@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "identity.server": "StartDebugging",
+        "reactspa.server": "StartDebugging",
+        "problems.api": "StartDebugging",
+        "webspa": "StartDebugging",
+        "submits.api": "StartDebugging"
+      }
+    }
+  }
+}

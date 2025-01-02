@@ -1,0 +1,16 @@
+@WebSPA_HostAddress = http://localhost:6000
+
+GET {{WebSPA_HostAddress}}/api/problems/list?page=1&pageSize=10
+Accept: application/json
+X-CSRF: 1
+
+###
+
+GET {{WebSPA_HostAddress}}/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+
+### WA
+GET {{WebSPA_HostAddress}}/api/submissions/441/detail
+Accept: application/json
+X-CSRF: 1

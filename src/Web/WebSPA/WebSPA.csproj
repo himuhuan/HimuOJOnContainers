@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>465f1cee-343a-4eed-95ce-513a4e907972</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..\..</DockerfileContext>
+		<DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+		
+		<RootNamespace> HimuOJ.Web.WebSPA </RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.json;">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Update="wwwroot\**\*;">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj" />
+		<ProjectReference Include="..\..\Services\Submits\Submits.Domain\Submits.Domain.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Duende.BFF" Version="2.2.0" />
+		<PackageReference Include="Duende.BFF.Yarp" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
+			<Version>8.*-*</Version>
+		</PackageReference>
+
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+
+		<PackageReference Include="Refit" Version="8.0.0" />
+
+		<PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Controller\" />
+	  <Folder Include="Configuration\" />
+	  <Folder Include="Client\" />
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Include="..\..\Services\Identity\Identity.Server\Controllers\UserControllerModels.cs">
+	    <Link>Models\UserControllerModels.cs</Link>
+	  </Compile>
+	  <Compile Include="..\..\Services\Problems\Problems.API\Application\Queries\ProblemsQueryModels.cs">
+	    <Link>Models\ProblemsQueryModels.cs</Link>
+	  </Compile>
+	  <Compile Include="..\..\Services\Submits\Submits.API\Application\Queries\SubmitsQueryModels.cs">
+	    <Link>Models\SubmitsQueryModels.cs</Link>
+	  </Compile>
+	</ItemGroup>
+
+</Project>

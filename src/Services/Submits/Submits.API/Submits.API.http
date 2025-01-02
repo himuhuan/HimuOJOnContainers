@@ -1,0 +1,6 @@
+@SubmitsAPI_HostAddress = http://localhost:5200
+
+GET {{SubmitsAPI_HostAddress}}/submissions/300
+Accept: application/json
+X-CSRF: 1
+###

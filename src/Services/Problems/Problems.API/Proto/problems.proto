@@ -1,0 +1,36 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GrpcProblems";
+
+package ProblemsApi;
+
+service ProblemsService {
+  rpc GetProblemEssentialPartForJudge (GetProblemEssentialPartForJudgeRequest) 
+      returns (GetProblemEssentialPartForJudgeResponse);
+  rpc CheckHealth (CheckHealthRequest) 
+      returns (CheckHealthResponse);
+}
+
+message GetProblemEssentialPartForJudgeRequest {
+  int32 ProblemId = 1;
+}
+
+message GetProblemEssentialPartForJudgeResponse {
+  int64 MaxTimeLimitMs = 3;
+  int64 MaxMemoryLimitByte = 4;
+  repeated TestPointEssentialPart TestPoints = 8;
+}
+
+message TestPointEssentialPart {
+  int32 TestPointId = 1;
+  string Input = 2;
+  string ExpectedOutput = 3;
+}
+
+message CheckHealthRequest {
+}
+
+message CheckHealthResponse {
+  // 0: OK
+  int32 Status = 1;
+}

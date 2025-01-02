@@ -1,0 +1,140 @@
+﻿GET http://localhost:6000/api/submissions/441/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T201314.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/441/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T201044.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/441/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T134052.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/441/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T131432.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/215/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T124625.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/215/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T120120.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T120026.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T115451.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T103631.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T103609.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T101714.200.json
+
+###
+
+GET http://localhost:5200/submissions/300
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T101440.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T101425.200.json
+
+###
+
+GET http://localhost:6000/api/submissions/300/detail
+Accept: application/json
+X-CSRF: 1
+User-Agent: IntelliJ HTTP Client/JetBrains Rider 2024.3.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+<> 2025-01-01T101220.200.json
+
+###
+

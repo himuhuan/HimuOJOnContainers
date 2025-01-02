@@ -1,0 +1,23 @@
+{
+  "id": 300,
+  "problemId": 1,
+  "usage": {
+    "usedMemoryByte": 67739648,
+    "usedTimeMs": 15
+  },
+  "status": "Accepted",
+  "submitterId": "7dba24b0-aae8-4d1a-83dc-c6dadc0f8991",
+  "submitTime": "2024-12-30T09:07:41.328049Z",
+  "compilerName": "g++",
+  "statusMessage": null,
+  "testPointResults": [
+    {
+      "submissionId": 0,
+      "testPointId": 0,
+      "status": 0,
+      "usage": null,
+      "difference": null,
+      "id": 0
+    }
+  ]
+}

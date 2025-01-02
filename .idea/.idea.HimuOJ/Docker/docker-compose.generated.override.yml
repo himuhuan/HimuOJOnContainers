@@ -1,0 +1,94 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  identity:
+    build:
+      context: "E:\\HimuOJ"
+      dockerfile: "src/Services/Identity/Identity.Server/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Identity.Server.dll"
+    environment:
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/Identity.Server.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "identityserver:dev"
+    ports: []
+    volumes:
+    - "E:\\HimuOJ\\src\\Services\\Identity\\Identity.Server:/app:rw"
+    - "E:\\HimuOJ:/src:rw"
+    - "C:\\Users\\LiuHuan\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  problems-api:
+    build:
+      context: "E:\\HimuOJ"
+      dockerfile: "src/Services/Problems/Problems.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Problems.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "problemsapi:dev"
+    ports: []
+    volumes:
+    - "E:\\HimuOJ\\src\\Services\\Problems\\Problems.API:/app:rw"
+    - "E:\\HimuOJ:/src:rw"
+    - "C:\\Users\\LiuHuan\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  submits-api:
+    build:
+      context: "E:\\HimuOJ"
+      dockerfile: "src/Services/Submits/Submits.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Submits.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "submitsapi:dev"
+    ports: []
+    volumes:
+    - "E:\\HimuOJ\\src\\Services\\Submits\\Submits.API:/app:rw"
+    - "E:\\HimuOJ:/src:rw"
+    - "C:\\Users\\LiuHuan\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  submits-backgroundtasks:
+    build:
+      context: "E:\\HimuOJ"
+      dockerfile: "src/Services/Submits/Submits.BackgroundTasks/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Submits.BackgroundTasks.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "submitsbackgroundtasks:dev"
+    ports: []
+    volumes:
+    - "E:\\HimuOJ\\src\\Services\\Submits\\Submits.BackgroundTasks:/app:rw"
+    - "E:\\HimuOJ:/src:rw"
+    - "C:\\Users\\LiuHuan\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  webspa-bff:
+    build:
+      context: "E:\\HimuOJ"
+      dockerfile: "src/Web/WebSPA/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/WebSPA.dll"
+    environment:
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/WebSPA.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "webspa:dev"
+    ports: []
+    volumes:
+    - "E:\\HimuOJ\\src\\Web\\WebSPA:/app:rw"
+    - "E:\\HimuOJ:/src:rw"
+    - "C:\\Users\\LiuHuan\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"

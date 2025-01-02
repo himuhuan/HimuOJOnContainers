@@ -1,0 +1,42 @@
+services:
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+  
+  identity:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.Server/Dockerfile
+
+  problems-api:
+    image: ${DOCKER_REGISTRY-}problemsapi
+    build:
+      context: .
+      dockerfile: src/Services/Problems/Problems.API/Dockerfile
+    depends_on:
+      - rabbitmq
+
+  submits-api:
+    image: ${DOCKER_REGISTRY-}submitsapi
+    build:
+      context: .
+      dockerfile: src/Services/Submits/Submits.API/Dockerfile
+    depends_on:
+      - rabbitmq 
+  
+  webspa-bff:
+    image: ${DOCKER_REGISTRY-}webspa
+    build:
+      context: .
+      dockerfile: src/Web/WebSPA/Dockerfile
+
+  submits-backgroundtasks:
+    image: ${DOCKER_REGISTRY-}submitsbackgroundtasks
+    build:
+      context: .
+      dockerfile: src/Services/Submits/Submits.BackgroundTasks/Dockerfile
+    depends_on:
+      - rabbitmq
+      - submits-api
+      - problems-api 

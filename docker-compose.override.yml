@@ -1,0 +1,77 @@
+services:
+  identity:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - WebSpaClient=http://localhost:6100
+      - ProblemsApiExternalUrl=http://localhost:5100
+      - SubmitsApiExternalUrl=http://localhost:5200
+      - ConnectionStrings__IdentityDbContext=Host=host.docker.internal;Database=HimuOJIdentityDB;Username=postgres;Password=liuhuan123
+    ports:
+      - "5001:80" 
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  problems-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - ASPNETCORE_HTTPS_PORTS=81
+      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - SubmitsGrpcUrl=http://submits-api:81
+      - ConnectionStrings__ProblemsDbContext=Host=host.docker.internal;Database=HimuOJProblemsDB;Username=postgres;Password=liuhuan123
+    ports:
+      - "5100:80"
+      - "5101:81"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  submits-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - ASPNETCORE_HTTPS_PORTS=81
+      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - ConnectionStrings__SubmitsDbContext=Host=host.docker.internal;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123
+    ports:
+      - "5200:80"
+      - "5201:81"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  
+  submits-backgroundtasks:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SubmitsDbContext=Host=host.docker.internal;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123
+      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - ProblemsGrpcUrl=http://problems-api:81
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  webspa-bff:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - ASPNETCORE_HTTPS_PORTS=81
+      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+    ports:
+      - "6000:80"
+      - "6001:81"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

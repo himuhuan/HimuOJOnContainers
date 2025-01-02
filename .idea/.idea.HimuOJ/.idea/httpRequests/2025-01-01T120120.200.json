@@ -1,0 +1,75 @@
+{
+  "submitterName": "himudev",
+  "submitterAvatar": "/static/users/default/default_avatar.png",
+  "problemTitle": " [USACO1.5] 八皇后 Checker Challenge ",
+  "id": 215,
+  "problemId": 3,
+  "usage": null,
+  "status": "WrongAnswer",
+  "submitterId": "7dba24b0-aae8-4d1a-83dc-c6dadc0f8991",
+  "submitTime": "2024-12-16T13:07:42.774202Z",
+  "compilerName": "g++",
+  "statusMessage": "Output difference detected",
+  "testPointResults": [
+    {
+      "submissionId": 215,
+      "testPointId": 22,
+      "status": "PendingOrSkipped",
+      "usage": null,
+      "difference": {
+        "expectedOutput": null,
+        "actualOutput": null,
+        "position": 0
+      },
+      "id": 222
+    },
+    {
+      "submissionId": 215,
+      "testPointId": 23,
+      "status": "PendingOrSkipped",
+      "usage": null,
+      "difference": {
+        "expectedOutput": null,
+        "actualOutput": null,
+        "position": 0
+      },
+      "id": 223
+    },
+    {
+      "submissionId": 215,
+      "testPointId": 24,
+      "status": "PendingOrSkipped",
+      "usage": null,
+      "difference": {
+        "expectedOutput": null,
+        "actualOutput": null,
+        "position": 0
+      },
+      "id": 224
+    },
+    {
+      "submissionId": 215,
+      "testPointId": 25,
+      "status": "PendingOrSkipped",
+      "usage": null,
+      "difference": {
+        "expectedOutput": null,
+        "actualOutput": null,
+        "position": 0
+      },
+      "id": 225
+    },
+    {
+      "submissionId": 215,
+      "testPointId": 21,
+      "status": "WrongAnswer",
+      "usage": null,
+      "difference": {
+        "expectedOutput": null,
+        "actualOutput": null,
+        "position": 1
+      },
+      "id": 221
+    }
+  ]
+}
