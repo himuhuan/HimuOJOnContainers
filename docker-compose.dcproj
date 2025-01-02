@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include=".env" />
+    <None Include=".gitignore" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
