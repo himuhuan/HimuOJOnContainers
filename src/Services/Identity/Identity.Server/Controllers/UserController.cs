@@ -56,5 +56,25 @@ namespace Identity.Server.Controllers
                 );
             return Ok(queryResult);
         }
+        
+        [HttpGet("{userId}")]
+        [ProducesResponseType<UserDetail>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserDetail(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new UserDetail
+            {
+                UserId = user.Id,
+                UserName = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                RegisterDate = user.RegisterDate.ToShortDateString(),
+                LastLoginDate = user.LastLoginDate.ToShortDateString()
+            });
+        }
     }
 }

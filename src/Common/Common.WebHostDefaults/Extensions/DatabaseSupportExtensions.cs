@@ -1,5 +1,10 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Data;
+using System.Linq.Expressions;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -163,7 +168,7 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
         }
 
         #region LINQ Extensions
-        
+
         /// <summary>
         /// WhereIf extension method for IQueryable.
         /// </summary>
@@ -174,7 +179,40 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
         {
             return condition ? query.Where(predicate) : query;
         }
+
+        #endregion
+
+        #region Dapper
+
+        /// <summary>
+        /// Executes a raw SQL query asynchronously using Dapper and returns the result as an IEnumerable of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of the result elements.</typeparam>
+        /// <param name="database">The DatabaseFacade instance to execute the query on.</param>
+        /// <param name="commandText">The raw SQL query to execute.</param>
+        /// <param name="param">The parameters to pass to the SQL query.</param>
+        /// <param name="commandTimeout">The optional command timeout.</param>
+        /// <param name="commandType">The optional command type.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an IEnumerable of type T.</returns>
+        public static async Task<IEnumerable<T>> RawQueryAsync<T>(
+            this DatabaseFacade database,
+            string commandText,
+            object param,
+            int? commandTimeout = null,
+            CommandType? commandType = null)
+        {
+            var            cn  = database.GetDbConnection();
+            IDbTransaction trn = database.CurrentTransaction?.GetDbTransaction()!;
+            return await cn.QueryAsync<T>(commandText, param, trn, commandTimeout, commandType);
+        }
         
+        #nullable enable
+        public static async Task<T?> FirstOrDefault<T>(this Task<IEnumerable<T>> source)
+        {
+            return (await source).FirstOrDefault();
+        }
+        #nullable restore
+
         #endregion
     }
 }

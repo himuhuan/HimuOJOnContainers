@@ -39,6 +39,16 @@ const routes = [
 		component: () => import("@/views/submissions/SubmissionDetail.vue"),
 	},
 	{
+		path: "/users/:id",
+		name: "user-profile",
+		props: true,
+		// TODO: uncomment this line to enable authentication
+		// meta: {
+		// 	requireAuthentication: true,
+		// },
+		component: () => import("@/views/users/UserProfile.vue"),
+	},
+	{
 		path: "/error/not-found",
 		name: "not-found",
 		component: () => import("@/views/error/NotFound.vue"),

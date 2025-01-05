@@ -1,4 +1,5 @@
 ﻿using HimuOJ.Services.Submits.API.Application.Queries;
+using Identity.Server.Controllers;
 
 namespace HimuOJ.Web.WebSPA.Models;
 
@@ -36,4 +37,12 @@ public class BffSubmission : GetSubmissionResult
     public string? SubmitterName { get; set; }
     public string? SubmitterAvatar { get; set; }
     public string? ProblemTitle { get; set; }
+}
+
+public class BffUserDetail : UserDetail
+{
+    public int TotalSubmissionCount { get; set; }
+    public int AcceptedSubmissionCount { get; set; }
+    public int TotalProblemTriedCount { get; set; }
+    public int AcceptedProblemCount { get; set; }
 }

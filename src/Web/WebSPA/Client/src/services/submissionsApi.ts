@@ -53,6 +53,6 @@ export async function getSubmissionDetail(submissionId: number) {
 		return response.data;
 	} catch (error) {
 		console.error("Error occurred while fetching submission detail:", error);
-		throw error; // 抛出错误以便外部处理
+		throw error;
 	}
 }

@@ -14,3 +14,8 @@ X-CSRF: 1
 GET {{WebSPA_HostAddress}}/api/submissions/441/detail
 Accept: application/json
 X-CSRF: 1
+
+### UserProfile
+GET {{WebSPA_HostAddress}}/api/users/7dba24b0-aae8-4d1a-83dc-c6dadc0f2991/detail
+Accept: application/json
+X-CSRF: 1

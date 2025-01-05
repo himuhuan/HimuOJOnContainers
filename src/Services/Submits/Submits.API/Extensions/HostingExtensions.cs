@@ -24,7 +24,7 @@ public static class HostingExtensions
         });
         
         builder.Services.AddScoped<ISubmitsRepository, SubmitsRepository>();
-        builder.Services.AddScoped<ISubmitsQuery, SubmitsEFQuery>();
+        builder.Services.AddScoped<ISubmitsQuery, SubmitsQuery>();
         
         builder.Services.AddGrpc();
         builder.Services.AddControllers();

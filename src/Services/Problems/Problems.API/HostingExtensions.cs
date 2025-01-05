@@ -21,7 +21,7 @@ public static class HostingExtensions
         builder.Services.AddDbContextMigration<ProblemsDbContext, ProblemsDbContextSeeder>();
 
         builder.Services.AddScoped<IProblemsRepository, ProblemsRepository>();
-        builder.Services.AddScoped<IProblemsQuery, ProblemsEFQuery>();
+        builder.Services.AddScoped<IProblemsQuery, ProblemsQuery>();
 
         builder.Services.AddControllers();
         builder.Services.AddGrpc();

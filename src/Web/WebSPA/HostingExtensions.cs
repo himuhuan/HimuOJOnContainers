@@ -1,4 +1,5 @@
 ﻿using Duende.Bff.Yarp;
+using HimuOJ.Web.WebSPA.Filters;
 using HimuOJ.Web.WebSPA.Services;
 using Microsoft.IdentityModel.Logging;
 using Refit;
@@ -78,7 +79,10 @@ public static class HostingExtensions
                    };
                });
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<BffGatewayRefitExceptionFilter>();
+        });
         
         builder.Services.AddRemoteApis<IProblemsApi>();
         builder.Services.AddRemoteApis<ISubmitsApi>();

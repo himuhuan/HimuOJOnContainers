@@ -4,3 +4,12 @@ GET {{SubmitsAPI_HostAddress}}/submissions/300
 Accept: application/json
 X-CSRF: 1
 ###
+
+GET {{SubmitsAPI_HostAddress}}/submissions/statistics/problems-list/1
+Accept: application/json
+X-CSRF: 1
+
+### user-profile
+GET {{SubmitsAPI_HostAddress}}/submissions/statistics/user-profile/7dba24b0-aae8-4d1a-83dc-c6dadc0f8991
+Accept: application/json
+X-CSRF: 1

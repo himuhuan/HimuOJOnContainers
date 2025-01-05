@@ -5,13 +5,14 @@ import {
 	SubmissionListItem,
 } from "@/modules/submits-type";
 import { h, onMounted, ref, defineProps, onUnmounted } from "vue";
-import { DataTableColumn, NButton, NDataTable, useThemeVars } from "naive-ui";
+import { DataTableColumn, NButton, NDataTable } from "naive-ui";
 import { getSubmissionList } from "@/services/submissionsApi";
 import AvatarWithText from "@/components/shared/AvatarWithText.vue";
 import SubmissionStatusTag from "./SubmissionStatusTag.vue";
 import SubmissionRemarks from "./SubmissionRemarks.vue";
 import router from "@/routers";
 import { createSubmitsHubConnection } from "@/services/hubConnection";
+import { pageHeaderDark } from "naive-ui/es/page-header/styles";
 
 ////////////////////////// props //////////////////////////
 
@@ -30,6 +31,10 @@ const props = defineProps({
 			problemId: undefined,
 			submitterId: undefined,
 		}),
+	},
+	pageSize: {
+		type: Number,
+		default: 20,
 	},
 });
 
@@ -129,7 +134,7 @@ function handleRowProps(rowData: SubmissionListItem, _: number) {
 }
 
 let connection: signalR.HubConnection | null = null;
-async function fetchSubmissionList(page: number, pageSize: number = 30) {
+async function fetchSubmissionList(page: number, pageSize: number = props.pageSize) {
 	loadingRef.value = true;
 	getSubmissionList({
 		page,

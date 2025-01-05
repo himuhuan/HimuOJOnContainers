@@ -14,4 +14,7 @@ public interface ISubmitsApi
 
     [Get("/api/submissions/{id}")]
     Task<BffSubmission> GetSubmission(int id);
+    
+    [Get("/api/submissions/statistics/user-profile/{userId}")]
+    Task<UserProfileStatistics> GetUserProfileStatisticsAsync(string userId);
 }

@@ -1,7 +1,5 @@
 using System.Security.Claims;
-
 using DotNetCore.CAP;
-
 using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
@@ -12,12 +10,9 @@ using HimuOJ.Services.Submits.API.Services;
 using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using HimuOJ.Services.Submits.Domain.Events;
 using HimuOJ.Services.Submits.Infrastructure.Repositories;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using Submits.BackgroundTasks.Services.IntegrationEvents;
 
 namespace HimuOJ.Services.Submits.API.Controllers
@@ -39,11 +34,11 @@ namespace HimuOJ.Services.Submits.API.Controllers
             IEventBusService bus,
             ISubmitsQuery query)
         {
-            _logger = logger;
+            _logger     = logger;
             _repository = repository;
-            _mediator = mediator;
-            _bus = bus;
-            _query = query;
+            _mediator   = mediator;
+            _bus        = bus;
+            _query      = query;
         }
 
         [HttpPost]
@@ -77,6 +72,7 @@ namespace HimuOJ.Services.Submits.API.Controllers
             {
                 return NotFound();
             }
+
             await _bus.PublishSubmissionReadyToJudgeAsync(submission.Id, submission.ProblemId);
             return Ok();
         }
@@ -100,9 +96,14 @@ namespace HimuOJ.Services.Submits.API.Controllers
         public async Task<IActionResult> GetSubmission(int id)
         {
             var submission = await _query.GetSubmissionAsync(id);
-            if (submission == null) { return NotFound(); }
-            return submission.ToHttpApiResult(ApiResultCode.Ok);
+            return submission == null ? NotFound() : submission.ToHttpApiResult(ApiResultCode.Ok);
         }
 
+        [HttpGet("statistics/user-profile/{userId}")]
+        public async Task<IActionResult> GetStatisticsByUser(string userId)
+        {
+            var statistics = await _query.GetUserProfileStatisticsAsync(userId);
+            return statistics.ToHttpApiResult();
+        }
     }
 }

@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccountManage: typeof import('./src/components/users/AccountManage.vue')['default']
     AvatarWithText: typeof import('./src/components/shared/AvatarWithText.vue')['default']
     CenterContentContainer: typeof import('./src/components/shared/CenterContentContainer.vue')['default']
     CommitList: typeof import('./src/components/commits/CommitList.vue')['default']
@@ -22,6 +23,7 @@ declare module 'vue' {
     Info: typeof import('./src/components/profile/Info.vue')['default']
     ListGotoItem: typeof import('./src/components/shared/ListGotoItem.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
+    NCol: typeof import('naive-ui')['NCol']
     ProblemCommitTabs: typeof import('./src/components/problems/ProblemCommitTabs.vue')['default']
     ProblemDetailPreview: typeof import('./src/components/problems/ProblemDetailPreview.vue')['default']
     ProblemList: typeof import('./src/components/problems/ProblemList.vue')['default']

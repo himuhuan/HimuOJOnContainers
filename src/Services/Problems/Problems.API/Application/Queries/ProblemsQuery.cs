@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HimuOJ.Services.Problems.API.Application.Queries;
 
-public class ProblemsEFQuery : IProblemsQuery
+public class ProblemsQuery : IProblemsQuery
 {
     private readonly ProblemsDbContext _context;
 
-    public ProblemsEFQuery(ProblemsDbContext context, ILogger<ProblemsEFQuery> logger)
+    public ProblemsQuery(ProblemsDbContext context, ILogger<ProblemsQuery> logger)
     {
         _context = context;
     }

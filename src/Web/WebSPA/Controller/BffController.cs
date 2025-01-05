@@ -101,7 +101,7 @@ namespace HimuOJ.Web.WebSPA.Controller
             try
             {
                 await Task.WhenAll(
-                    userBriefTask ?? Task.CompletedTask, 
+                    userBriefTask ?? Task.CompletedTask,
                     problemTitleTask ?? Task.CompletedTask);
             }
             catch (Exception e)
@@ -114,6 +114,24 @@ namespace HimuOJ.Web.WebSPA.Controller
             submission.ProblemTitle    = problemTitleTask?.Result;
 
             return Ok(submission);
+        }
+
+        [HttpGet("users-detail/{id}")]
+        public async Task<IActionResult> GetUserDetail(string id)
+        {
+            var userDetailTask = _usersApi.GetUserDetailAsync(id);
+            var profileTask    = _submitsApi.GetUserProfileStatisticsAsync(id);
+
+            await Task.WhenAll(userDetailTask, profileTask);
+
+            var userDetail = userDetailTask.Result;
+            var profile    = profileTask.Result;
+            userDetail.AcceptedSubmissionCount = profile.AcceptedSubmissionCount;
+            userDetail.TotalSubmissionCount    = profile.TotalSubmissionCount;
+            userDetail.TotalProblemTriedCount  = profile.TotalProblemTriedCount;
+            userDetail.AcceptedProblemCount    = profile.AcceptedProblemCount;
+
+            return Ok(userDetail);
         }
     }
 }

@@ -8,6 +8,7 @@
 			<problem-list />
 		</n-card>
 	</center-content-container>
+	<himu-copyright />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +16,7 @@ import { NCard, NH2 } from "naive-ui";
 import ProblemList from "@/components/problems/ProblemList.vue";
 import { onMounted } from "vue";
 import CenterContentContainer from "@/components/shared/CenterContentContainer.vue";
+import HimuCopyright from "@/components/shared/HimuCopyright.vue";
 
 onMounted(() => {
 	
