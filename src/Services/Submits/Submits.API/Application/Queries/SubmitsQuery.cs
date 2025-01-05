@@ -108,7 +108,7 @@ public class SubmitsQuery : ISubmitsQuery
               WHERE "SubmitterId" = @submitterId;
               """;
         
-        UserProfileStatistics? result =
+        UserProfileStatistics result =
             await _context
                   .Database
                   .RawQueryAsync<UserProfileStatistics>(query, new { submitterId = userId })

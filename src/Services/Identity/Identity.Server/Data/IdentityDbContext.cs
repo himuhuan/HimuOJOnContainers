@@ -16,6 +16,7 @@ namespace Identity.Server.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
+            builder.ApplyConfiguration(new ApplicationRoleEntityConfiguration());
         }
     }
 }

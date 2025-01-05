@@ -43,9 +43,9 @@ const routes = [
 		name: "user-profile",
 		props: true,
 		// TODO: uncomment this line to enable authentication
-		// meta: {
-		// 	requireAuthentication: true,
-		// },
+		meta: {
+			requireAuthentication: true,
+		},
 		component: () => import("@/views/users/UserProfile.vue"),
 	},
 	{

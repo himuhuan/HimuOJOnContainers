@@ -12,28 +12,23 @@ namespace Identity.Server.Data
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-            var logger = serviceProvider.GetRequiredService<ILogger<IdentityDbContextSeeder>>();
+            var logger      = serviceProvider.GetRequiredService<ILogger<IdentityDbContextSeeder>>();
 
             using (context)
             {
                 if (!await context.Roles.AnyAsync())
                 {
-                    foreach (string role in ApplicationRole.RolePermissionPriority.Keys)
+                    foreach (var role in ApplicationRole.GetAllRoles())
                     {
-                        await roleManager.CreateAsync(new ApplicationRole
-                        {
-                            Name = role,
-                            NormalizedName = role.ToUpper()
-                        });
-
-                        logger.LogDebug("Role created: {RoleName}", role);
+                        await roleManager.CreateAsync(role);
+                        logger.LogDebug("Role created: {@Role}", role);
                     }
                 }
 
                 if (!await context.Users.AnyAsync())
                 {
                     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                    var (user, rawPassword) = GetInitialUserFromConfig(configuration);
+                    (ApplicationUser user, string rawPassword) = GetInitialUserFromConfig(configuration);
                     var result = await userManager.CreateAsync(user, rawPassword);
 
                     if (!result.Succeeded)
@@ -42,6 +37,7 @@ namespace Identity.Server.Data
                     }
 
                     logger.LogDebug("Initial user created: {UserName}", user.UserName);
+                    await userManager.AddToRoleAsync(user, ApplicationRole.Administrator.Name!);
                 }
 
                 await context.SaveChangesAsync();
@@ -51,18 +47,20 @@ namespace Identity.Server.Data
         private static (ApplicationUser user, string rawPassword) GetInitialUserFromConfig(IConfiguration configuration)
         {
             var initialUserConfig = configuration.GetSection("InitialUser");
-            var userName = initialUserConfig.GetValue<string>("Name");
-            var password = initialUserConfig.GetValue<string>("Password");
-            var mail = initialUserConfig.GetValue<string>("Mail");
+            var userName          = initialUserConfig.GetValue<string>("Name");
+            var password          = initialUserConfig.GetValue<string>("Password");
+            var mail              = initialUserConfig.GetValue<string>("Mail");
             if (userName == null || password == null || mail == null)
                 throw new ArgumentException("Invalid configuration in InitialUser");
 
             var user = new ApplicationUser
             {
+                // TODO: may be better to use a random GUID in production?
+                Id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
                 UserName = userName,
-                Email = mail
+                Email          = mail,
+                EmailConfirmed = true
             };
-            user.EmailConfirmed = true;
 
             return (user, password);
         }
