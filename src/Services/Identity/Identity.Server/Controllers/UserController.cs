@@ -16,7 +16,7 @@ namespace Identity.Server.Controllers
         public UserController(UserManager<ApplicationUser> userManager, IdentityDbContext context)
         {
             _userManager = userManager;
-            _context = context;
+            _context     = context;
         }
 
         [HttpGet("{userId}/brief")]
@@ -32,7 +32,7 @@ namespace Identity.Server.Controllers
             return Ok(new UserBrief
             {
                 UserName = user.UserName ?? string.Empty,
-                Avatar = user.Avatar
+                Avatar   = user.Avatar
             });
         }
 
@@ -51,12 +51,12 @@ namespace Identity.Server.Controllers
                     d => new UserBrief
                     {
                         UserName = d.UserName,
-                        Avatar = d.Avatar
+                        Avatar   = d.Avatar
                     }
                 );
             return Ok(queryResult);
         }
-        
+
         [HttpGet("{userId}")]
         [ProducesResponseType<UserDetail>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserDetail(string userId)
@@ -69,12 +69,45 @@ namespace Identity.Server.Controllers
 
             return Ok(new UserDetail
             {
-                UserId = user.Id,
-                UserName = user.UserName ?? string.Empty,
-                Email = user.Email ?? string.Empty,
-                RegisterDate = user.RegisterDate.ToShortDateString(),
+                UserId        = user.Id,
+                UserName      = user.UserName ?? string.Empty,
+                Email         = user.Email ?? string.Empty,
+                RegisterDate  = user.RegisterDate.ToShortDateString(),
                 LastLoginDate = user.LastLoginDate.ToShortDateString()
             });
+        }
+
+        [HttpPost]
+        [ProducesResponseType<UserDetail>(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            var user = new ApplicationUser
+            {
+                UserName      = request.UserName,
+                Email         = request.Email,
+                RegisterDate  = DateOnly.FromDateTime(DateTime.UtcNow),
+                LastLoginDate = DateOnly.MinValue,
+                // TODO: Add email confirmation
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return CreatedAtAction(nameof(GetUserDetail), new { userId = user.Id },
+                new UserDetail
+                {
+                    UserId        = user.Id,
+                    UserName      = user.UserName ?? string.Empty,
+                    Email         = user.Email ?? string.Empty,
+                    RegisterDate  = user.RegisterDate.ToShortDateString(),
+                    LastLoginDate = user.LastLoginDate.ToShortDateString()
+                });
         }
     }
 }

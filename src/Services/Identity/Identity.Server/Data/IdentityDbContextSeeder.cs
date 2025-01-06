@@ -1,6 +1,5 @@
 ﻿using HimuOJ.Common.WebHostDefaults.Extensions;
 using Identity.Server.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -19,3 +19,10 @@ public class UserDetail
     public required string RegisterDate { get; set; }
     public required string LastLoginDate { get; set; }
 }
+
+public class CreateUserRequest
+{
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
+    public required string Email { get; set; }
+}
