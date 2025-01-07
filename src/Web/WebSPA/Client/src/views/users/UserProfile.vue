@@ -11,7 +11,12 @@
 				</n-layout-sider>
 				<n-layout>
 					<n-layout-header>
-						<n-h2 class="mb-0">{{ userRef.userName }}</n-h2>
+						<n-h2 class="mb-0">
+							{{ userRef.userName }}
+							<n-tag type="primary" class="m-2 float-end">
+								Administrator
+							</n-tag>
+						</n-h2>
 						<div>
 							{{ userRef.email }} <n-divider vertical /> 注册于
 							{{ userRef.registerDate }}<n-divider vertical /> 最近登录于
@@ -29,7 +34,7 @@
 								</n-statistic>
 							</n-col>
 							<n-col :span="6">
-								<n-statistic label="通过数"> 
+								<n-statistic label="通过数">
 									<n-number-animation
 										:from="0"
 										:to="userRef.acceptedSubmissionCount"
@@ -37,9 +42,7 @@
 								</n-statistic>
 							</n-col>
 							<n-col :span="6">
-								<n-statistic
-									label="尝试题目数"
-								>
+								<n-statistic label="尝试题目数">
 									<n-number-animation
 										:from="0"
 										:to="userRef.totalProblemTriedCount"
@@ -47,9 +50,7 @@
 								</n-statistic>
 							</n-col>
 							<n-col :span="6">
-								<n-statistic
-									label="通过题目数"
-								>
+								<n-statistic label="通过题目数">
 									<n-number-animation
 										:from="0"
 										:to="userRef.acceptedProblemCount"
@@ -64,23 +65,30 @@
 
 		<n-card class="mt-4">
 			<n-tabs type="line" animated>
-				<n-tab-pane name="account" tab="账号管理" display-directive="show:lazy">
-					<account-manage />
-				</n-tab-pane>
-				<n-tab-pane
-					name="submissions"
-					tab="提交分析"
-					display-directive="show:lazy"
-				>
+				<n-tab-pane name="submissions" tab="提交分析" display-directive="show">
 					<submission-list
 						show-submission-id
 						:page-size="10"
 						:filter="{
-							userId: userRef.userId,
+							submitterId: userRef.userId,
 						}"
 					/>
 				</n-tab-pane>
-				<n-tab-pane name="problems-manage" tab="创建/管理题目"> </n-tab-pane>
+				<n-tab-pane
+					v-if="isCurrentUser"
+					name="account"
+					tab="账号管理"
+					display-directive="show:lazy"
+				>
+					<account-manage />
+				</n-tab-pane>
+
+				<n-tab-pane
+					v-if="isCurrentUser"
+					name="problems-manage"
+					tab="创建/管理题目"
+				>
+				</n-tab-pane>
 			</n-tabs>
 		</n-card>
 	</center-content-container>
@@ -93,6 +101,7 @@ import {
 	NCard,
 	NRow,
 	NCol,
+	NTag,
 	NH2,
 	NAvatar,
 	NStatistic,
@@ -112,6 +121,7 @@ import AccountManage from "@/components/users/AccountManage.vue";
 import SubmissionList from "@/components/submissions/SubmissionList.vue";
 import { getUserDetail } from "@/services/usersApi";
 import { UserDetail } from "@/modules/user-types";
+import { useUserState } from "@/stores/user";
 
 const props = defineProps({
 	id: {
@@ -119,6 +129,8 @@ const props = defineProps({
 		required: true,
 	},
 });
+
+const userState = useUserState();
 
 const userRef = ref<UserDetail>({
 	userId: props.id,
@@ -132,11 +144,13 @@ const userRef = ref<UserDetail>({
 	acceptedProblemCount: 0,
 });
 
+const isCurrentUser = ref(false);
+
 onMounted(() => {
 	getUserDetail(props.id)
 		.then((res) => {
 			userRef.value = res;
-			console.log(res);
+			isCurrentUser.value = userState.isLogin && res.userId === userState.id;
 		})
 		.catch((err) => {
 			console.error(err);

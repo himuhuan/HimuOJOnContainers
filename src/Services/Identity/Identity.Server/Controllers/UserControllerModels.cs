@@ -8,7 +8,7 @@ public class UserBrief
 
 public class GetUserBriefsRequest
 {
-    public required IEnumerable<string> Id { get; set; }
+    public IEnumerable<string>? Ids { get; set; }
 }
 
 public class UserDetail

@@ -60,7 +60,7 @@ namespace HimuOJ.Web.WebSPA.Controller
             var userBriefsTask = _usersApi.GetUserBriefsAsync(
                 new GetUserBriefsRequest
                 {
-                    Id = userIds
+                    Ids = userIds
                 });
 
             await Task.WhenAll(userBriefsTask, problemTitlesTask);

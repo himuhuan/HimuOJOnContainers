@@ -64,7 +64,7 @@ public class ProblemsQuery : IProblemsQuery
     public async Task<ApiResult<Dictionary<int, string>>>
         GetProblemTitlesAsync(GetProblemTitleListRequest request)
     {
-        var idList = request.Ids.ToList();
+        var idList = request.Ids?.ToList() ?? [];
 
         // NOTE: If the number of Ids in the request is huge, the following query performance may be poor.
         Dictionary<int, string> titles = await _context.Problems.AsNoTracking()

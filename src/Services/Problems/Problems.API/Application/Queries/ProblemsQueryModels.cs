@@ -26,7 +26,7 @@ public class ProblemList
 
 public class GetProblemTitleListRequest
 {
-    public required IEnumerable<int> Ids { get; set; }
+    public IEnumerable<int>? Ids { get; set; }
 }
 
 public class ProblemTestPoint

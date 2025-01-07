@@ -40,7 +40,12 @@ namespace Identity.Server.Controllers
         [ProducesResponseType<Dictionary<string, UserBrief>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserBriefs([FromQuery] GetUserBriefsRequest request)
         {
-            var ids = request.Id.ToList();
+            if (request.Ids == null || !request.Ids.Any())
+            {
+                return NoContent();
+            }
+            
+            var ids = request.Ids.ToList();
 
             //NOTE: If the number of Ids in the request is huge, the following query performance may be poor.
             Dictionary<string, UserBrief> queryResult = await _context.Users.AsNoTracking()
