@@ -1,4 +1,3 @@
-
 /**
  * To avoid annoying warnings for some ides
  */
@@ -6,8 +5,8 @@ export function usedVariables(v: any) {
     return v;
 }
 
-export function utc2LoaclDate(utc: any) : Date {
-    let date = (typeof utc === "string") ? new Date(utc + "Z") : new Date(utc); 
+export function utc2LoaclDate(utc: any): Date {
+    let date = (typeof utc === "string") ? new Date(utc + "Z") : new Date(utc);
     return new Date(date.toLocaleString());
 }
 
@@ -44,13 +43,13 @@ export function combinePath(...paths: string[]): string {
  *          Otherwise, it returns the original compiler name.
  */
 export function mapCompilerNameToLanguage(compilerName: string) {
-	switch (compilerName) {
-		case "g++":
-		case "clang++":
-			return "cpp";
-		default:
-			return compilerName;
-	}
+    switch (compilerName) {
+        case "g++":
+        case "clang++":
+            return "cpp";
+        default:
+            return compilerName;
+    }
 }
 
 export function isAcceptedStatus(status: string) {

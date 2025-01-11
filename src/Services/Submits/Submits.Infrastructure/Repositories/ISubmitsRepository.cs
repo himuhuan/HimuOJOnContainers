@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.Infrastructure.Repositories;
 

@@ -1,4 +1,6 @@
-﻿using HimuOJ.Common.WebHostDefaults.Infrastructure.OpenApi;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Infrastructure.OpenApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +9,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
+#endregion
+
 namespace HimuOJ.Common.WebHostDefaults.Extensions;
+
 public static class OpenApiExtensions
 {
     // TODO: add Api Versioning support
@@ -34,7 +39,7 @@ public static class OpenApiExtensions
 
         // ArgumentNullException.ThrowIfNull(apiVersioning);
 
-        var openApiOptions = builder.Configuration.GetSection("OpenApi");
+        var openApiOptions        = builder.Configuration.GetSection("OpenApi");
         var identityServerOptions = builder.Configuration.GetSection("IdentityServer");
         if (!openApiOptions.Exists())
         {
@@ -44,9 +49,10 @@ public static class OpenApiExtensions
 
         builder.Services.AddEndpointsApiExplorer();
 
-        var name = openApiOptions["Name"];
+        var name    = openApiOptions["Name"];
         var version = openApiOptions["Version"];
-        var scopes = identityServerOptions.GetRequiredSection("Scopes").GetChildren()
+        var scopes = identityServerOptions.GetRequiredSection("Scopes")
+            .GetChildren()
             .ToDictionary(x => x.Key, x => x.Value);
 
         builder.Services.AddSwaggerGen(c =>
@@ -66,8 +72,8 @@ public static class OpenApiExtensions
                     Implicit = new OpenApiOAuthFlow
                     {
                         AuthorizationUrl = new Uri($"{url}/connect/authorize"),
-                        TokenUrl = new Uri($"{url}/connect/token"),
-                        Scopes = scopes
+                        TokenUrl         = new Uri($"{url}/connect/token"),
+                        Scopes           = scopes
                     }
                 }
             });

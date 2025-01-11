@@ -13,7 +13,7 @@
                     <h2>Claims</h2>
                 </div>
                 <div class="card-body">
-                    @if(Model.View.AuthenticateResult.Principal != null)
+                    @if (Model.View.AuthenticateResult.Principal != null)
                     {
                         <dl>
                             @foreach (var claim in Model.View.AuthenticateResult.Principal.Claims)
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col">
             <div class="card">
                 <div class="card-header">
@@ -48,7 +48,7 @@
                             <dd>
                                 @{
                                     var clients = Model.View.Clients.ToArray();
-                                    for(var i = 0; i < clients.Length; i++)
+                                    for (var i = 0; i < clients.Length; i++)
                                     {
                                         <text>@clients[i]</text>
                                         if (i < clients.Length - 1)

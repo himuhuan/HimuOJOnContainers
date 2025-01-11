@@ -1,5 +1,9 @@
-﻿using HimuOJ.Services.Submits.API.Application.Queries;
+﻿#region
+
+using HimuOJ.Services.Submits.API.Application.Queries;
 using Identity.Server.Controllers;
+
+#endregion
 
 namespace HimuOJ.Web.WebSPA.Models;
 

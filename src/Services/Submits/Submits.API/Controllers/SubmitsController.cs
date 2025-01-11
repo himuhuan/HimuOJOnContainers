@@ -1,9 +1,8 @@
+#region
+
 using System.Security.Claims;
-using DotNetCore.CAP;
 using HimuOJ.Common.WebApiComponents.Extensions;
-using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
-using HimuOJ.Services.Submits.API.Application.IntegrationEvents;
 using HimuOJ.Services.Submits.API.Application.Objects;
 using HimuOJ.Services.Submits.API.Application.Queries;
 using HimuOJ.Services.Submits.API.Services;
@@ -13,7 +12,8 @@ using HimuOJ.Services.Submits.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Submits.BackgroundTasks.Services.IntegrationEvents;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Controllers
 {
@@ -21,11 +21,11 @@ namespace HimuOJ.Services.Submits.API.Controllers
     [ApiController]
     public class SubmitsController : ControllerBase
     {
-        private readonly ISubmitsRepository _repository;
-        private readonly ISubmitsQuery _query;
-        private readonly IMediator _mediator;
         private readonly IEventBusService _bus;
         private readonly ILogger<SubmitsController> _logger;
+        private readonly IMediator _mediator;
+        private readonly ISubmitsQuery _query;
+        private readonly ISubmitsRepository _repository;
 
         public SubmitsController(
             ILogger<SubmitsController> logger,

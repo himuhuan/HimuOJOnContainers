@@ -1,4 +1,6 @@
-﻿using GrpcProblems;
+﻿#region
+
+using GrpcProblems;
 using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using HimuOJ.Services.Submits.Infrastructure.Repositories;
 using MediatR;
@@ -7,19 +9,25 @@ using Submits.BackgroundTasks.Library;
 using Submits.BackgroundTasks.Services.Remote;
 using Submits.BackgroundTasks.Services.Sandbox;
 
+#endregion
+
 namespace Submits.BackgroundTasks.Services.Judge;
+
+#region
 
 using ProblemInfo = GetProblemEssentialPartForJudgeResponse;
 
+#endregion
+
 public class JudgeService : IJudgeService
 {
-    private readonly ILogger<JudgeService> _logger;
-    private readonly ProblemsServices _problemsServices;
+    private readonly ILocalCacheFileService _cacheFiles;
     private readonly ICompileService _compileService;
+    private readonly ILogger<JudgeService> _logger;
+    private readonly IMediator _mediator;
+    private readonly ProblemsServices _problemsServices;
     private readonly ISandboxService _sandbox;
     private readonly ISubmitsRepository _submitsRepository;
-    private readonly ILocalCacheFileService _cacheFiles;
-    private readonly IMediator _mediator;
 
     public JudgeService(
         ILogger<JudgeService> logger,
@@ -51,7 +59,8 @@ public class JudgeService : IJudgeService
 
     private async Task RunJudgeTask(JudgeTask task)
     {
-        _logger.LogInformation("Starting judge task for submission {SubmissionId}", task.SubmissionId);
+        _logger.LogInformation("Starting judge task for submission {SubmissionId}",
+            task.SubmissionId);
 
         int submissionId = task.SubmissionId;
         var submission   = await _submitsRepository.GetAsync(submissionId);
@@ -70,7 +79,8 @@ public class JudgeService : IJudgeService
         }
 
         var problemPart =
-            await _problemsServices.GetProblemEssentialPartForJudgeAsync(submission.ProblemId.Value);
+            await _problemsServices.GetProblemEssentialPartForJudgeAsync(submission.ProblemId
+                .Value);
         if (problemPart == null)
         {
             await _mediator.Publish(new JudgeTaskExitedEvent(submission, JudgeStatus.SystemError,
@@ -107,13 +117,16 @@ public class JudgeService : IJudgeService
 
         if (hasError)
         {
-            _logger.LogInformation("There are some test points in submission {SubmissionId} has skipped", submissionId);
+            _logger.LogInformation(
+                "There are some test points in submission {SubmissionId} has skipped",
+                submissionId);
         }
         else
         {
             // All test points passed
             submission.UpdateStatus(JudgeStatus.Accepted);
-            await _mediator.Publish(new JudgeTaskExitedEvent(submission, JudgeStatus.Accepted, null));
+            await _mediator.Publish(
+                new JudgeTaskExitedEvent(submission, JudgeStatus.Accepted, null));
         }
 
         _logger.LogInformation("Judge task for submission {SubmissionId} finished", submissionId);
@@ -131,7 +144,8 @@ public class JudgeService : IJudgeService
             "output", testPoint.TestPointId + ".out", string.Empty);
 
         var sandboxResult =
-            RunSandbox(submission.Id, executable, inputPath, outputPath, submission.CompilerName, problemPart);
+            RunSandbox(submission.Id, executable, inputPath, outputPath, submission.CompilerName,
+                problemPart);
         SandboxStatus status = (SandboxStatus) sandboxResult.Status;
         if (status != SandboxStatus.Success || sandboxResult.ExitCode != 0)
         {
@@ -143,7 +157,8 @@ public class JudgeService : IJudgeService
         }
 
         submission.UpdateResultResourceUsage(testPoint.TestPointId,
-            new ResourceUsage((long) sandboxResult.MemoryUsage, (long) sandboxResult.RealTimeUsage));
+            new ResourceUsage((long) sandboxResult.MemoryUsage,
+                (long) sandboxResult.RealTimeUsage));
 
         string expectedOutputPath = await _cacheFiles.CreateOrGetTextFileAsync(
             "answer", testPoint.TestPointId + ".ans", testPoint.ExpectedOutput);
@@ -200,7 +215,8 @@ public class JudgeService : IJudgeService
 
         if (compilerResult.ExitCode != 0)
         {
-            await _mediator.Publish(new JudgeTaskExitedEvent(submission, JudgeStatus.CompilationError,
+            await _mediator.Publish(new JudgeTaskExitedEvent(submission,
+                JudgeStatus.CompilationError,
                 compilerResult.Message));
         }
 
@@ -227,7 +243,9 @@ public class JudgeService : IJudgeService
         return _sandbox.Run(configuration);
     }
 
-    private async Task<OutputDifference?> CompareOutput(string expectedOutputPath, string actualOutputPath)
+    private async Task<OutputDifference?> CompareOutput(
+        string expectedOutputPath,
+        string actualOutputPath)
     {
         using StreamReader expectedReader = new(expectedOutputPath);
         using StreamReader actualReader   = new(actualOutputPath);

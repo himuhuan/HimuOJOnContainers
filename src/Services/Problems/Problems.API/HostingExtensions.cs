@@ -1,10 +1,14 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Problems.API.Application.Queries;
 using HimuOJ.Services.Problems.API.GrpcServices;
 using HimuOJ.Services.Problems.API.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
 using Serilog;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.API;
 
@@ -25,7 +29,7 @@ public static class HostingExtensions
 
         builder.Services.AddControllers();
         builder.Services.AddGrpc();
-        
+
         builder.AddDefaultOpenApi();
         builder.AddDefaultAuthenticationPolicy();
 

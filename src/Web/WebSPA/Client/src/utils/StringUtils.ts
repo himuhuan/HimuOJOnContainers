@@ -9,18 +9,18 @@
  * @returns The truncated string.
  */
 export function truncateStringWith(
-	str: string | null | undefined,
-	length: number,
-	end: string = "...",
+    str: string | null | undefined,
+    length: number,
+    end: string = "...",
     emptyStr: string = "空",
     nullStr: string = "null",
     undefinedStr: string = "undefined"
 ): string {
-	if (str === null) return nullStr;
-	else if (str === undefined) return undefinedStr;
-	if (str.length === 0) return emptyStr;
+    if (str === null) return nullStr;
+    else if (str === undefined) return undefinedStr;
+    if (str.length === 0) return emptyStr;
 
-	return str.length > length
-		? str.substring(0, length - end.length) + end
-		: str;
+    return str.length > length
+        ? str.substring(0, length - end.length) + end
+        : str;
 }

@@ -1,13 +1,14 @@
-using Duende.IdentityServer;
+#region
+
 using Duende.IdentityServer.Services;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using Identity.Server.Data;
 using Identity.Server.Models;
 using Identity.Server.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Serilog;
+
+#endregion
 
 namespace Identity.Server
 {
@@ -18,9 +19,9 @@ namespace Identity.Server
             builder.Services.AddRazorPages();
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-                   .AddSignInManager<AppSignInManager>()
-                   .AddEntityFrameworkStores<IdentityDbContext>()
-                   .AddDefaultTokenProviders();
+                .AddSignInManager<AppSignInManager>()
+                .AddEntityFrameworkStores<IdentityDbContext>()
+                .AddDefaultTokenProviders();
 
             Log.Information("Applying seeder migration for {type}", nameof(IdentityDbContext));
             builder.Services.AddDbContextMigration<IdentityDbContext, IdentityDbContextSeeder>();
@@ -29,21 +30,21 @@ namespace Identity.Server
             builder.Services.AddDatabaseConnection<IdentityDbContext>(builder.Configuration);
 
             builder.Services
-                   .AddIdentityServer(options =>
-                   {
-                       options.Events.RaiseErrorEvents       = true;
-                       options.Events.RaiseInformationEvents = true;
-                       options.Events.RaiseFailureEvents     = true;
-                       options.Events.RaiseSuccessEvents     = true;
+                .AddIdentityServer(options =>
+                {
+                    options.Events.RaiseErrorEvents       = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents     = true;
+                    options.Events.RaiseSuccessEvents     = true;
 
-                       options.EmitStaticAudienceClaim = true;
-                       options.KeyManagement.Enabled   = true;
-                   })
-                   .AddInMemoryIdentityResources(Config.IdentityResources)
-                   .AddInMemoryApiScopes(Config.ApiScopes)
-                   .AddInMemoryClients(Config.GetClients(builder.Configuration))
-                   .AddAspNetIdentity<ApplicationUser>()
-                   .AddDeveloperSigningCredential();
+                    options.EmitStaticAudienceClaim = true;
+                    options.KeyManagement.Enabled   = true;
+                })
+                .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryClients(Config.GetClients(builder.Configuration))
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddDeveloperSigningCredential();
 
             builder.Services.AddAuthentication();
 
@@ -79,7 +80,7 @@ namespace Identity.Server
             app.MapDefaultControllerRoute();
 
             app.MapRazorPages()
-               .RequireAuthorization();
+                .RequireAuthorization();
 
             return app;
         }

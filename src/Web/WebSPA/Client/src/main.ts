@@ -1,8 +1,8 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './routers'
-import { createPinia } from 'pinia'
+import {createPinia} from 'pinia'
 import 'vfonts/Inter.css'
 import 'vfonts/FiraCode.css'
 import PersistedStatePlugin from 'pinia-plugin-persistedstate';

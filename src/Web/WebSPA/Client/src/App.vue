@@ -1,22 +1,22 @@
 <template>
   <n-config-provider
-    :theme="userState.perferTheme === 'dark' ? darkTheme : null"
-    :theme-overrides="
+      :hljs="hljs"
+      :theme="userState.perferTheme === 'dark' ? darkTheme : null"
+      :theme-overrides="
       userState.perferTheme !== 'dark'
         ? lightThemeOverrides
         : darkThemeOverrides
     "
-    :hljs="hljs"
   >
     <n-message-provider placement="top-right">
       <n-notification-provider>
         <n-dialog-provider>
           <n-scrollbar style="max-height: 100vh" trigger="hover">
             <himu-nav-bar></himu-nav-bar>
-            <himu-background background-theme-color="#f85a6625" />
+            <himu-background background-theme-color="#f85a6625"/>
             <n-loading-bar-provider>
               <n-modal-provider>
-                <ViewComponent />
+                <ViewComponent/>
               </n-modal-provider>
             </n-loading-bar-provider>
           </n-scrollbar>
@@ -30,34 +30,33 @@
 import HimuNavBar from "@/components/shared/HimuNavBar.vue";
 import HimuBackground from "./components/shared/HimuBackground.vue";
 import "@/style.css";
-import { defineComponent, h } from "vue";
-import { useLoadingBar } from "naive-ui"; 
+import {defineComponent, h} from "vue";
+import {
+  darkTheme,
+  GlobalThemeOverrides,
+  NConfigProvider,
+  NDialogProvider,
+  NLoadingBarProvider,
+  NMessageProvider,
+  NModalProvider,
+  NNotificationProvider,
+  NScrollbar,
+  useLoadingBar,
+  useThemeVars
+} from "naive-ui";
 import hljs from "highlight.js";
 import cpp from "highlight.js/lib/languages/cpp";
 import java from "highlight.js/lib/languages/java";
 import python from "highlight.js/lib/languages/python";
+import {RouterView} from "vue-router";
+import router from "./routers";
+
+import {useUiServices} from "@/stores/ui-services";
+import {useUserState} from "./stores/user";
 
 hljs.registerLanguage("cpp", cpp);
 hljs.registerLanguage("java", java);
 hljs.registerLanguage("python", python);
-
-import {
-  NLoadingBarProvider,
-  NMessageProvider,
-  NNotificationProvider,
-  NDialogProvider,
-  NConfigProvider,
-  NModalProvider,
-  NScrollbar,
-  GlobalThemeOverrides,
-  darkTheme,
-  useThemeVars,
-} from "naive-ui";
-import { RouterView } from "vue-router";
-import router from "./routers";
-
-import { useUiServices } from "@/stores/ui-services";
-import { useUserState } from "./stores/user";
 
 const userState = useUserState();
 
@@ -103,7 +102,7 @@ const darkThemeOverrides: GlobalThemeOverrides = {
 };
 
 const ViewComponent = defineComponent({
-  render: () => h(RouterView, { key: router.currentRoute.value.fullPath }),
+  render: () => h(RouterView, {key: router.currentRoute.value.fullPath}),
   setup: () => {
     const uiServices = useUiServices();
     uiServices.setLoadingBarInstance(useLoadingBar());

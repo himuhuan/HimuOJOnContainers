@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Application.Queries;
 
@@ -9,7 +13,6 @@ public record ProblemSubmitStatistics(int TotalSubmits, int AcceptedSubmits)
     public ProblemSubmitStatistics()
         : this(0, 0)
     {
-        
     }
 }
 
@@ -21,7 +24,7 @@ public class GetSubmissionsListRequest
 
     [Required]
     public int PageSize { get; set; }
-    
+
     public int? ProblemId { get; set; }
     public string? SubmitterId { get; set; }
 }
@@ -54,7 +57,7 @@ public class SubmissionList
 public class GetSubmissionResult
 {
     public required int Id { get; init; }
-            
+
     public required int? ProblemId { get; init; }
 
     public required ResourceUsage? Usage { get; init; }
@@ -69,7 +72,7 @@ public class GetSubmissionResult
     public required string CompilerName { get; init; }
 
     public required string StatusMessage { get; init; }
-    
+
     public required string SourceCode { get; init; }
 
     public required TestPointResult[] TestPointResults { get; init; }

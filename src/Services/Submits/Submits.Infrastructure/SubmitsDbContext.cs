@@ -1,21 +1,15 @@
-﻿using System.Data;
+﻿#region
+
+using System.Data;
+using System.Diagnostics;
 using HimuOJ.Services.Submits.Infrastructure.EntityConfigurations;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.Infrastructure;
 
 public class SubmitsDbContext : DbContext, IUnitOfWork
 {
-    public DbSet<Submission> Submissions { get; set; }
-    public DbSet<TestPointResult> TestPointResults { get; set; }
-    
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.HasDefaultSchema("submits");
-        modelBuilder.ApplyConfiguration(new SubmissionEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new TestPointResultEntityConfiguration());
-    }
-
     private readonly IMediator _mediator;
     private IDbContextTransaction _currentTransaction;
 
@@ -28,10 +22,11 @@ public class SubmitsDbContext : DbContext, IUnitOfWork
         : base(options)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        System.Diagnostics.Debug.WriteLine("SubmitsDbContext::ctor ->" + base.GetHashCode());
+        Debug.WriteLine("SubmitsDbContext::ctor ->" + base.GetHashCode());
     }
 
-    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
+    public DbSet<Submission> Submissions { get; set; }
+    public DbSet<TestPointResult> TestPointResults { get; set; }
 
     public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -43,19 +38,29 @@ public class SubmitsDbContext : DbContext, IUnitOfWork
         return true;
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDefaultSchema("submits");
+        modelBuilder.ApplyConfiguration(new SubmissionEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TestPointResultEntityConfiguration());
+    }
+
+    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
+
     private async Task DispatchDomainEventsAsync()
     {
         var domainEntities = ChangeTracker
-                             .Entries<Entity>()
-                             .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
-                             .ToList();
+            .Entries<Entity>()
+            .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
+            .ToList();
 
         var domainEvents = domainEntities
-                           .SelectMany(x => x.Entity.DomainEvents)
-                           .ToList();
+            .SelectMany(x => x.Entity.DomainEvents)
+            .ToList();
 
         domainEntities.ToList()
-                      .ForEach(entity => entity.Entity.ClearDomainEvents());
+            .ForEach(entity => entity.Entity.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
             await _mediator.Publish(domainEvent);
@@ -73,7 +78,8 @@ public class SubmitsDbContext : DbContext, IUnitOfWork
     {
         ArgumentNullException.ThrowIfNull(transaction);
         if (transaction != _currentTransaction)
-            throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+            throw new InvalidOperationException(
+                $"Transaction {transaction.TransactionId} is not current");
 
         try
         {

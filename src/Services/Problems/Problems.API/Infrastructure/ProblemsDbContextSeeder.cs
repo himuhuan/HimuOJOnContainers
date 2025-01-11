@@ -1,8 +1,12 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
+using System.Xml.Serialization;
+using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Problems.Domain.AggregatesModel.ProblemAggregate;
 using HimuOJ.Services.Problems.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Serialization;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.API.Infrastructure;
 
@@ -14,9 +18,10 @@ class ProblemsDbContextSeeder : IDbContextSeeder<ProblemsDbContext>
         {
             if (!await context.Problems.AnyAsync())
             {
-                var env = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+                var env    = serviceProvider.GetRequiredService<IWebHostEnvironment>();
                 var logger = serviceProvider.GetRequiredService<ILogger<ProblemsDbContextSeeder>>();
-                await context.Problems.AddRangeAsync(GetSampleProblems(env.ContentRootPath, logger));
+                await context.Problems.AddRangeAsync(GetSampleProblems(env.ContentRootPath,
+                    logger));
             }
 
             await context.SaveChangesAsync();
@@ -25,15 +30,14 @@ class ProblemsDbContextSeeder : IDbContextSeeder<ProblemsDbContext>
 
     private IEnumerable<Problem> GetSampleProblems(
         string rootPath,
-        ILogger<ProblemsDbContextSeeder> logger
-    )
+        ILogger<ProblemsDbContextSeeder> logger)
     {
         string samplePath = Path.Combine(rootPath, "Setup", "Problems");
-        var xmlFiles = Directory.GetFiles(samplePath, "*.xml");
+        var    xmlFiles   = Directory.GetFiles(samplePath, "*.xml");
 
         logger.LogInformation("Adding sample problems (count: {SampleCount}", xmlFiles.Length);
 
-        List<Problem> problems = [];
+        List<Problem> problems   = [];
         XmlSerializer serializer = new(typeof(ProblemXmlObject));
         var xamlObjs = xmlFiles.Select(file =>
         {
@@ -43,8 +47,8 @@ class ProblemsDbContextSeeder : IDbContextSeeder<ProblemsDbContext>
         foreach (var xmlObj in xamlObjs)
         {
             Problem problem = new(Guid.Empty, xmlObj.Title, xmlObj.Content,
-                                  new(xmlObj.MaxMemoryLimitByte, xmlObj.MaxExecuteTimeLimit),
-                                  new(xmlObj.AllowDownloadInput, xmlObj.AllowDownloadAnswer));
+                new(xmlObj.MaxMemoryLimitByte, xmlObj.MaxExecuteTimeLimit),
+                new(xmlObj.AllowDownloadInput, xmlObj.AllowDownloadAnswer));
 
             foreach (var testPoint in xmlObj.TestPoints)
             {
@@ -62,7 +66,7 @@ class ProblemsDbContextSeeder : IDbContextSeeder<ProblemsDbContext>
         ProblemXmlObject? problem;
         using (var stream = new FileStream(filePath, FileMode.Open))
         {
-            problem = (ProblemXmlObject?)serializer.Deserialize(stream);
+            problem = (ProblemXmlObject?) serializer.Deserialize(stream);
         }
 
         if (problem == null)
@@ -71,7 +75,7 @@ class ProblemsDbContextSeeder : IDbContextSeeder<ProblemsDbContext>
         foreach (var element in problem.TestPoints)
         {
             element.Expected = RemoveIndent(element.Expected);
-            element.Input = RemoveIndent(element.Input);
+            element.Input    = RemoveIndent(element.Input);
         }
 
         return problem;

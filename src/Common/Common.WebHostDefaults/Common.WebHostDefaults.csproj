@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace> HimuOJ.Common.WebHostDefaults </RootNamespace>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>HimuOJ.Common.WebHostDefaults</RootNamespace>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.35" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.1.35"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="DotNetCore.CAP" Version="8.3.1" />
-		<PackageReference Include="DotNetCore.CAP.PostgreSql" Version="8.3.1" />
-		<PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.3.1" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="DotNetCore.CAP" Version="8.3.1"/>
+        <PackageReference Include="DotNetCore.CAP.PostgreSql" Version="8.3.1"/>
+        <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.3.1"/>
+    </ItemGroup>
 </Project>

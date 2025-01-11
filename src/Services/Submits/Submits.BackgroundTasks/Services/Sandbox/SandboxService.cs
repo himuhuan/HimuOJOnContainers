@@ -1,4 +1,8 @@
-﻿using Submits.BackgroundTasks.Library;
+﻿#region
+
+using Submits.BackgroundTasks.Library;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services.Sandbox;
 
@@ -17,7 +21,7 @@ public class SandboxService : ISandboxService
             configuration);
 
         var result = SandboxInvoker.RunSandbox(configuration);
-        
+
         _logger.LogInformation("--- sandbox-{TaskName} finished with {@Result}",
             configuration.TaskName, result);
         return result;

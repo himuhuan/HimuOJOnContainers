@@ -1,10 +1,14 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
-using IdentityModel;
-using Microsoft.AspNetCore.Authentication;
+#region
+
 using System.Text;
 using System.Text.Json;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
+
+#endregion
 
 namespace Identity.Server.Pages.Diagnostics
 {
@@ -20,10 +24,12 @@ namespace Identity.Server.Pages.Diagnostics
                 {
                     var bytes = Base64Url.Decode(encoded);
                     var value = Encoding.UTF8.GetString(bytes);
-                    Clients = JsonSerializer.Deserialize<string[]>(value) ?? Enumerable.Empty<string>();
+                    Clients = JsonSerializer.Deserialize<string[]>(value)
+                              ?? Enumerable.Empty<string>();
                     return;
                 }
             }
+
             Clients = Enumerable.Empty<string>();
         }
 

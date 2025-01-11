@@ -1,5 +1,4 @@
-@using Identity.Server.Pages.Consent
-@model ScopeViewModel
+@model Identity.Server.Pages.Consent.ScopeViewModel
 
 <li class="list-group-item">
     <label>
@@ -9,12 +8,12 @@
                id="scopes_@Model.Value"
                value="@Model.Value"
                checked="@Model.Checked"
-               disabled="@Model.Required" />
+               disabled="@Model.Required"/>
         @if (Model.Required)
         {
             <input type="hidden"
                    name="Input.ScopesConsented"
-                   value="@Model.Value" />
+                   value="@Model.Value"/>
         }
         <strong>@Model.DisplayName</strong>
         @if (Model.Emphasize)
@@ -37,10 +36,10 @@
         <div class="consent-description">
             <label>Will be available to these resource servers:</label>
             <ul>
-            @foreach (var resource in Model.Resources)
-            {
-                <li>@resource.DisplayName</li>
-            }
+                @foreach (var resource in Model.Resources)
+                {
+                    <li>@resource.DisplayName</li>
+                }
             </ul>
         </div>
     }

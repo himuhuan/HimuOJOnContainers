@@ -1,4 +1,4 @@
-import type {ProblemDetail, ProblemList, ProblemListRequest,} from "@/modules/problems-types.ts";
+import type {CreateProblemRequest, ProblemDetail, ProblemList, ProblemListRequest, ProblemManageList,} from "@/modules/problems-types.ts";
 
 import client from "@/modules/HttpClient.ts";
 
@@ -28,5 +28,20 @@ export async function getProblemListAsync(
 export async function getProblemDetailAsync(problemId: number) {
     const requestUrl = `/api/problems/${problemId}`;
     const response = await client.get<ProblemDetail>(requestUrl);
+    return response.data;
+}
+
+export async function getProblemManageListAsync(
+    request: ProblemListRequest
+): Promise<ProblemManageList> {
+    const requestUrl =
+        `/api/problems/management_list?page=${request.page}&pageSize=${request.pageSize}` +
+        `&distributorId=${request.distributorId}`;
+    const response = await client.get<ProblemManageList>(requestUrl);
+    return response.data;
+}
+
+export async function createProblemAsync(request: CreateProblemRequest) {
+    const response = await client.post(`/api/problems`, request);
     return response.data;
 }

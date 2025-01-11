@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#region
+
 using System.Data;
 using System.Linq.Expressions;
 using Dapper;
@@ -9,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace HimuOJ.Common.WebHostDefaults.Extensions
 {
@@ -21,13 +24,14 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
     public static class DatabaseSupportExtensions
     {
         /// <summary>
-        /// Add database connection for the specified DbContext.
+        ///     Add database connection for the specified DbContext.
         /// </summary>
         /// <remarks>
-        /// The connection string in ConnectionStrings must be in the format of "DbContextName".
-        /// For example, if the DbContext is named "IdentityDbContext", the key of connection string must be "IdentityDbContext".
+        ///     The connection string in ConnectionStrings must be in the format of "DbContextName".
+        ///     For example, if the DbContext is named "IdentityDbContext", the key of connection string must be
+        ///     "IdentityDbContext".
         /// </remarks>
-        /// <exception cref="ArgumentException" /> 
+        /// <exception cref="ArgumentException" />
         public static IServiceCollection AddDatabaseConnection<TDbContext>(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -49,11 +53,17 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
             // Now we use postgresql rather than mysql
             if (usePooling)
             {
-                services.AddDbContextPool<TDbContext>(options => { options.UseNpgsql(connectionString); });
+                services.AddDbContextPool<TDbContext>(options =>
+                {
+                    options.UseNpgsql(connectionString);
+                });
             }
             else
             {
-                services.AddDbContext<TDbContext>(options => { options.UseNpgsql(connectionString); });
+                services.AddDbContext<TDbContext>(options =>
+                {
+                    options.UseNpgsql(connectionString);
+                });
             }
 
             return services;
@@ -67,10 +77,12 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
             services.AddScoped(typeof(IDbContextSeeder<TContext>), dbContextSeederType);
             var seeder = (TContext context, IServiceProvider serviceProvider) =>
             {
-                var dbContextSeeder = serviceProvider.GetRequiredService<IDbContextSeeder<TContext>>();
+                var dbContextSeeder =
+                    serviceProvider.GetRequiredService<IDbContextSeeder<TContext>>();
                 return dbContextSeeder.SeedAsync(context, serviceProvider);
             };
-            return services.AddHostedService(sp => new MigrationHostedService<TContext>(sp, seeder));
+            return services.AddHostedService(sp =>
+                new MigrationHostedService<TContext>(sp, seeder));
         }
 
         public static IServiceCollection AddDbContextMigration<TContext, TDbContextSeeder>(
@@ -86,10 +98,12 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
             Func<TContext, IServiceProvider, Task> seeder)
             where TContext : DbContext
         {
-            return services.AddHostedService(sp => new MigrationHostedService<TContext>(sp, seeder));
+            return services.AddHostedService(sp =>
+                new MigrationHostedService<TContext>(sp, seeder));
         }
 
-        public static IServiceCollection AddDbContextMigration<TContext>(this IServiceCollection services)
+        public static IServiceCollection AddDbContextMigration<TContext>(
+            this IServiceCollection services)
             where TContext : DbContext
         {
             return services.AddDbContextMigration<TContext>((_, _) => Task.CompletedTask);
@@ -110,7 +124,8 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
                 var strategy = context.Database.CreateExecutionStrategy();
                 await strategy.ExecuteAsync(async () =>
                 {
-                    logger.LogInformation("Migrating database associated with context {DbContextName}",
+                    logger.LogInformation(
+                        "Migrating database associated with context {DbContextName}",
                         typeof(TContext).Name);
                     await context.Database.MigrateAsync();
                     await seeder(context, serviceProvider);
@@ -118,30 +133,15 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
             }
             catch (Exception e)
             {
-                logger.LogError(e, "FATAL: An exception occurred while migrating the context ({ContextName}) seed.",
+                logger.LogError(e,
+                    "FATAL: An exception occurred while migrating the context ({ContextName}) seed.",
                     context.GetGenericTypeName());
                 throw;
             }
         }
 
-        private class MigrationHostedService<TContext>(
-            IServiceProvider serviceProvider,
-            Func<TContext, IServiceProvider, Task> seeder
-        )
-            : BackgroundService where TContext : DbContext
-        {
-            public override Task StartAsync(CancellationToken cancellationToken)
-            {
-                return serviceProvider.MigrateDbContextAsync(seeder);
-            }
-
-            protected override Task ExecuteAsync(CancellationToken stoppingToken)
-            {
-                return Task.CompletedTask;
-            }
-        }
-
-        public static string GetNpgsqlLocalConnectionString<TContext>(this IConfiguration configuration)
+        public static string GetNpgsqlLocalConnectionString<TContext>(
+            this IConfiguration configuration)
             where TContext : DbContext
         {
             string? connectionString = configuration.GetConnectionString(typeof(TContext).Name);
@@ -170,7 +170,7 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
         #region LINQ Extensions
 
         /// <summary>
-        /// WhereIf extension method for IQueryable.
+        ///     WhereIf extension method for IQueryable.
         /// </summary>
         public static IQueryable<T> WhereIf<T>(
             this IQueryable<T> query,
@@ -182,10 +182,27 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
 
         #endregion
 
+        private class MigrationHostedService<TContext>(
+            IServiceProvider serviceProvider,
+            Func<TContext, IServiceProvider, Task> seeder
+        )
+            : BackgroundService where TContext : DbContext
+        {
+            public override Task StartAsync(CancellationToken cancellationToken)
+            {
+                return serviceProvider.MigrateDbContextAsync(seeder);
+            }
+
+            protected override Task ExecuteAsync(CancellationToken stoppingToken)
+            {
+                return Task.CompletedTask;
+            }
+        }
+
         #region Dapper
 
         /// <summary>
-        /// Executes a raw SQL query asynchronously using Dapper and returns the result as an IEnumerable of type T.
+        ///     Executes a raw SQL query asynchronously using Dapper and returns the result as an IEnumerable of type T.
         /// </summary>
         /// <typeparam name="T">The type of the result elements.</typeparam>
         /// <param name="database">The DatabaseFacade instance to execute the query on.</param>
@@ -205,13 +222,12 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
             IDbTransaction trn = database.CurrentTransaction?.GetDbTransaction()!;
             return await cn.QueryAsync<T>(commandText, param, trn, commandTimeout, commandType);
         }
-        
-        #nullable enable
+
+#nullable enable
         public static async Task<T?> FirstOrDefault<T>(this Task<IEnumerable<T>> source)
         {
             return (await source).FirstOrDefault();
         }
-        #nullable restore
 
         #endregion
     }

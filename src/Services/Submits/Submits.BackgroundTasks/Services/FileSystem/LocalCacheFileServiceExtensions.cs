@@ -1,4 +1,8 @@
-﻿using Serilog;
+﻿#region
+
+using Serilog;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services;
 
@@ -12,9 +16,11 @@ public static class LocalCacheFileServiceExtensions
         var workspaceDir = section.GetValue<string>("CacheDirectory") ?? "workspace";
         if (!Directory.Exists(workspaceDir))
         {
-            Log.Warning("Cache directory {CacheDirectory} does not exist, creating it", workspaceDir);
+            Log.Warning("Cache directory {CacheDirectory} does not exist, creating it",
+                workspaceDir);
             Directory.CreateDirectory(workspaceDir);
         }
+
         services.AddSingleton<ILocalCacheFileService, LocalCacheFileService>();
         return services;
     }

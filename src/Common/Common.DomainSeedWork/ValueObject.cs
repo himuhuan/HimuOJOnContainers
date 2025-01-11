@@ -8,6 +8,7 @@ public abstract class ValueObject
         {
             return false;
         }
+
         return ReferenceEquals(left, null) || left.Equals(right);
     }
 
@@ -25,7 +26,7 @@ public abstract class ValueObject
             return false;
         }
 
-        var other = (ValueObject)obj;
+        var other = (ValueObject) obj;
 
         return this.GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
     }

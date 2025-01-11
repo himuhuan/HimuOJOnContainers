@@ -1,6 +1,8 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
@@ -13,23 +15,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
+#endregion
+
 namespace Identity.Server.Pages.Login
 {
     [SecurityHeaders]
     [AllowAnonymous]
     public class Index : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
-        private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IIdentityProviderStore _identityProviderStore;
-
-        public ViewModel View { get; set; } = default!;
-
-        [BindProperty]
-        public InputModel Input { get; set; } = default!;
+        private readonly IIdentityServerInteractionService _interaction;
+        private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public Index(
             IIdentityServerInteractionService interaction,
@@ -39,13 +38,18 @@ namespace Identity.Server.Pages.Login
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _interaction = interaction;
-            _schemeProvider = schemeProvider;
+            _userManager           = userManager;
+            _signInManager         = signInManager;
+            _interaction           = interaction;
+            _schemeProvider        = schemeProvider;
             _identityProviderStore = identityProviderStore;
-            _events = events;
+            _events                = events;
         }
+
+        public ViewModel View { get; set; } = default!;
+
+        [BindProperty]
+        public InputModel Input { get; set; } = default!;
 
         public async Task<IActionResult> OnGet(string? returnUrl)
         {
@@ -54,7 +58,8 @@ namespace Identity.Server.Pages.Login
             if (View.IsExternalLoginOnly)
             {
                 // we only have one option for logging in and it's an external provider
-                return RedirectToPage("/ExternalLogin/Challenge", new { scheme = View.ExternalLoginScheme, returnUrl });
+                return RedirectToPage("/ExternalLogin/Challenge",
+                    new { scheme = View.ExternalLoginScheme, returnUrl });
             }
 
             return Page();
@@ -76,7 +81,8 @@ namespace Identity.Server.Pages.Login
                     // if the user cancels, send a result back into IdentityServer as if they 
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
-                    await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+                    await _interaction.DenyAuthorizationAsync(context,
+                        AuthorizationError.AccessDenied);
 
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                     if (context.IsNativeClient())
@@ -88,21 +94,22 @@ namespace Identity.Server.Pages.Login
 
                     return Redirect(Input.ReturnUrl ?? "~/");
                 }
-                else
-                {
-                    // since we don't have a valid context, then we just go back to the home page
-                    return Redirect("~/");
-                }
+
+                // since we don't have a valid context, then we just go back to the home page
+                return Redirect("~/");
             }
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Username!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(Input.Username!,
+                    Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(Input.Username!);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
-                    Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id,
+                        user.UserName, clientId: context?.Client.ClientId));
+                    Telemetry.Metrics.UserLogin(context?.Client.ClientId,
+                        IdentityServerConstants.LocalIdentityProvider);
 
                     if (context != null)
                     {
@@ -125,20 +132,21 @@ namespace Identity.Server.Pages.Login
                     {
                         return Redirect(Input.ReturnUrl);
                     }
-                    else if (string.IsNullOrEmpty(Input.ReturnUrl))
+
+                    if (string.IsNullOrEmpty(Input.ReturnUrl))
                     {
                         return Redirect("~/");
                     }
-                    else
-                    {
-                        // user might have clicked on a malicious link - should be logged
-                        throw new ArgumentException("invalid return URL");
-                    }
+
+                    // user might have clicked on a malicious link - should be logged
+                    throw new ArgumentException("invalid return URL");
                 }
 
                 const string error = "invalid credentials";
-                await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId: context?.Client.ClientId));
-                Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
+                await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error,
+                    clientId: context?.Client.ClientId));
+                Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId,
+                    IdentityServerConstants.LocalIdentityProvider, error);
                 ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -157,7 +165,7 @@ namespace Identity.Server.Pages.Login
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
             {
-                var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
+                var local = context.IdP == IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
                 View = new ViewModel
@@ -169,7 +177,8 @@ namespace Identity.Server.Pages.Login
 
                 if (!local)
                 {
-                    View.ExternalProviders = new[] { new ViewModel.ExternalProvider(authenticationScheme: context.IdP) };
+                    View.ExternalProviders = new[]
+                        { new ViewModel.ExternalProvider(authenticationScheme: context.IdP) };
                 }
 
                 return;
@@ -183,7 +192,8 @@ namespace Identity.Server.Pages.Login
                 (
                     authenticationScheme: x.Name,
                     displayName: x.DisplayName ?? x.Name
-                )).ToList();
+                ))
+                .ToList();
 
             var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
                 .Where(x => x.Enabled)
@@ -196,21 +206,25 @@ namespace Identity.Server.Pages.Login
 
 
             var allowLocal = true;
-            var client = context?.Client;
+            var client     = context?.Client;
             if (client != null)
             {
                 allowLocal = client.EnableLocalLogin;
-                if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Count != 0)
+                if (client.IdentityProviderRestrictions != null
+                    && client.IdentityProviderRestrictions.Count != 0)
                 {
-                    providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
+                    providers = providers.Where(provider =>
+                            client.IdentityProviderRestrictions.Contains(provider
+                                .AuthenticationScheme))
+                        .ToList();
                 }
             }
 
             View = new ViewModel
             {
                 AllowRememberLogin = LoginOptions.AllowRememberLogin,
-                EnableLocalLogin = allowLocal && LoginOptions.AllowLocalLogin,
-                ExternalProviders = providers.ToArray()
+                EnableLocalLogin   = allowLocal && LoginOptions.AllowLocalLogin,
+                ExternalProviders  = providers.ToArray()
             };
         }
     }

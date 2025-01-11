@@ -1,6 +1,10 @@
-﻿using HimuOJ.Web.WebSPA.Models;
+﻿#region
+
+using HimuOJ.Web.WebSPA.Models;
 using Identity.Server.Controllers;
 using Refit;
+
+#endregion
 
 namespace HimuOJ.Web.WebSPA.Services;
 
@@ -11,7 +15,7 @@ public interface IUsersApi
 
     [Get("/api/users/briefs")]
     Task<IDictionary<string, UserBrief>> GetUserBriefsAsync([Query] GetUserBriefsRequest request);
-    
+
     [Get("/api/users/{id}")]
     Task<BffUserDetail> GetUserDetailAsync(string id);
 }

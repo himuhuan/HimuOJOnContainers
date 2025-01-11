@@ -1,6 +1,5 @@
 @using Duende.IdentityServer.Extensions
 @{
-    #nullable enable
     string? name = null;
     if (!true.Equals(ViewData["signed-out"]))
     {
@@ -13,7 +12,7 @@
 
         <a href="~/" class="navbar-brand">
             <img src="~/himuoj-logo.svg" class="icon-banner">
-            HimuOJ 安全认证
+            HimuOJ 璁よ瘉鏈嶅姟
         </a>
 
         @if (!string.IsNullOrWhiteSpace(name))
@@ -21,13 +20,13 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">@name <b class="caret"></b></a>
-                    
+
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-page="/Account/Logout/Index">注销</a>
+                        <a class="dropdown-item" asp-page="/Account/Logout/Index">注锟斤拷</a>
                     </div>
-              </li>
+                </li>
             </ul>
         }
-    
+
     </nav>
 </div>

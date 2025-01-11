@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HimuOJ.Common.WebHostDefaults.Extensions
+﻿namespace HimuOJ.Common.WebHostDefaults.Extensions
 {
     public static class GenericTypeExtensions
     {
@@ -14,7 +8,8 @@ namespace HimuOJ.Common.WebHostDefaults.Extensions
 
             if (type.IsGenericType)
             {
-                var genericTypes = string.Join(",", type.GetGenericArguments().Select(t => t.Name).ToArray());
+                var genericTypes = string.Join(",",
+                    type.GetGenericArguments().Select(t => t.Name).ToArray());
                 typeName = $"{type.Name.Remove(type.Name.IndexOf('`'))}<{genericTypes}>";
             }
             else

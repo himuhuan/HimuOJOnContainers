@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Design;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.Infrastructure;
 
@@ -7,8 +11,9 @@ public class SubmitsDbContextFactory : IDesignTimeDbContextFactory<SubmitsDbCont
 {
     public SubmitsDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder   = new DbContextOptionsBuilder<SubmitsDbContext>();
-        var connectionString = "Host=localhost;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123";
+        var optionsBuilder = new DbContextOptionsBuilder<SubmitsDbContext>();
+        var connectionString =
+            "Host=localhost;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123";
         optionsBuilder.UseNpgsql(connectionString);
         return new SubmitsDbContext(optionsBuilder.Options);
     }

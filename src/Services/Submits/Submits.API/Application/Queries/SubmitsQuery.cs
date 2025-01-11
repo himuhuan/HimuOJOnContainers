@@ -1,10 +1,12 @@
-﻿using HimuOJ.Common.WebApiComponents.Extensions;
+﻿#region
+
+using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
-using HimuOJ.Services.Submits.API.Application.Objects;
-using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using HimuOJ.Services.Submits.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Application.Queries;
 
@@ -17,7 +19,8 @@ public class SubmitsQuery : ISubmitsQuery
         _context = context;
     }
 
-    public async Task<ApiResult<ProblemSubmitStatistics>> GetProblemSubmitStatisticsAsync(int problemId)
+    public async Task<ApiResult<ProblemSubmitStatistics>> GetProblemSubmitStatisticsAsync(
+        int problemId)
     {
         const string rawSql = """
                               SELECT COUNT(*) AS "TotalSubmits",
@@ -27,37 +30,38 @@ public class SubmitsQuery : ISubmitsQuery
                               """;
 
         var statistics = await _context
-                               .Database
-                               .RawQueryAsync<ProblemSubmitStatistics>(rawSql, new { problemId })
-                               .FirstOrDefault();
+            .Database
+            .RawQueryAsync<ProblemSubmitStatistics>(rawSql, new { problemId })
+            .FirstOrDefault();
 
         return statistics == null
             ? ApiResult<ProblemSubmitStatistics>.Success(new ProblemSubmitStatistics(0, 0))
             : ApiResult<ProblemSubmitStatistics>.Success(statistics);
     }
 
-    public async Task<ApiResult<SubmissionList>> GetSubmissionListAsync(GetSubmissionsListRequest request)
+    public async Task<ApiResult<SubmissionList>> GetSubmissionListAsync(
+        GetSubmissionsListRequest request)
     {
         var query = _context.Submissions
-                            .AsNoTracking()
-                            .OrderByDescending(s => s.SubmitTime)
-                            .WhereIf(request.ProblemId.HasValue, s => s.ProblemId == request.ProblemId)
-                            .WhereIf(request.SubmitterId != null, s => s.SubmitterId == request.SubmitterId)
-                            .Select(s => new SubmissionListItem
-                            {
-                                Id           = s.Id,
-                                ProblemId    = s.ProblemId,
-                                Usage        = s.Usage,
-                                Status       = s.Status,
-                                SubmitterId  = s.SubmitterId,
-                                SubmitTime   = s.SubmitTime,
-                                CompilerName = s.CompilerName
-                            });
+            .AsNoTracking()
+            .OrderByDescending(s => s.SubmitTime)
+            .WhereIf(request.ProblemId.HasValue, s => s.ProblemId == request.ProblemId)
+            .WhereIf(request.SubmitterId != null, s => s.SubmitterId == request.SubmitterId)
+            .Select(s => new SubmissionListItem
+            {
+                Id           = s.Id,
+                ProblemId    = s.ProblemId,
+                Usage        = s.Usage,
+                Status       = s.Status,
+                SubmitterId  = s.SubmitterId,
+                SubmitTime   = s.SubmitTime,
+                CompilerName = s.CompilerName
+            });
 
         var total = await query.CountAsync();
         var items = await query.Skip((request.Page - 1) * request.PageSize)
-                               .Take(request.PageSize)
-                               .ToListAsync();
+            .Take(request.PageSize)
+            .ToListAsync();
 
         return ApiResult<SubmissionList>.Success(new SubmissionList
         {
@@ -70,10 +74,10 @@ public class SubmitsQuery : ISubmitsQuery
     public async Task<GetSubmissionResult?> GetSubmissionAsync(int submissionId)
     {
         var submission = await _context.Submissions
-                                       .AsNoTracking()
-                                       .Where(s => s.Id == submissionId)
-                                       .Include(s => s.TestPointResults)
-                                       .SingleOrDefaultAsync();
+            .AsNoTracking()
+            .Where(s => s.Id == submissionId)
+            .Include(s => s.TestPointResults)
+            .SingleOrDefaultAsync();
 
         if (submission == null)
             return null;
@@ -107,12 +111,12 @@ public class SubmitsQuery : ISubmitsQuery
               FROM submits.t_submissions
               WHERE "SubmitterId" = @submitterId;
               """;
-        
+
         UserProfileStatistics result =
             await _context
-                  .Database
-                  .RawQueryAsync<UserProfileStatistics>(query, new { submitterId = userId })
-                  .FirstOrDefault() ?? new UserProfileStatistics();
+                .Database
+                .RawQueryAsync<UserProfileStatistics>(query, new { submitterId = userId })
+                .FirstOrDefault() ?? new UserProfileStatistics();
 
         return result.ToApiResult(ApiResultCode.Ok);
     }

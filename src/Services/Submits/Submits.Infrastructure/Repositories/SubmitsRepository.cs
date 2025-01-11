@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.Infrastructure.Repositories;
 
@@ -12,7 +16,7 @@ public class SubmitsRepository : ISubmitsRepository
     }
 
     public IUnitOfWork UnitOfWork => _context;
-    
+
     public DatabaseFacade Database => _context.Database;
 
     public Submission Add(Submission entity)
@@ -31,12 +35,10 @@ public class SubmitsRepository : ISubmitsRepository
         if (entity != null)
         {
             await _context.Entry(entity)
-                          .Collection(p => p.TestPointResults)
-                          .LoadAsync();
+                .Collection(p => p.TestPointResults)
+                .LoadAsync();
         }
 
         return entity;
     }
-
-
 }

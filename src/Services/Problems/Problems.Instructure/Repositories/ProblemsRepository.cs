@@ -4,12 +4,12 @@ public class ProblemsRepository : IProblemsRepository
 {
     private readonly ProblemsDbContext _context;
 
-    public IUnitOfWork UnitOfWork => _context;
-
     public ProblemsRepository(ProblemsDbContext context)
     {
         _context = context;
     }
+
+    public IUnitOfWork UnitOfWork => _context;
 
     public Problem Add(Problem problem)
     {
@@ -30,6 +30,7 @@ public class ProblemsRepository : IProblemsRepository
                 .Collection(p => p.TestPoints)
                 .LoadAsync();
         }
+
         return problem;
     }
 }

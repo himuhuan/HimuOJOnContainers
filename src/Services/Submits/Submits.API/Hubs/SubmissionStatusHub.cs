@@ -1,5 +1,9 @@
-﻿using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
+﻿#region
+
+using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using Microsoft.AspNetCore.SignalR;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Hubs;
 
@@ -13,7 +17,9 @@ public static class SubmissionStatusHubMethods
 {
     public static async Task SendSubmissionStatusAsync(
         this IHubContext<SubmissionStatusHub> hubContext,
-        int submissionId, string status, ResourceUsage? usage = null)
+        int submissionId,
+        string status,
+        ResourceUsage? usage = null)
     {
         await hubContext.Clients.All
             .SendAsync("ReceiveSubmissionStatus", submissionId, status, usage);

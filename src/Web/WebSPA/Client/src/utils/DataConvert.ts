@@ -1,7 +1,6 @@
-
 /**
  * Convert time span to milliseconds
- * @param timeSpan time span in format hh:mm:ss, only support 24 hours format 
+ * @param timeSpan time span in format hh:mm:ss, only support 24 hours format
  * @returns time span in milliseconds
  * @example "01:00:00" => 3600000
  */
@@ -19,8 +18,7 @@ export function convertTimeSpanToMilliseconds(timeSpan: string): number {
  * @returns time span in format hh:mm:ss
  * @example 3600000 => "01:00:00"
  */
-export function convertMillisecondsToTimeSpan(milliseconds: number): string
-{
+export function convertMillisecondsToTimeSpan(milliseconds: number): string {
     const hour = Math.floor(milliseconds / 3600000);
     const minute = Math.floor((milliseconds % 3600000) / 60000);
     const second = Math.floor((milliseconds % 60000) / 1000);

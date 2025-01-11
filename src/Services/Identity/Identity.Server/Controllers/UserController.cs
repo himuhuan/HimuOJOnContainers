@@ -1,8 +1,12 @@
+#region
+
 using Identity.Server.Data;
 using Identity.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace Identity.Server.Controllers
 {
@@ -10,8 +14,8 @@ namespace Identity.Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IdentityDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UserController(UserManager<ApplicationUser> userManager, IdentityDbContext context)
         {
@@ -44,7 +48,7 @@ namespace Identity.Server.Controllers
             {
                 return NoContent();
             }
-            
+
             var ids = request.Ids.ToList();
 
             //NOTE: If the number of Ids in the request is huge, the following query performance may be poor.

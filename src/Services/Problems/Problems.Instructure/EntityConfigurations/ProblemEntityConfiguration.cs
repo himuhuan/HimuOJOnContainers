@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.Infrastructure.EntityConfigurations;
 

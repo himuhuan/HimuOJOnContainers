@@ -1,4 +1,8 @@
-﻿using HimuOJ.Common.WebHostDefaults.Infrastructure;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Infrastructure;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Application.Queries;
 

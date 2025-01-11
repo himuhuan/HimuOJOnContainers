@@ -1,32 +1,25 @@
-﻿using System.Text.Json.Serialization;
+﻿#region
+
+using System.Text.Json.Serialization;
 using MediatR;
+
+#endregion
 
 namespace HimuOJ.Common.DomainSeedWork;
 
 /// <summary>
-/// The foundation of entity objects in Domain Driven Design
+///     The foundation of entity objects in Domain Driven Design
 /// </summary>
 /// <remarks>
-/// reference to https://github.com/dotnet/eShop/blob/main/src/Ordering.Domain/SeedWork/Entity.cs
+///     reference to https://github.com/dotnet/eShop/blob/main/src/Ordering.Domain/SeedWork/Entity.cs
 /// </remarks>
 public abstract class Entity
 {
-    int? _requestedHashCode;
-    int _Id;
-    public int Id
-    {
-        get
-        {
-            return _Id;
-        }
-        protected set
-        {
-            _Id = value;
-        }
-    }
-
     private List<INotification> _domainEvents;
-    
+    int? _requestedHashCode;
+
+    public int Id { get; protected set; }
+
     [JsonIgnore]
     public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
@@ -56,18 +49,17 @@ public abstract class Entity
         if (obj == null || !(obj is Entity))
             return false;
 
-        if (Object.ReferenceEquals(this, obj))
+        if (ReferenceEquals(this, obj))
             return true;
 
         if (this.GetType() != obj.GetType())
             return false;
 
-        Entity item = (Entity)obj;
+        Entity item = (Entity) obj;
 
         if (item.IsTransient() || this.IsTransient())
             return false;
-        else
-            return item.Id == this.Id;
+        return item.Id == this.Id;
     }
 
     public override int GetHashCode()
@@ -79,17 +71,15 @@ public abstract class Entity
 
             return _requestedHashCode.Value;
         }
-        else
-            return base.GetHashCode();
 
+        return base.GetHashCode();
     }
 
     public static bool operator ==(Entity left, Entity right)
     {
         if (Equals(left, null))
             return (Equals(right, null)) ? true : false;
-        else
-            return left.Equals(right);
+        return left.Equals(right);
     }
 
     public static bool operator !=(Entity left, Entity right)

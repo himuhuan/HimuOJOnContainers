@@ -1,7 +1,11 @@
-﻿using Identity.Server.Models;
+﻿#region
+
 using Identity.Server.Data.EntityConfiguration;
+using Identity.Server.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace Identity.Server.Data
 {

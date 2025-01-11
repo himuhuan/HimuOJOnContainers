@@ -1,9 +1,13 @@
-﻿using Duende.Bff.Yarp;
+﻿#region
+
+using Duende.Bff.Yarp;
 using HimuOJ.Web.WebSPA.Filters;
 using HimuOJ.Web.WebSPA.Services;
 using Microsoft.IdentityModel.Logging;
 using Refit;
 using Serilog;
+
+#endregion
 
 namespace HimuOJ.Web.WebSPA;
 
@@ -14,17 +18,18 @@ public static class HostingExtensions
         builder.Services.AddBff().AddRemoteApis();
 
         builder.Services.AddReverseProxy()
-               .AddBffExtensions()
-               .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+            .AddBffExtensions()
+            .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
         var identityServer = builder.Configuration.GetRequiredSection("IdentityServer");
 
         string identityServerUrl = identityServer.GetValue<string>("Url")
-                                   ?? throw new ArgumentException("IdentityServer:Url is not configured");
+                                   ?? throw new ArgumentException(
+                                       "IdentityServer:Url is not configured");
 
         var scopes = identityServer.GetRequiredSection("Scopes")
-                                   .GetChildren()
-                                   .ToDictionary(x => x.Key, x => x.Value);
+            .GetChildren()
+            .ToDictionary(x => x.Key, x => x.Value);
 
         Log.Information("Using Identity Server: {ServerUrl}", identityServerUrl);
         foreach (var scope in scopes)
@@ -38,56 +43,56 @@ public static class HostingExtensions
         }
 
         builder.Services
-               .AddAuthentication(options =>
-               {
-                   options.DefaultScheme          = "Cookies";
-                   options.DefaultChallengeScheme = "oidc";
-                   options.DefaultSignOutScheme   = "oidc";
-               })
-               .AddCookie("Cookies")
-               .AddOpenIdConnect("oidc", options =>
-               {
-                   options.Authority    = identityServerUrl;
-                   options.ClientId     = "webspa";
-                   options.ClientSecret = "secret";
-                   options.ResponseType = "code";
-                   options.ResponseMode = "query";
+            .AddAuthentication(options =>
+            {
+                options.DefaultScheme          = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
+                options.DefaultSignOutScheme   = "oidc";
+            })
+            .AddCookie("Cookies")
+            .AddOpenIdConnect("oidc", options =>
+            {
+                options.Authority    = identityServerUrl;
+                options.ClientId     = "webspa";
+                options.ClientSecret = "secret";
+                options.ResponseType = "code";
+                options.ResponseMode = "query";
 
 
-                   // Required for docker compose
+                // Required for docker compose
 #if DEBUG
-                   options.MetadataAddress      = $"{identityServerUrl}/.well-known/openid-configuration";
-                   options.RequireHttpsMetadata = false;
+                options.MetadataAddress = $"{identityServerUrl}/.well-known/openid-configuration";
+                options.RequireHttpsMetadata = false;
 #endif
 
-                   options.Scope.Clear();
+                options.Scope.Clear();
 
-                   foreach (var scope in scopes)
-                   {
-                       options.Scope.Add(scope.Key);
-                   }
+                foreach (var scope in scopes)
+                {
+                    options.Scope.Add(scope.Key);
+                }
 
-                   options.GetClaimsFromUserInfoEndpoint = true;
-                   options.MapInboundClaims              = false;
-                   options.SaveTokens                    = true;
-                   options.DisableTelemetry              = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.MapInboundClaims              = false;
+                options.SaveTokens                    = true;
+                options.DisableTelemetry              = true;
 
-                   options.TokenValidationParameters = new()
-                   {
-                       NameClaimType = "name",
-                       RoleClaimType = "role"
-                   };
-               });
+                options.TokenValidationParameters = new()
+                {
+                    NameClaimType = "name",
+                    RoleClaimType = "role"
+                };
+            });
 
         builder.Services.AddControllers(options =>
         {
             options.Filters.Add<BffGatewayRefitExceptionFilter>();
         });
-        
+
         builder.Services.AddRemoteApis<IProblemsApi>();
         builder.Services.AddRemoteApis<ISubmitsApi>();
         builder.Services.AddRemoteApis<IUsersApi>();
-        
+
         builder.Services.AddAuthorization();
 
         return builder.Build();
@@ -112,34 +117,31 @@ public static class HostingExtensions
 
         app.UseAuthorization();
 
-        app.MapReverseProxy(proxyPipeline =>
-        {
-            proxyPipeline.UseAntiforgeryCheck();
-        });
-        
+        app.MapReverseProxy(proxyPipeline => { proxyPipeline.UseAntiforgeryCheck(); });
+
         app.MapBffManagementEndpoints();
 
         app.MapControllers();
 
         app.MapFallbackToFile("/index.html");
-        
+
         return app;
     }
-    
+
     private static IServiceCollection AddRemoteApis<TApiInterface>(this IServiceCollection services)
         where TApiInterface : class
     {
         services.AddRefitClient<TApiInterface>(new RefitSettings
-                {
-                    // restful api supported only
-                    CollectionFormat = CollectionFormat.Multi
-                })
-                .ConfigureHttpClient(c =>
-                {
-                    // redirect to gateway itself
-                    c.BaseAddress = new Uri("http://webspa-bff");
-                    c.DefaultRequestHeaders.Add("X-CSRF", "1");
-                }); // TODO: retry policy
+            {
+                // restful api supported only
+                CollectionFormat = CollectionFormat.Multi
+            })
+            .ConfigureHttpClient(c =>
+            {
+                // redirect to gateway itself
+                c.BaseAddress = new Uri("http://webspa-bff");
+                c.DefaultRequestHeaders.Add("X-CSRF", "1");
+            }); // TODO: retry policy
         return services;
     }
 }

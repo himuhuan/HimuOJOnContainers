@@ -1,15 +1,21 @@
-﻿using DotNetCore.CAP;
+﻿#region
+
+using DotNetCore.CAP;
 using HimuOJ.Services.Submits.API.Application.IntegrationEvents;
 using Submits.BackgroundTasks.Services.Judge;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services.Subscribers;
 
 public class SubmitsSubscriberService : ISubmitsSubscriberService, ICapSubscribe
 {
-    private readonly ILogger<SubmitsSubscriberService> _logger;
     private readonly IJudgeService _judgeService;
+    private readonly ILogger<SubmitsSubscriberService> _logger;
 
-    public SubmitsSubscriberService(ILogger<SubmitsSubscriberService> logger, IJudgeService judgeService)
+    public SubmitsSubscriberService(
+        ILogger<SubmitsSubscriberService> logger,
+        IJudgeService judgeService)
     {
         _logger       = logger;
         _judgeService = judgeService;
@@ -20,6 +26,6 @@ public class SubmitsSubscriberService : ISubmitsSubscriberService, ICapSubscribe
     {
         _logger.LogInformation("Received event {EventName} with SubmissionId={@EventId}",
             @event.EventName, @event.SubmissionId);
-        _judgeService.AddJudgeTask(@event.SubmissionId);   
+        _judgeService.AddJudgeTask(@event.SubmissionId);
     }
 }

@@ -1,10 +1,14 @@
-﻿using Duende.IdentityServer.Models;
+﻿#region
+
+using System.Security.Claims;
+using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Identity.Server.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
-using System.Security.Claims;
+
+#endregion
 
 namespace Identity.Server.Services
 {
@@ -19,19 +23,22 @@ namespace Identity.Server.Services
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var subject = context.Subject ?? throw new ArgumentNullException(nameof(context.Subject));
-            var subjectId = (subject.Claims.FirstOrDefault(x => x.Type == "sub")?.Value) 
-                ?? throw new ArgumentException("subjectId is null");
-            var user = await _userManager.FindByIdAsync(subjectId) 
-                ?? throw new ArgumentException("Invalid subject identifier");
+            var subject = context.Subject
+                          ?? throw new ArgumentNullException(nameof(context.Subject));
+            var subjectId = (subject.Claims.FirstOrDefault(x => x.Type == "sub")?.Value)
+                            ?? throw new ArgumentException("subjectId is null");
+            var user = await _userManager.FindByIdAsync(subjectId)
+                       ?? throw new ArgumentException("Invalid subject identifier");
             var claims = GetClaims(user);
             context.IssuedClaims = claims.ToList();
         }
 
         public async Task IsActiveAsync(IsActiveContext context)
         {
-            var subject = context.Subject ?? throw new ArgumentNullException(nameof(context.Subject));
-            var subjectId = (subject.Claims.FirstOrDefault(x => x.Type == "sub")?.Value) ?? throw new ArgumentException("subjectId is null");
+            var subject = context.Subject
+                          ?? throw new ArgumentNullException(nameof(context.Subject));
+            var subjectId = (subject.Claims.FirstOrDefault(x => x.Type == "sub")?.Value)
+                            ?? throw new ArgumentException("subjectId is null");
             var user = await _userManager.FindByIdAsync(subjectId);
             context.IsActive = false;
             if (user != null)
@@ -51,8 +58,8 @@ namespace Identity.Server.Services
                 }
 
                 context.IsActive = !user.LockoutEnabled
-                    || !user.LockoutEnd.HasValue
-                    || user.LockoutEnd <= DateTime.UtcNow;
+                                   || !user.LockoutEnd.HasValue
+                                   || user.LockoutEnd <= DateTime.UtcNow;
             }
         }
 
@@ -81,12 +88,14 @@ namespace Identity.Server.Services
                 });
             }
 
-            if (_userManager.SupportsUserPhoneNumber && !string.IsNullOrWhiteSpace(user.PhoneNumber))
+            if (_userManager.SupportsUserPhoneNumber
+                && !string.IsNullOrWhiteSpace(user.PhoneNumber))
             {
                 claims.AddRange(new[]
                 {
                     new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber),
-                    new Claim(JwtClaimTypes.PhoneNumberVerified, user.PhoneNumberConfirmed ? "true" : "false",
+                    new Claim(JwtClaimTypes.PhoneNumberVerified,
+                        user.PhoneNumberConfirmed ? "true" : "false",
                         ClaimValueTypes.Boolean)
                 });
             }

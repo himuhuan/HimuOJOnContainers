@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#region
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Refit;
+
+#endregion
 
 namespace HimuOJ.Web.WebSPA.Filters;
 
 /// <summary>
-/// Handle Refit exception, and return a friendly message to the client.
+///     Handle Refit exception, and return a friendly message to the client.
 /// </summary>
 public class BffGatewayRefitExceptionFilter : IActionFilter
 {
@@ -28,7 +32,7 @@ public class BffGatewayRefitExceptionFilter : IActionFilter
             {
                 StatusCode = (int) refitException.StatusCode
             };
-            
+
             context.ExceptionHandled = true;
         }
     }

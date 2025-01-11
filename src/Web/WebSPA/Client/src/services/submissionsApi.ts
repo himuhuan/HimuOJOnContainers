@@ -1,9 +1,9 @@
 import client from "@/modules/HttpClient";
 import type {
-	CreateSubmissionRequest,
-	SubmissionDetail,
-	SubmissionList,
-	SubmissionListRequest,
+    CreateSubmissionRequest,
+    SubmissionDetail,
+    SubmissionList,
+    SubmissionListRequest,
 } from "@/modules/submits-type";
 
 // const exampleProblemList: SubmissionList = {
@@ -31,28 +31,28 @@ import type {
 // };
 
 export async function getSubmissionList(
-	request: SubmissionListRequest
+    request: SubmissionListRequest
 ): Promise<SubmissionList> {
-	let requestUrl = `/api/submissions?page=${request.page}&pageSize=${request.pageSize}`;
-	if (request.problemId) requestUrl += `&problemId=${request.problemId}`;
-	if (request.submitterId) requestUrl += `&submitterId=${request.submitterId}`;
-	const response = await client.get<SubmissionList>(requestUrl);
-	return response.data;
+    let requestUrl = `/api/submissions?page=${request.page}&pageSize=${request.pageSize}`;
+    if (request.problemId) requestUrl += `&problemId=${request.problemId}`;
+    if (request.submitterId) requestUrl += `&submitterId=${request.submitterId}`;
+    const response = await client.get<SubmissionList>(requestUrl);
+    return response.data;
 }
 
 export async function postSubmission(request: CreateSubmissionRequest) {
-	const response = await client.post<number>("/api/submissions", request);
-	return response.data;
+    const response = await client.post<number>("/api/submissions", request);
+    return response.data;
 }
 
 export async function getSubmissionDetail(submissionId: number) {
-	try {
-		const response = await client.get<SubmissionDetail>(
-			`/api/submissions/${submissionId}/detail`
-		);
-		return response.data;
-	} catch (error) {
-		console.error("Error occurred while fetching submission detail:", error);
-		throw error;
-	}
+    try {
+        const response = await client.get<SubmissionDetail>(
+            `/api/submissions/${submissionId}/detail`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error occurred while fetching submission detail:", error);
+        throw error;
+    }
 }

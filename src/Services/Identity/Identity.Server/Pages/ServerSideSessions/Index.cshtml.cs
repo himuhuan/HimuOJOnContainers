@@ -1,11 +1,15 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Identity.Server.Pages.ServerSideSessions
 {
@@ -35,23 +39,23 @@ namespace Identity.Server.Pages.ServerSideSessions
         [BindProperty(SupportsGet = true)]
         public string? Prev { get; set; }
 
+        [BindProperty]
+        public string? SessionId { get; set; }
+
         public async Task OnGet()
         {
             if (_sessionManagementService != null)
             {
                 UserSessions = await _sessionManagementService.QuerySessionsAsync(new SessionQuery
                 {
-                    ResultsToken = Token,
+                    ResultsToken        = Token,
                     RequestPriorResults = Prev == "true",
-                    DisplayName = DisplayNameFilter,
-                    SessionId = SessionIdFilter,
-                    SubjectId = SubjectIdFilter
+                    DisplayName         = DisplayNameFilter,
+                    SessionId           = SessionIdFilter,
+                    SubjectId           = SubjectIdFilter
                 });
             }
         }
-
-        [BindProperty]
-        public string? SessionId { get; set; }
 
         public async Task<IActionResult> OnPost()
         {
@@ -61,8 +65,8 @@ namespace Identity.Server.Pages.ServerSideSessions
             {
                 SessionId = SessionId,
             });
-            return RedirectToPage("/ServerSideSessions/Index", new { Token, DisplayNameFilter, SessionIdFilter, SubjectIdFilter, Prev });
+            return RedirectToPage("/ServerSideSessions/Index",
+                new { Token, DisplayNameFilter, SessionIdFilter, SubjectIdFilter, Prev });
         }
     }
 }
-

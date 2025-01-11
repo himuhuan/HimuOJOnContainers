@@ -13,20 +13,21 @@
             @Model.View.ClientName
             <small class="text-muted">is requesting your permission</small>
         </h1>
-        
-        <h3>Verify that this identifier matches what the client is displaying: <em  class="text-primary">@Model.View.BindingMessage</em></h3>
+
+        <h3>Verify that this identifier matches what the client is displaying: <em
+                class="text-primary">@Model.View.BindingMessage</em></h3>
 
         <p>Uncheck the permissions you do not wish to grant.</p>
     </div>
 
     <div class="row">
         <div class="col-sm-8">
-            <partial name="_ValidationSummary" />
+            <partial name="_ValidationSummary"/>
         </div>
     </div>
 
     <form asp-page="/Ciba/Consent">
-        <input type="hidden" asp-for="Input.Id" />
+        <input type="hidden" asp-for="Input.Id"/>
         <div class="row">
             <div class="col-sm-8">
                 @if (Model.View.IdentityScopes.Any())
@@ -40,7 +41,7 @@
                             <ul class="list-group list-group-flush">
                                 @foreach (var scope in Model.View.IdentityScopes)
                                 {
-                                    <partial name="_ScopeListItem" model="@scope" />
+                                    <partial name="_ScopeListItem" model="@scope"/>
                                 }
                             </ul>
                         </div>
@@ -58,7 +59,7 @@
                             <ul class="list-group list-group-flush">
                                 @foreach (var scope in Model.View.ApiScopes)
                                 {
-                                    <partial name="_ScopeListItem" model="scope" />
+                                    <partial name="_ScopeListItem" model="scope"/>
                                 }
                             </ul>
                         </div>
@@ -72,7 +73,8 @@
                             Description
                         </div>
                         <div class="card-body">
-                            <input class="form-control" placeholder="Description or name of device" asp-for="Input.Description" autofocus>
+                            <input class="form-control" placeholder="Description or name of device"
+                                   asp-for="Input.Description" autofocus>
                         </div>
                     </div>
                 </div>

@@ -8,8 +8,8 @@ export class CodeTemplate {
             ["java", "public class Main {\n\tpublic static void main(String[] args) {\n\t\t// your code here\n\t}\n}"],
             ["python", "# your code here\n"],
             ["_new_problem", "请不要在问题描述内重复您的标题，在此处使用 Markdown 语法编写您的问题。"
-                             + "`HimuOJ` 支持绝大多数Markdown 功能。一般而言推荐的模板如下: \n"
-                             + "## 问题描述\n\n## 输入格式\n\n## 输出格式\n\n## 样例\n\n## 说明/提示\n\n"],
+            + "`HimuOJ` 支持绝大多数Markdown 功能。一般而言推荐的模板如下: \n"
+            + "## 问题描述\n\n## 输入格式\n\n## 输出格式\n\n## 样例\n\n## 说明/提示\n\n"],
         ]);
     }
 

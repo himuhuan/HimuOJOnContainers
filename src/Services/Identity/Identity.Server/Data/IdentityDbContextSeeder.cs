@@ -1,7 +1,11 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Extensions;
 using Identity.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace Identity.Server.Data
 {
@@ -11,7 +15,7 @@ namespace Identity.Server.Data
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-            var logger      = serviceProvider.GetRequiredService<ILogger<IdentityDbContextSeeder>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<IdentityDbContextSeeder>>();
 
             using (context)
             {
@@ -27,7 +31,8 @@ namespace Identity.Server.Data
                 if (!await context.Users.AnyAsync())
                 {
                     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                    (ApplicationUser user, string rawPassword) = GetInitialUserFromConfig(configuration);
+                    (ApplicationUser user, string rawPassword) =
+                        GetInitialUserFromConfig(configuration);
                     var result = await userManager.CreateAsync(user, rawPassword);
 
                     if (!result.Succeeded)
@@ -43,7 +48,8 @@ namespace Identity.Server.Data
             }
         }
 
-        private static (ApplicationUser user, string rawPassword) GetInitialUserFromConfig(IConfiguration configuration)
+        private static (ApplicationUser user, string rawPassword) GetInitialUserFromConfig(
+            IConfiguration configuration)
         {
             var initialUserConfig = configuration.GetSection("InitialUser");
             var userName          = initialUserConfig.GetValue<string>("Name");
@@ -55,8 +61,8 @@ namespace Identity.Server.Data
             var user = new ApplicationUser
             {
                 // TODO: may be better to use a random GUID in production?
-                Id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
-                UserName = userName,
+                Id             = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
+                UserName       = userName,
                 Email          = mail,
                 EmailConfirmed = true
             };

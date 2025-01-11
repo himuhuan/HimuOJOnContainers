@@ -1,5 +1,9 @@
-﻿using HimuOJ.Common.WebHostDefaults.Infrastructure;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+
+#endregion
 
 namespace HimuOJ.Common.WebApiComponents.Extensions;
 
@@ -23,7 +27,10 @@ public static class ResultApiWebExtensions
         return (await apiTask).ToHttpApiResult();
     }
 
-    public static IActionResult ToHttpApiResult<T>(this T any, ApiResultCode code, string message = null)
+    public static IActionResult ToHttpApiResult<T>(
+        this T any,
+        ApiResultCode code,
+        string message = null)
     {
         return (new ApiResult<T>(any, code, message)).ToHttpApiResult();
     }

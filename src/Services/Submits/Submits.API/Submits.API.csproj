@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace> HimuOJ.Services.Submits.API </RootNamespace>
+        <RootNamespace>HimuOJ.Services.Submits.API</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>620f8efe-9b6b-4d63-8685-4fc5fea729e1</UserSecretsId>
         <DockerfileContext>..\..\..\..</DockerfileContext>
@@ -12,27 +12,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
-        <PackageReference Include="System.Text.Json" Version="8.0.5" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0"/>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7"/>
+        <PackageReference Include="System.Text.Json" Version="8.0.5"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj" />
-      <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj" />
-      <ProjectReference Include="..\Submits.Infrastructure\Submits.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj"/>
+        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
+        <ProjectReference Include="..\Submits.Infrastructure\Submits.Infrastructure.csproj"/>
     </ItemGroup>
 
-	<ItemGroup>
-		<Compile Include="..\Submits.BackgroundTasks\Services\IntegrationEvents\SubmissionJudgeFinishedIntegrationEvent.cs">
-			<Link>Application\IntegrationEvents\SubmissionJudgeFinishedIntegrationEvent.cs</Link>
-		</Compile>
-	</ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\Submits.BackgroundTasks\Services\IntegrationEvents\SubmissionJudgeFinishedIntegrationEvent.cs">
+            <Link>Application\IntegrationEvents\SubmissionJudgeFinishedIntegrationEvent.cs</Link>
+        </Compile>
+    </ItemGroup>
 
 </Project>
