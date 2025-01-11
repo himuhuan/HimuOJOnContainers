@@ -72,10 +72,10 @@ namespace Identity.Server
 
                     RedirectUris =
                     {
-                        $"{configuration["ProblemsApiExternalUrl"]}/swagger/oauth2-redirect.html"
+                        $"{configuration["ProblemsApiExternalUrl"]}/api-reference/v1"
                     },
                     PostLogoutRedirectUris =
-                        { $"{configuration["ProblemsApiExternalUrl"]}/swagger/" },
+                        { $"{configuration["ProblemsApiExternalUrl"]}/api-reference/v1" },
 
                     AllowedScopes =
                     {
@@ -96,10 +96,10 @@ namespace Identity.Server
 
                     RedirectUris =
                     {
-                        $"{configuration["SubmitsApiExternalUrl"]}/swagger/oauth2-redirect.html"
+                        $"{configuration["SubmitsApiExternalUrl"]}/api-reference/v1"
                     },
                     PostLogoutRedirectUris =
-                        { $"{configuration["SubmitsApiExternalUrl"]}/swagger/" },
+                        { $"{configuration["SubmitsApiExternalUrl"]}/api-reference/v1" },
 
                     AllowedScopes =
                     {

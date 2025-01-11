@@ -1,5 +1,8 @@
 ﻿#region
 
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using HimuOJ.Common.WebHostDefaults.Infrastructure.OpenApi;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using Serilog;
 
 #endregion
@@ -53,6 +57,7 @@ public static class OpenApiExtensions
 
         var name    = openApiOptions["Name"];
         var version = openApiOptions["Version"];
+        var serviceUrl = openApiOptions["ServiceUrl"] ?? "http://localhost:5000";
         var xmlFile = openApiOptions["XmlComments"];
         var scopes = identityServerOptions.GetRequiredSection("Scopes")
             .GetChildren()
@@ -67,16 +72,19 @@ public static class OpenApiExtensions
 
             string url = identityServerOptions.GetValue<string>("Url");
 
+            c.AddServer(new OpenApiServer { Url = serviceUrl });
+            
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
+                
                 Flows = new OpenApiOAuthFlows
                 {
                     Implicit = new OpenApiOAuthFlow
                     {
                         AuthorizationUrl = new Uri($"{url}/connect/authorize"),
                         TokenUrl         = new Uri($"{url}/connect/token"),
-                        Scopes           = scopes
+                        Scopes           = scopes,
                     }
                 }
             });
@@ -100,19 +108,34 @@ public static class OpenApiExtensions
     public static IApplicationBuilder UseDefaultOpenApi(this WebApplication app)
     {
         var openApiSection = app.Configuration.GetSection("OpenApi");
-
+        var identityServerSection = app.Configuration.GetSection("IdentityServer");
+        
         app.UseSwagger();
 
         if (app.Environment.IsDevelopment() && openApiSection.Exists())
         {
-            app.UseSwaggerUI(setup =>
+            var scopes = identityServerSection.GetRequiredSection("Scopes")
+                .GetChildren()
+                .Select(x => x.Key)
+                .ToArray();
+         
+            var clientId = openApiSection["Auth:ClientId"];
+
+            app.UseSwagger(options => { options.RouteTemplate = "/swagger/v1/swagger.json"; });
+
+            app.MapScalarApiReference(options =>
             {
-                var authOptions = openApiSection.GetSection("Auth");
-                if (authOptions.Exists())
+                options.Authentication = new ScalarAuthenticationOptions
                 {
-                    setup.OAuthClientId(authOptions["ClientId"]);
-                    setup.OAuthAppName(authOptions["ClientName"]);
-                }
+                    PreferredSecurityScheme = "oauth2",
+                    OAuth2 = new OAuth2Options
+                    {
+                        ClientId = clientId,
+                        Scopes   = scopes
+                    }
+                };
+                options.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+                options.WithEndpointPrefix("/api-reference/{documentName}");
             });
 
             app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
@@ -120,4 +143,5 @@ public static class OpenApiExtensions
 
         return app;
     }
+    
 }
