@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Reflection;
 using HimuOJ.Common.WebHostDefaults.Infrastructure.OpenApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ public static class OpenApiExtensions
         // "OpenApi": {
         //   "Name": "HimuOJ.xxx.API",
         //   "Version": "v1",
+        //   "XmlComments": "xxx.xml",
         //   "Auth": {
         //       "ClientId": "xxx",
         //       "ClientName": "xxx",
@@ -51,6 +53,7 @@ public static class OpenApiExtensions
 
         var name    = openApiOptions["Name"];
         var version = openApiOptions["Version"];
+        var xmlFile = openApiOptions["XmlComments"];
         var scopes = identityServerOptions.GetRequiredSection("Scopes")
             .GetChildren()
             .ToDictionary(x => x.Key, x => x.Value);
@@ -79,6 +82,16 @@ public static class OpenApiExtensions
             });
 
             c.OperationFilter<AuthenticationOperationFilter>([scopes.Keys.ToArray()]);
+
+            // Set the comments path for the Swagger JSON and UI.
+            if (xmlFile != null)
+            {
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath, true);
+                }
+            }
         });
 
         return builder;

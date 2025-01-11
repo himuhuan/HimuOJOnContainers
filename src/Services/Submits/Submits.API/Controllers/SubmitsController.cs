@@ -99,6 +99,11 @@ namespace HimuOJ.Services.Submits.API.Controllers
             return submission == null ? NotFound() : submission.ToHttpApiResult(ApiResultCode.Ok);
         }
 
+        /// <summary>
+        /// Retrieves the submission statistics for a specific user.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose statistics are to be retrieved.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the user's submission statistics.</returns>
         [HttpGet("statistics/user-profile/{userId}")]
         public async Task<IActionResult> GetStatisticsByUser(string userId)
         {
