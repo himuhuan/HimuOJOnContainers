@@ -52,7 +52,9 @@ class HttpClient {
     }
 
     public async delete<T>(url: string, data?: any): Promise<AxiosResponse<T>> {
-        return this.instance.delete<T>(url, data).catch((res) => {
+        return this.instance.delete<T>(url, {
+            data: data,
+        }).catch((res) => {
             if (res && res.response) {
                 return Promise.reject(res.response);
             } else {

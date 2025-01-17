@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Globalization;
 using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
 using HimuOJ.Services.Problems.API.Application.Models.Dto;
@@ -21,12 +22,53 @@ public class ProblemsQuery : IProblemsQuery
         _context = context;
     }
 
-    public async Task<ApiResult<Problem>> GetProblemAsync(int id)
+    public async Task<ApiResult<ProblemVo>> GetProblemAsync(int id)
     {
-        var problem = await _context.Problems.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
-        return problem == null
-            ? ApiResult<Problem>.Error(ApiResultCode.ResourceNotExist)
-            : ApiResult<Problem>.Success(problem);
+        var problem = await _context.Problems
+            .AsNoTracking()
+            .Include(p => p.TestPoints)
+            .Where(p => p.Id == id)
+            .SingleOrDefaultAsync();
+
+        if (problem == null)
+            return ApiResult<ProblemVo>.Error(ApiResultCode.ResourceNotExist);
+
+        var vo = new ProblemVo
+        {
+            Id                  = problem.Id,
+            Title               = problem.Title,
+            Content             = problem.Content,
+            AllowDownloadAnswer = problem.GuestAccessLimit.AllowDownloadInput,
+            AllowDownloadInput  = problem.GuestAccessLimit.AllowDownloadInput,
+            TestPoints          = problem.TestPoints.ToList(),
+            
+            CreateTime     = problem.CreateTime.ToString(CultureInfo.InvariantCulture),
+            LastModifyTime = problem.LastModifyTime.ToString(CultureInfo.InvariantCulture),
+
+            MaxMemoryLimitByte = problem.DefaultResourceLimit.MaxMemoryLimitByte,
+            MaxRealTimeLimitMilliseconds =
+                problem.DefaultResourceLimit.MaxRealTimeLimitMilliseconds,
+        };
+
+        return ApiResult<ProblemVo>.Success(vo);
+    }
+
+    public async Task<ApiResult<ProblemDetail>> GetProblemDetailAsync(int id)
+    {
+        var detail = await _context.Problems
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Select(p => new ProblemDetail
+            {
+                Content              = p.Content,
+                CreateTime           = p.CreateTime.ToString(CultureInfo.InvariantCulture),
+                DefaultResourceLimit = p.DefaultResourceLimit,
+                Title                = p.Title
+            })
+            .SingleOrDefaultAsync();
+        return detail == null
+            ? ApiResult<ProblemDetail>.Error(ApiResultCode.ResourceNotExist)
+            : detail.ToApiResult(ApiResultCode.Ok);
     }
 
     public async Task<ApiResult<ProblemList>> GetProblemListAsync(GetProblemsListRequest request)

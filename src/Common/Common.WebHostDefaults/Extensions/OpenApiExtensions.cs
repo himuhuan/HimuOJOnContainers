@@ -125,6 +125,7 @@ public static class OpenApiExtensions
 
             app.MapScalarApiReference(options =>
             {
+                options.Title = openApiSection["Name"] ?? "HimuOJ API";
                 options.Authentication = new ScalarAuthenticationOptions
                 {
                     PreferredSecurityScheme = "oauth2",
@@ -138,7 +139,7 @@ public static class OpenApiExtensions
                 options.WithEndpointPrefix("/api-reference/{documentName}");
             });
 
-            app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+            app.MapGet("/", () => Results.Redirect("/api-reference/{documentName}")).ExcludeFromDescription();
         }
 
         return app;

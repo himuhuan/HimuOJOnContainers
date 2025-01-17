@@ -19,6 +19,12 @@ public class GuestAccessLimit : ValueObject
         AllowDownloadInput  = allowDownloadInput;
         AllowDownloadOutput = allowDownloadOutput;
     }
+    
+    public void Update(bool allowDownloadInput, bool allowDownloadOutput)
+    {
+        AllowDownloadInput  = allowDownloadInput;
+        AllowDownloadOutput = allowDownloadOutput;
+    }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

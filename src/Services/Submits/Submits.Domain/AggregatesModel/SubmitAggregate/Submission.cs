@@ -141,18 +141,13 @@ public class Submission : Entity, IAggregateRoot
 
     private int FindIndexOfTestPoint(int testPointId)
     {
-        int low = 0, high = _testPointResults.Count;
-        while (low < high)
+        for (int i = 0; i < _testPointResults.Count; i++)
         {
-            int mid = low + (high - low) / 2;
-            if (_testPointResults[mid].TestPointId == testPointId)
-                return mid;
-            if (_testPointResults[mid].TestPointId < testPointId)
-                low = mid + 1;
-            else
-                high = mid;
+            if (_testPointResults[i].TestPointId == testPointId)
+            {
+                return i;
+            }
         }
-
         return -1;
     }
 }

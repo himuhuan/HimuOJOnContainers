@@ -18,6 +18,12 @@ public class ResourceLimit : ValueObject
         MaxMemoryLimitByte           = maxMemoryLimitByte;
         MaxRealTimeLimitMilliseconds = maxRealTimeLimitMilliseconds;
     }
+    
+    public void Update(long maxMemoryLimitByte, long maxRealTimeLimitMilliseconds)
+    {
+        MaxMemoryLimitByte           = maxMemoryLimitByte;
+        MaxRealTimeLimitMilliseconds = maxRealTimeLimitMilliseconds;
+    }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

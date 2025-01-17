@@ -11,7 +11,9 @@ namespace HimuOJ.Services.Problems.API.Application.Queries;
 
 public interface IProblemsQuery
 {
-    Task<ApiResult<Problem>> GetProblemAsync(int id);
+    Task<ApiResult<ProblemVo>> GetProblemAsync(int id);
+    
+    Task<ApiResult<ProblemDetail>> GetProblemDetailAsync(int id);
 
     Task<ApiResult<ProblemList>> GetProblemListAsync(GetProblemsListRequest request);
 

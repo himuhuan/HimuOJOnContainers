@@ -33,4 +33,22 @@ public class ProblemsRepository : IProblemsRepository
 
         return problem;
     }
+
+    public async Task<int> RemoveTestPoints(int problemId, IEnumerable<int> testPointIds)
+    {
+        var ids = testPointIds as int[] ?? testPointIds.ToArray();
+        if (ids.Length == 0) return 0;
+        return await _context.TestPoints
+            .Where(tp => tp.ProblemId == problemId && ids.Contains(tp.Id))
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        // TODO: use soft delete
+        int count = await _context.Problems
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync();
+        return count > 0;
+    }
 }

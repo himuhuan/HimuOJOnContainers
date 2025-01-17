@@ -32,7 +32,7 @@ export interface ProblemList {
 /**
  * Represents the detailed information about a problem.
  *
- * GET /problems/{problemId}
+ * GET /problems/{problemId}/detail
  *
  * @property {string} title - The title of the problem.
  * @property {string} content - The content of the problem.
@@ -62,11 +62,41 @@ export interface ProblemManageList {
     items: ProblemManageListItem[];
 }
 
-export interface CreateProblemRequest {
+export interface TestPoint {
+
+    /**
+     * The unique identifier of the test point.
+     * 
+     * To create a new test point, set this field to 0.
+     */
+    id: number;
+    
+    problemId: number;
+    input: string;
+    expectedOutput: string;
+    remarks: string;
+}
+
+export interface ProblemDto {
     title: string;
     content: string;
     maxMemoryLimitByte: number;
     maxRealTimeLimitMilliseconds: number;
     allowDownloadInput: boolean;
     allowDownloadAnswer: boolean;
+
+    testPoints: TestPoint[];
+}
+
+export interface ProblemVo {
+    id: number;
+    title: string;
+    content: string;
+    maxMemoryLimitByte: number;
+    maxRealTimeLimitMilliseconds: number;
+    allowDownloadInput: boolean;
+    allowDownloadAnswer: boolean;
+    createTime: string;
+    lastModifyTime: string;
+    testPoints: TestPoint[];
 }
