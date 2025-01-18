@@ -18,12 +18,15 @@ public class LocalCacheFileService : ILocalCacheFileService
     public async Task<string> CreateOrGetTextFileAsync(
         string directory,
         string fileName,
-        string content)
+        string content,
+        long prefix)
     {
         var filePath = Path.Combine(BasePath, directory);
         if (!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);
-
+        
+        fileName = $"{prefix}-{fileName}";
+        
         filePath = Path.Combine(filePath, fileName);
         if (File.Exists(filePath))
         {

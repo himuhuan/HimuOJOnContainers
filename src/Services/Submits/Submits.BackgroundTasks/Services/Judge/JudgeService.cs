@@ -139,9 +139,9 @@ public class JudgeService : IJudgeService
         ProblemInfo problemPart)
     {
         var inputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "input", testPoint.TestPointId + ".in", testPoint.Input);
+            "input", testPoint.TestPointId + ".in", testPoint.Input, testPoint.OutdatedTimestamp);
         var outputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "output", testPoint.TestPointId + ".out", string.Empty);
+            "output", testPoint.TestPointId + ".out", string.Empty, submission.Id);
 
         var sandboxResult =
             RunSandbox(submission.Id, executable, inputPath, outputPath, submission.CompilerName,
@@ -161,7 +161,8 @@ public class JudgeService : IJudgeService
                 (long) sandboxResult.RealTimeUsage));
 
         string expectedOutputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "answer", testPoint.TestPointId + ".ans", testPoint.ExpectedOutput);
+            "answer", testPoint.TestPointId + ".ans", testPoint.ExpectedOutput,
+            testPoint.OutdatedTimestamp);
         var outputDifference = await CompareOutput(expectedOutputPath, outputPath);
         if (outputDifference != null)
         {

@@ -25,6 +25,7 @@ message TestPointEssentialPart {
   int32 TestPointId = 1;
   string Input = 2;
   string ExpectedOutput = 3;
+  int64 OutdatedTimestamp = 4;
 }
 
 message CheckHealthRequest {

@@ -2,6 +2,7 @@
 
 using Grpc.Core;
 using GrpcProblems;
+using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Problems.Domain.AggregatesModel.ProblemAggregate;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -51,9 +52,10 @@ public class ProblemsGrpcServices : ProblemsService.ProblemsServiceBase
         {
             response.TestPoints.Add(new TestPointEssentialPart
             {
-                TestPointId    = testPoint.Id,
-                Input          = testPoint.Input,
-                ExpectedOutput = testPoint.ExpectedOutput
+                TestPointId       = testPoint.Id,
+                Input             = testPoint.Input,
+                ExpectedOutput    = testPoint.ExpectedOutput,
+                OutdatedTimestamp = new DateTimeOffset(testPoint.LastModifyTime).ToUnixTimeSeconds()
             });
         }
 

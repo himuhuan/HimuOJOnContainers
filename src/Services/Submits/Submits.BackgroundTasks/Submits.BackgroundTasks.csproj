@@ -34,8 +34,6 @@
 
     <ItemGroup>
         <Folder Update="..\..\Problems\Problems.API\Proto"/>
-        <Folder Include="logs\"/>
-        <Folder Include="workspace\"/>
     </ItemGroup>
 
     <ItemGroup>
