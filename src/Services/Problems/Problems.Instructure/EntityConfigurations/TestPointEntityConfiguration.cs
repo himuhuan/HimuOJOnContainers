@@ -20,5 +20,11 @@ public class TestPointEntityConfiguration : IEntityTypeConfiguration<TestPoint>
 
         builder.Property(tp => tp.Remarks)
             .HasMaxLength(2000);
+        
+        builder.Property(tp => tp.ResourceType)
+            .IsRequired()
+            .HasMaxLength(20)
+            .HasDefaultValue(TestPointResourceType.Text)
+            .HasConversion<string>();
     }
 }
