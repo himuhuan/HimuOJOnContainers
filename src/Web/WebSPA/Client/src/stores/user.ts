@@ -40,7 +40,8 @@ export const useUserState = defineStore("user", {
                 isLogin: true,
                 claims: resp.data,
             };
-            console.log("user profile fetched", this.profile);
+            console.log("Welcome to HimuOJ!", this.profile);
+            console.log("role", this.roles);
         },
 
         triggerThemeChange() {
@@ -58,5 +59,14 @@ export const useUserState = defineStore("user", {
         userLogoutUrl: (state) =>
             getUserClaimValue(state.profile, "bff:logout_url"),
         perferTheme: (state) => state.localSettings.perferTheme,
+        roles: (state) => {
+            if (!state || !state.profile?.isLogin) return undefined;
+            return state.profile.claims.filter((x) => x.type === "role").map((x) => x.value);
+        },
+        isDistributor: (state) => {
+            if (!state || !state.profile?.isLogin) return undefined;
+            const roles = state.profile.claims.filter((x) => x.type === "role").map((x) => x.value);
+            return roles.includes("Distributor") || roles.includes("Administrator");
+        }
     },
 });

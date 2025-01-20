@@ -72,6 +72,7 @@ export interface TestPoint {
     id: number;
     
     problemId: number;
+    type: "Text" | "File";
     input: string;
     expectedOutput: string;
     remarks: string;

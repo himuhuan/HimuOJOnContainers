@@ -51,4 +51,9 @@ public class ProblemsRepository : IProblemsRepository
             .ExecuteDeleteAsync();
         return count > 0;
     }
+
+    public async Task<Problem> GetProblemMinimalAsync(int id)
+    {
+        return await _context.Problems.FindAsync(id);
+    }
 }

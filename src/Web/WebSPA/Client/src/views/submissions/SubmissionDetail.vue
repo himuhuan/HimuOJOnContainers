@@ -74,7 +74,7 @@
             请不要尝试进行非法操作。过多的非法操作将导致您的账号被封禁。
           </n-alert>
           <n-card embedded>
-            <n-code :code="stateRef.data!.statusMessage" language="plaintext"/>
+            <n-code :code="stateRef.data!.statusMessage" word-wrap language="plaintext"/>
           </n-card>
         </n-collapse-item>
 

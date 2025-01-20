@@ -22,4 +22,15 @@ public interface IProblemsRepository : IRepository<Problem, int>
     /// The task result contains a boolean indicating whether the delete operation was successful.
     /// </returns>
     Task<bool> DeleteAsync(int id);
+
+    /// <summary>
+    /// Retrieves a minimal representation of a problem asynchronously by its ID.
+    /// Without navigation properties.
+    /// </summary>
+    /// <param name="id">The ID of the problem to retrieve.</param>
+    /// <returns>
+    /// A task that represents the asynchronous get operation.
+    /// The task result contains the minimal representation of the problem.
+    /// </returns>
+    Task<Problem> GetProblemMinimalAsync(int id);
 }

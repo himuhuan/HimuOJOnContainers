@@ -88,6 +88,13 @@ namespace HimuOJ.Services.Problems.Infrastructure.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProblemId");

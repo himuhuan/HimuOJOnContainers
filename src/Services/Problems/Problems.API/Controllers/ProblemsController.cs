@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Security.Claims;
+using HimuOJ.Common.WebApiComponents.Authorization;
 using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
 using HimuOJ.Services.Problems.API.Application.Models.Dto;
@@ -22,16 +23,19 @@ public class ProblemsController : ControllerBase
 {
     private readonly IProblemsQuery _query;
     private readonly IProblemsRepository _repository;
+    private readonly IAuthorizationService _authorization;
     private readonly ILogger<ProblemsController> _logger;
 
     public ProblemsController(
         IProblemsQuery query,
         IProblemsRepository repository,
-        ILogger<ProblemsController> logger)
+        ILogger<ProblemsController> logger,
+        IAuthorizationService authorization)
     {
-        _query      = query;
-        _repository = repository;
-        _logger     = logger;
+        _query         = query;
+        _repository    = repository;
+        _logger        = logger;
+        _authorization = authorization;
     }
 
     /// <summary>API /problems/{id}: Retrieves the full details of a problem by its ID.</summary>
@@ -45,9 +49,10 @@ public class ProblemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetFullProblem(int id)
     {
-        // TODO: add authorization check
         var result = await _query.GetProblemAsync(id);
-        return result.ToHttpApiResult();
+        var authResult =
+            await _authorization.AuthorizeAsync(User, result.Result, AuthorizationOperations.Read);
+        return !authResult.Succeeded ? Forbid() : result.ToHttpApiResult();
     }
 
     [HttpGet("{id}/detail")]
@@ -116,6 +121,12 @@ public class ProblemsController : ControllerBase
             new ResourceLimit(dto.MaxMemoryLimitByte, dto.MaxRealTimeLimitMilliseconds),
             new GuestAccessLimit(dto.AllowDownloadInput, dto.AllowDownloadAnswer));
 
+        if (!(await _authorization.AuthorizeAsync(User, problem, AuthorizationOperations.Create))
+            .Succeeded)
+        {
+            return Forbid();
+        }
+
         foreach (var testPointDto in dto.TestPoints)
         {
             problem.AddTestPoint(testPointDto.Input, testPointDto.ExpectedOutput,
@@ -154,6 +165,12 @@ public class ProblemsController : ControllerBase
             return NotFound();
         }
 
+        if (!(await _authorization.AuthorizeAsync(User, problem, AuthorizationOperations.Update))
+            .Succeeded)
+        {
+            return Forbid();
+        }
+
         bool success = problem.Update(dto.Title, dto.Content,
             dto.MaxMemoryLimitByte, dto.MaxRealTimeLimitMilliseconds,
             dto.AllowDownloadInput, dto.AllowDownloadAnswer,
@@ -185,11 +202,23 @@ public class ProblemsController : ControllerBase
         _logger.LogInformation("Removing test points {@Ids} from problem {@ProblemId}",
             testPointIds,
             id);
-        
+
+        var problem = await _repository.GetProblemMinimalAsync(id);
+        if (problem == null)
+        {
+            return NotFound();
+        }
+
+        if (!(await _authorization.AuthorizeAsync(User, problem, AuthorizationOperations.Update))
+            .Succeeded)
+        {
+            return Forbid();
+        }
+
         await _repository.RemoveTestPoints(id, testPointIds);
         return NoContent();
     }
-    
+
     /// <summary>
     /// API DELETE: /problems/{id}
     /// </summary>
@@ -203,12 +232,24 @@ public class ProblemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProblemAsync(int id)
     {
+        var problem = await _repository.GetProblemMinimalAsync(id);
+        if (problem == null)
+        {
+            return NotFound();
+        }
+
+        if (!(await _authorization.AuthorizeAsync(User, problem, AuthorizationOperations.Delete))
+            .Succeeded)
+        {
+            return Forbid();
+        }
+
         var success = await _repository.DeleteAsync(id);
         if (!success)
         {
             return NotFound();
         }
-        
+
         await _repository.UnitOfWork.SaveEntitiesAsync();
         return NoContent();
     }

@@ -92,7 +92,15 @@
             name="problems-manage"
             tab="创建/管理题目"
         >
-          <problems-manage/>
+          <problems-manage v-if="userState.isDistributor"/>
+          <n-alert
+              v-else
+              type="error"
+              show-icon
+              title="你不是题目管理员"
+          >
+            你没有在 HimuOJ 创建题目的权限，请联系管理员以获取权限。
+        </n-alert>
         </n-tab-pane>
       </n-tabs>
     </n-card>

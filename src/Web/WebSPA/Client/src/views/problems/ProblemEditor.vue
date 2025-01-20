@@ -149,12 +149,18 @@
 											:title="testPoint.remarks"
 											name="ss"
 										>
-											<n-form
-												:model="testPoint"
-												label-placement="top"
-											>
+											<n-form :model="testPoint" label-placement="top">
 												<n-form-item label="备注" path="testPointRemarks">
 													<n-input v-model:value="testPoint.remarks" />
+												</n-form-item>
+												<n-form-item label="类型" path="testPointType">
+													<n-select
+														:disabled="testPoint.id !== 0"
+														v-model:value="testPoint.type"
+														placeholder="请选择测试点类型"
+														:options="typeOptions"
+													>
+													</n-select>
 												</n-form-item>
 												<n-form-item label="输入" path="testPointInput">
 													<n-input
@@ -182,7 +188,10 @@
 							</transition-group>
 						</n-tab-pane>
 						<n-tab-pane name="submits" tab="提交记录" v-if="isEdit">
-							<submission-list :filter="{ problemId: Number(props.id!) }" :show-problem-title="false"/>
+							<submission-list
+								:filter="{ problemId: Number(props.id!) }"
+								:show-problem-title="false"
+							/>
 						</n-tab-pane>
 					</n-tabs>
 				</n-scrollbar>
@@ -232,6 +241,7 @@ import {
 	NSwitch,
 	FormRules,
 	NAlert,
+	NSelect,
 	useLoadingBar,
 	NCollapse,
 	NCollapseItem,
@@ -315,8 +325,13 @@ const formRules: FormRules = {
 			if (value >= 10 * 1000) return new Error("时间不得高于 10s");
 			return true;
 		},
-	}
+	},
 };
+
+const typeOptions = [
+	{ label: "文本", value: "Text" },
+	{ label: "文件 (建议测试数据大于 10 KB 使用)", value: "File" },
+];
 
 const detail = computed(() => {
 	return {
@@ -334,7 +349,11 @@ function handleSubmitProblem() {
 	loadingBar.start();
 	if (isEdit.value) {
 		// update problem
-		updateProblemAsync(Number(props.id!), state.value.detail, state.value.removedTestPoints)
+		updateProblemAsync(
+			Number(props.id!),
+			state.value.detail,
+			state.value.removedTestPoints
+		)
 			.then((_) => {
 				window.$message.success("更新问题成功! ");
 				router.go(0);
@@ -371,6 +390,7 @@ function handleAddTestPoint() {
 		remarks: "新测试点 #" + state.value.detail.testPoints.length,
 		input: "",
 		expectedOutput: "",
+		type: "Text",
 	});
 }
 

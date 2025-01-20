@@ -20,4 +20,11 @@ export interface UserDetail {
     acceptedProblemCount: number;
 }
 
+export interface UserRegisterRequest {
+    email: string,
+    userName: string,
+    password: string,
+    repeatedPassword: string,
+    phone?: string,
+}
 

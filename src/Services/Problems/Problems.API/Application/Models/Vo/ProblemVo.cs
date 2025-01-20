@@ -11,6 +11,11 @@ public class ProblemVo
     /// problem ID.
     /// </summary>
     public required int Id { get; set; }
+    
+    /// <summary>
+    /// The ID of the distributor who owns the problem.
+    /// </summary>
+    public required Guid? DistributorId { get; set; }
 
     /// <summary>
     /// problem title.

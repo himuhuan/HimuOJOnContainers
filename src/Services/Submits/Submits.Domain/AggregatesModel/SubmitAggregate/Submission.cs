@@ -13,8 +13,8 @@ public class Submission : Entity, IAggregateRoot
     private readonly List<TestPointResult> _testPointResults;
 
     /// <remarks>
-    ///     Generally speaking, DDD requires us not to expose this constructor to public,
-    ///     But this type requires the serialization and deserialization of integrated events.
+    ///     Generally speaking, DDD requires us not to expose this constructor to public, But this
+    ///     type requires the serialization and deserialization of integrated events.
     /// </remarks>
     public Submission()
     {
@@ -56,18 +56,12 @@ public class Submission : Entity, IAggregateRoot
 
     public ResourceUsage Usage { get; private set; }
 
-    /// <summary>
-    ///     Status depends on the results of each test points
-    /// </summary>
+    /// <summary>Status depends on the results of each test points</summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public JudgeStatus Status { get; private set; }
 
-    /// <summary>
-    ///     Message from the compiler or the background service.
-    /// </summary>
-    /// <remarks>
-    ///     If the submission is accepted, this message should be null.
-    /// </remarks>
+    /// <summary>Message from the compiler or the background service.</summary>
+    /// <remarks>If the submission is accepted, this message should be null.</remarks>
     public string StatusMessage { get; private set; }
 
     public IReadOnlyCollection<TestPointResult> TestPointResults => _testPointResults.AsReadOnly();
@@ -148,6 +142,7 @@ public class Submission : Entity, IAggregateRoot
                 return i;
             }
         }
+
         return -1;
     }
 }

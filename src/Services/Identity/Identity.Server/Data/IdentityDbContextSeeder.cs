@@ -41,7 +41,8 @@ namespace Identity.Server.Data
                     }
 
                     logger.LogDebug("Initial user created: {UserName}", user.UserName);
-                    await userManager.AddToRoleAsync(user, ApplicationRole.Administrator.Name!);
+                    await userManager.AddToRolesAsync(
+                        user, ApplicationRole.GetAllRoles().Select(r => r.Name!));
                 }
 
                 await context.SaveChangesAsync();
@@ -52,18 +53,18 @@ namespace Identity.Server.Data
             IConfiguration configuration)
         {
             var initialUserConfig = configuration.GetSection("InitialUser");
-            var userName          = initialUserConfig.GetValue<string>("Name");
-            var password          = initialUserConfig.GetValue<string>("Password");
-            var mail              = initialUserConfig.GetValue<string>("Mail");
+            var userName = initialUserConfig.GetValue<string>("Name");
+            var password = initialUserConfig.GetValue<string>("Password");
+            var mail = initialUserConfig.GetValue<string>("Mail");
             if (userName == null || password == null || mail == null)
                 throw new ArgumentException("Invalid configuration in InitialUser");
 
             var user = new ApplicationUser
             {
                 // TODO: may be better to use a random GUID in production?
-                Id             = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
-                UserName       = userName,
-                Email          = mail,
+                Id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
+                UserName = userName,
+                Email = mail,
                 EmailConfirmed = true
             };
 

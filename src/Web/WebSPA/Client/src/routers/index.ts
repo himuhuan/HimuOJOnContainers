@@ -65,6 +65,11 @@ const routes = [
         component: () => import("@/views/users/UserProfile.vue"),
     },
     {
+        path: "/users/register",
+        name: "user-register",
+        component: () => import("@/views/users/Register.vue"),
+    },
+    {
         path: "/error/not-found",
         name: "not-found",
         component: () => import("@/views/error/NotFound.vue"),

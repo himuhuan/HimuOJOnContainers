@@ -1,5 +1,6 @@
 #region
 
+using HimuOJ.Common.WebHostDefaults.Infrastructure.Auth;
 using Identity.Server.Data;
 using Identity.Server.Models;
 using Microsoft.AspNetCore.Identity;
@@ -95,6 +96,7 @@ namespace Identity.Server.Controllers
             {
                 UserName      = request.UserName,
                 Email         = request.Email,
+                PhoneNumber   = request.Phone,
                 RegisterDate  = DateOnly.FromDateTime(DateTime.UtcNow),
                 LastLoginDate = DateOnly.MinValue,
                 // TODO: Add email confirmation
@@ -107,7 +109,9 @@ namespace Identity.Server.Controllers
             {
                 return BadRequest(result.Errors);
             }
-
+            
+            await _userManager.AddToRoleAsync(user, ApplicationRoleConstants.StandardUser);
+            
             return CreatedAtAction(nameof(GetUserDetail), new { userId = user.Id },
                 new UserDetail
                 {

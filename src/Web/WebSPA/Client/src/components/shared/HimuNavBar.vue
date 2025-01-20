@@ -138,6 +138,17 @@ const userInfoMenuOptions: MenuOption[] = [
     },
     key: "home",
   },
+  {
+    label: () => {
+      return h(
+          "a",
+          {href: `/users/register`},
+          {
+            default: () => "注册",
+          }
+      );
+    }
+  }
 ];
 
 const userProfileDropdownOptions: DropdownOption[] = [

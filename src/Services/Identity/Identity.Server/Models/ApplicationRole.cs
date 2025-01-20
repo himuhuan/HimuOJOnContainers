@@ -1,6 +1,7 @@
 ﻿#region
 
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 #endregion
 
@@ -66,6 +67,11 @@ public class ApplicationRole : IdentityRole<string>
         }
 
         return result;
+    }
+
+    public static ApplicationRole GetHighestRole(IEnumerable<Claim> claims)
+    {
+        return GetHighestRole(claims.Select(claim => claim.Value));
     }
 
     public static IQueryable<ApplicationRole> GetAllRoles()

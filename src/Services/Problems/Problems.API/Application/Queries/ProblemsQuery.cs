@@ -36,6 +36,7 @@ public class ProblemsQuery : IProblemsQuery
         var vo = new ProblemVo
         {
             Id                  = problem.Id,
+            DistributorId       = problem.DistributorId,
             Title               = problem.Title,
             Content             = problem.Content,
             AllowDownloadAnswer = problem.GuestAccessLimit.AllowDownloadInput,

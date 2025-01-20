@@ -80,25 +80,30 @@ namespace Identity.Server.Services
 
             if (_userManager.SupportsUserEmail)
             {
-                claims.AddRange(new[]
-                {
+                claims.AddRange(
+                [
                     new Claim(JwtClaimTypes.Email, user.Email ?? "null"),
                     new Claim(JwtClaimTypes.EmailVerified, user.EmailConfirmed ? "true" : "false",
                         ClaimValueTypes.Boolean)
-                });
+                ]);
             }
 
             if (_userManager.SupportsUserPhoneNumber
                 && !string.IsNullOrWhiteSpace(user.PhoneNumber))
             {
-                claims.AddRange(new[]
-                {
+                claims.AddRange(
+                [
                     new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber),
                     new Claim(JwtClaimTypes.PhoneNumberVerified,
                         user.PhoneNumberConfirmed ? "true" : "false",
                         ClaimValueTypes.Boolean)
-                });
+                ]);
             }
+
+            _userManager.GetRolesAsync(user).Result.ToList().ForEach(role =>
+            {
+                claims.Add(new Claim(JwtClaimTypes.Role, role));
+            });
 
             return claims;
         }
