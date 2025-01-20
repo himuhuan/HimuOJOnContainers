@@ -78,12 +78,22 @@ namespace HimuOJ.Services.Problems.Infrastructure.Migrations
                     b.Property<string>("Input")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("LastModifyTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ProblemId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Remarks")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Text");
 
                     b.HasKey("Id");
 

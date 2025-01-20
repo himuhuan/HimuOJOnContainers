@@ -1,13 +1,14 @@
-using Duende.IdentityServer;
+#region
+
 using Duende.IdentityServer.Services;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using Identity.Server.Data;
 using Identity.Server.Models;
 using Identity.Server.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Serilog;
+
+#endregion
 
 namespace Identity.Server
 {
@@ -17,7 +18,20 @@ namespace Identity.Server
         {
             builder.Services.AddRazorPages();
 
-            builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+            builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                {
+                    options.Lockout.AllowedForNewUsers      = true;
+                    options.Lockout.MaxFailedAccessAttempts = 3;
+                    options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromSeconds(30);
+
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit           = false;
+                    options.Password.RequiredUniqueChars    = 0;
+                    options.Password.RequireLowercase       = false;
+                    options.Password.RequireUppercase       = false;
+                    options.Password.RequiredLength         = 6;
+                })
+                .AddSignInManager<AppSignInManager>()
                 .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -30,13 +44,13 @@ namespace Identity.Server
             builder.Services
                 .AddIdentityServer(options =>
                 {
-                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseErrorEvents       = true;
                     options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
+                    options.Events.RaiseFailureEvents     = true;
+                    options.Events.RaiseSuccessEvents     = true;
 
                     options.EmitStaticAudienceClaim = true;
-                    options.KeyManagement.Enabled = true;
+                    options.KeyManagement.Enabled   = true;
                 })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)

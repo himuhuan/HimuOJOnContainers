@@ -1,34 +1,81 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿#region
+
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+
+#endregion
 
 namespace Identity.Server.Models;
 
-public class ApplicationRole : IdentityRole
+public class ApplicationRole : IdentityRole<string>
 {
-    public const string StandardUser = "StandardUser";
-    public const string Administrator = "Administrator";
-    public const string Distributor = "Distributor";
+    // Predefined roles
+    // TODO: may be better to use a random GUID in production?
 
-    /// <summary>
-    /// A dictionary that stores the priority of each role.
-    /// The lower the value, the higher the permission.
-    /// </summary>
-    public static readonly Dictionary<string, int> RolePermissionPriority = new()
+    public static readonly ApplicationRole StandardUser = new()
     {
-        { Administrator, 0},
-        { Distributor, 1},
-        { StandardUser, 2},
+        Id             = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2).ToString(),
+        Name           = "StandardUser",
+        Priority       = 2,
+        NormalizedName = "STANDARD_USER"
     };
 
-    public static string GetHighestRole(IEnumerable<string> roles)
+    public static readonly ApplicationRole Distributor = new()
     {
-        PriorityQueue<string, int> queue = new();
+        Id             = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1).ToString(),
+        Name           = "Distributor",
+        Priority       = 1,
+        NormalizedName = "DISTRIBUTOR"
+    };
+
+    public static readonly ApplicationRole Administrator = new()
+    {
+        Id             = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
+        Name           = "Administrator",
+        Priority       = 0,
+        NormalizedName = "ADMINISTRATOR"
+    };
+
+    public static readonly Dictionary<string, ApplicationRole> RolePermissionPriority = new()
+    {
+        { StandardUser.Name!, StandardUser },
+        { Distributor.Name!, Distributor },
+        { Administrator.Name!, Administrator }
+    };
+
+    /// <summary>
+    ///     Smaller values have higher permissions.
+    /// </summary>
+    public int Priority { get; set; }
+
+    /// <summary>
+    ///     Get the smallest (highest permission) role from the roles.
+    /// </summary>
+    public static ApplicationRole GetHighestRole(IEnumerable<string> roles)
+    {
+        ApplicationRole result = StandardUser;
+
         foreach (var role in roles)
         {
-            if (RolePermissionPriority.TryGetValue(role, out int value))
+            if (RolePermissionPriority.TryGetValue(role, out ApplicationRole? value))
             {
-                queue.Enqueue(role, value);
+                if (value.Priority < result.Priority)
+                {
+                    result = value;
+                }
             }
         }
-        return queue.Count > 0 ? queue.Peek() : StandardUser;
+
+        return result;
+    }
+
+    public static ApplicationRole GetHighestRole(IEnumerable<Claim> claims)
+    {
+        return GetHighestRole(claims.Select(claim => claim.Value));
+    }
+
+    public static IQueryable<ApplicationRole> GetAllRoles()
+    {
+        return RolePermissionPriority.Values.AsQueryable();
     }
 }

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { PropType } from "vue";
-import { ProblemDetail } from "@/modules/problems-types";
+import {PropType} from "vue";
+import {ProblemDetail} from "@/modules/problems-types";
 
 // ui
-import { NCard, NH2, NSpace, NTag, NText } from "naive-ui";
-import { MdPreview } from "md-editor-v3";
+import {NCard, NH2, NSpace, NTag, NText} from "naive-ui";
+import {MdPreview} from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 
 /////////////////// Props ///////////////////
@@ -20,7 +20,7 @@ const id = "problem-detail-preview";
 
 <template>
   <n-card bordered>
-    <n-space vertical size="large">
+    <n-space size="large" vertical>
       <n-h2>
         <n-text type="primary"> {{ props.detail?.title }}</n-text>
       </n-h2>
@@ -33,9 +33,9 @@ const id = "problem-detail-preview";
         </n-tag>
       </n-space>
       <MdPreview
-        :editor-id="id"
-        preview-theme="vuepress"
-        :model-value="props.detail?.content"
+          :editor-id="id"
+          :model-value="props.detail?.content"
+          preview-theme="vuepress"
       />
     </n-space>
   </n-card>

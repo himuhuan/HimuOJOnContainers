@@ -1,7 +1,11 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using System.ComponentModel.DataAnnotations;
+
+#endregion
 
 namespace Identity.Server.Pages.Login
 {
@@ -9,8 +13,10 @@ namespace Identity.Server.Pages.Login
     {
         [Required]
         public string? Username { get; set; }
+
         [Required]
         public string? Password { get; set; }
+
         public bool RememberLogin { get; set; }
         public string? ReturnUrl { get; set; }
         public string? Button { get; set; }

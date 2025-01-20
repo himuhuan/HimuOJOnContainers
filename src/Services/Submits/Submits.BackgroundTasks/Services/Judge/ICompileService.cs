@@ -9,7 +9,7 @@ public sealed record CompilerConfiguration(
 public class CompileServicesOptions
 {
     public bool OutputCompilerMessageInLog { get; init; } = false;
-    
+
     public required Dictionary<string, CompilerConfiguration> Compilers { get; init; }
 }
 

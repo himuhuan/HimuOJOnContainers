@@ -1,6 +1,8 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
@@ -9,29 +11,35 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
+#endregion
+
 namespace Identity.Server.Pages.Grants
 {
     [SecurityHeaders]
     [Authorize]
     public class Index : PageModel
     {
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clients;
-        private readonly IResourceStore _resources;
         private readonly IEventService _events;
+        private readonly IIdentityServerInteractionService _interaction;
+        private readonly IResourceStore _resources;
 
-        public Index(IIdentityServerInteractionService interaction,
+        public Index(
+            IIdentityServerInteractionService interaction,
             IClientStore clients,
             IResourceStore resources,
             IEventService events)
         {
             _interaction = interaction;
-            _clients = clients;
-            _resources = resources;
-            _events = events;
+            _clients     = clients;
+            _resources   = resources;
+            _events      = events;
         }
 
         public ViewModel View { get; set; } = default!;
+
+        [BindProperty]
+        public string? ClientId { get; set; }
 
         public async Task OnGet()
         {
@@ -45,17 +53,20 @@ namespace Identity.Server.Pages.Grants
                 {
                     var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
 
-                    var item = new GrantViewModel()
+                    var item = new GrantViewModel
                     {
-                        ClientId = client.ClientId,
-                        ClientName = client.ClientName ?? client.ClientId,
+                        ClientId      = client.ClientId,
+                        ClientName    = client.ClientName ?? client.ClientId,
                         ClientLogoUrl = client.LogoUri,
-                        ClientUrl = client.ClientUri,
-                        Description = grant.Description,
-                        Created = grant.CreationTime,
-                        Expires = grant.Expiration,
-                        IdentityGrantNames = resources.IdentityResources.Select(x => x.DisplayName ?? x.Name).ToArray(),
-                        ApiGrantNames = resources.ApiScopes.Select(x => x.DisplayName ?? x.Name).ToArray()
+                        ClientUrl     = client.ClientUri,
+                        Description   = grant.Description,
+                        Created       = grant.CreationTime,
+                        Expires       = grant.Expiration,
+                        IdentityGrantNames = resources.IdentityResources
+                            .Select(x => x.DisplayName ?? x.Name)
+                            .ToArray(),
+                        ApiGrantNames = resources.ApiScopes.Select(x => x.DisplayName ?? x.Name)
+                            .ToArray()
                     };
 
                     list.Add(item);
@@ -67,9 +78,6 @@ namespace Identity.Server.Pages.Grants
                 Grants = list
             };
         }
-
-        [BindProperty]
-        public string? ClientId { get; set; }
 
         public async Task<IActionResult> OnPost()
         {

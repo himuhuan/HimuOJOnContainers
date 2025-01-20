@@ -1,7 +1,9 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using System.Reflection;
+
+#endregion
 
 namespace Identity.Server.Data
 {
@@ -10,7 +12,8 @@ namespace Identity.Server.Data
         public IdentityDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
-            var connectionString = "Host=localhost;Database=HimuOJIdentityDB;Username=postgres;Password=liuhuan123";
+            var connectionString =
+                "Host=localhost;Database=HimuOJIdentityDB;Username=postgres;Password=liuhuan123";
             optionsBuilder.UseNpgsql(connectionString);
             return new IdentityDbContext(optionsBuilder.Options);
         }

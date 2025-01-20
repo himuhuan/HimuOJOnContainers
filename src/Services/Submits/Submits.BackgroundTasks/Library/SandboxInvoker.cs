@@ -1,46 +1,31 @@
-﻿using System.Runtime.InteropServices;
+﻿#region
+
+using System.Runtime.InteropServices;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Library;
 
 public static partial class SandboxInvoker
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    private struct InternalSandboxConfiguration
-    {
-        public IntPtr TaskName;
-        public IntPtr UserCommand;
-        public IntPtr WorkingDirectory;
-        public IntPtr EnvironmentVariables;
-        public ushort EnvironmentVariablesCount;
-        public IntPtr InputFile;
-        public IntPtr OutputFile;
-        public IntPtr ErrorFile;
-        public IntPtr LogFile;
-        public ulong MaxMemoryToCrash;
-        public ulong MaxMemory;
-        public ulong MaxStack;
-        public ulong MaxCpuTime;
-        public ulong MaxRealTime;
-        public ulong MaxOutputSize;
-        public int MaxProcessCount;
-        public int Policy;
-    }
-
     /// <summary>
-    /// P/Invoke to call
-    /// <code>
+    ///     P/Invoke to call
+    ///     <code>
     /// int StartSandbox(const SandboxConfiguration *config, SandboxResult *result);
     /// </code>
     /// </summary>
     /// <remarks>
-    /// See "SandboxRunner/SandboxRunnerCore/Sandbox.h" for more details.
+    ///     See "SandboxRunner/SandboxRunnerCore/Sandbox.h" for more details.
     /// </remarks>
     [LibraryImport("Library/libsandbox.so")]
-    private static partial int StartSandbox(ref InternalSandboxConfiguration configuration, ref SandboxResult result);
+    private static partial int StartSandbox(
+        ref InternalSandboxConfiguration configuration,
+        ref SandboxResult result);
 
     [LibraryImport("Library/libsandbox.so")]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool IsSandboxConfigurationVaild(ref InternalSandboxConfiguration configuration);
+    private static partial bool IsSandboxConfigurationVaild(
+        ref InternalSandboxConfiguration configuration);
 
     public static SandboxResult RunSandbox(SandboxConfiguration configuration)
     {
@@ -126,5 +111,27 @@ public static partial class SandboxInvoker
         Marshal.FreeHGlobal(internalConfiguration.LogFile);
 
         return result;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct InternalSandboxConfiguration
+    {
+        public IntPtr TaskName;
+        public IntPtr UserCommand;
+        public IntPtr WorkingDirectory;
+        public IntPtr EnvironmentVariables;
+        public ushort EnvironmentVariablesCount;
+        public IntPtr InputFile;
+        public IntPtr OutputFile;
+        public IntPtr ErrorFile;
+        public IntPtr LogFile;
+        public ulong MaxMemoryToCrash;
+        public ulong MaxMemory;
+        public ulong MaxStack;
+        public ulong MaxCpuTime;
+        public ulong MaxRealTime;
+        public ulong MaxOutputSize;
+        public int MaxProcessCount;
+        public int Policy;
     }
 }

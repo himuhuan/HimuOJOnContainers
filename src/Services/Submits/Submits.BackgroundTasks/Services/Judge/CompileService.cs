@@ -1,13 +1,17 @@
-﻿using System.Diagnostics;
+﻿#region
+
+using System.Diagnostics;
 using Microsoft.Extensions.Options;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services.Judge;
 
 public class CompileService : ICompileService
 {
-    private readonly CompileServicesOptions _options;
-    private readonly ILogger<CompileService> _logger;
     private readonly ILocalCacheFileService _files;
+    private readonly ILogger<CompileService> _logger;
+    private readonly CompileServicesOptions _options;
 
     public CompileService(
         IOptionsMonitor<CompileServicesOptions> options,
@@ -30,11 +34,13 @@ public class CompileService : ICompileService
         }
 
         string tempSourcePath =
-            _files.CombineAndMakeSureDirectoryExists("sources", taskName + compilerOptions.Extension);
-        string tempExecutablePath = _files.CombineAndMakeSureDirectoryExists("executables", taskName);
+            _files.CombineAndMakeSureDirectoryExists("sources",
+                taskName + compilerOptions.Extension);
+        string tempExecutablePath =
+            _files.CombineAndMakeSureDirectoryExists("executables", taskName);
         string commandLine = compilerOptions.Template
-                                            .Replace("{source}", tempSourcePath)
-                                            .Replace("{output}", tempExecutablePath);
+            .Replace("{source}", tempSourcePath)
+            .Replace("{output}", tempExecutablePath);
 #if DEBUG
         if (File.Exists(tempSourcePath))
         {
@@ -65,7 +71,8 @@ public class CompileService : ICompileService
             return null;
         }
 
-        _logger.LogInformation("--- {TaskId}: Compilation finished with exit code {ExitCode}", taskName,
+        _logger.LogInformation("--- {TaskId}: Compilation finished with exit code {ExitCode}",
+            taskName,
             process.ExitCode);
 
 #if !DEBUG

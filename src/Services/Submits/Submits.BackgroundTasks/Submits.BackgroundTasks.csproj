@@ -27,21 +27,19 @@
         <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
         <ProjectReference Include="..\Submits.Infrastructure\Submits.Infrastructure.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Protobuf Include="..\..\Problems\Problems.API\Proto\problems.proto" GrpcServices="Client"/>
     </ItemGroup>
 
     <ItemGroup>
         <Folder Update="..\..\Problems\Problems.API\Proto"/>
-        <Folder Include="logs\" />
-        <Folder Include="workspace\" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Library\libsandbox.so">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="Library\libsandbox.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

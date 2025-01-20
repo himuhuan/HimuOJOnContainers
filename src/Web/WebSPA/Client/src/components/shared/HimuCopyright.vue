@@ -36,21 +36,21 @@
           <span class="copyright-header"> 开源社区 </span>
           <p>本项目的诞生离不开以下开源项目与社区的帮助：</p>
           <n-space>
-            <img :src="DotNetBrand" alt="DotNetBrand" width="32" height="32" />
-            <img :src="NaiveLogo" alt="NaiveLogo" width="32" height="32" />
+            <img :src="DotNetBrand" alt="DotNetBrand" width="32" height="32"/>
+            <img :src="NaiveLogo" alt="NaiveLogo" width="32" height="32"/>
             <n-icon size="32" :color="themeVars.primaryColor">
-              <logo-docker />
+              <logo-docker/>
             </n-icon>
             <n-icon size="32" :color="themeVars.primaryColor">
-              <logo-vue />
+              <logo-vue/>
             </n-icon>
           </n-space>
         </n-space>
       </n-grid-item>
     </n-grid>
-    <n-hr />
+    <n-hr/>
     <n-space vertical>
-      <n-text> Copyright &copy; 2023-2024 Himu. </n-text>
+      <n-text> Copyright &copy; 2023-2024 Himu.</n-text>
       <n-text>
         本项目是开源项目,
         请参看源代码的版权声明。本软件没有任何担保；包括没有适销性和某一专用目的下的适用性担保
@@ -60,19 +60,11 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  NSpace,
-  NGrid,
-  NGridItem,
-  NIcon,
-  NHr,
-  NText,
-  useThemeVars,
-} from "naive-ui";
-import { defineProps } from "vue";
+import {NGrid, NGridItem, NHr, NIcon, NSpace, NText, useThemeVars,} from "naive-ui";
+import {defineProps} from "vue";
 import DotNetBrand from "@/assets/images/brand-dotnet.png";
 import NaiveLogo from "@/assets/images/naive-logo.svg";
-import { LogoDocker, LogoVue } from "@vicons/ionicons5";
+import {LogoDocker, LogoVue} from "@vicons/ionicons5";
 
 const props = defineProps({
   backgroundColor: {
@@ -89,8 +81,8 @@ const themeVars = useThemeVars();
   padding: 1rem 3rem;
   background-color: v-bind("themeVars.bodyColor");
   backdrop-filter: blur(10px);
-	top: 0;
-	width: 100%;
+  top: 0;
+  width: 100%;
 }
 
 #copyright a {

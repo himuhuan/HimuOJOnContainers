@@ -19,11 +19,11 @@ public enum ApiResultCode
     DbOperationFailed,
     DuplicateItem,
     StorageFailed,
-    
+
     InvalidData,
 
     /// <summary>
-    /// OutOfLimit means that some object in request exceeds the limit.
+    ///     OutOfLimit means that some object in request exceeds the limit.
     /// </summary>
     OutOfLimit
 }

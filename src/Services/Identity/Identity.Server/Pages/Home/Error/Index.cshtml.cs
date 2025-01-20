@@ -1,9 +1,13 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Identity.Server.Pages.Error
 {
@@ -11,16 +15,16 @@ namespace Identity.Server.Pages.Error
     [SecurityHeaders]
     public class Index : PageModel
     {
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly IWebHostEnvironment _environment;
-
-        public ViewModel View { get; set; } = new();
+        private readonly IIdentityServerInteractionService _interaction;
 
         public Index(IIdentityServerInteractionService interaction, IWebHostEnvironment environment)
         {
             _interaction = interaction;
             _environment = environment;
         }
+
+        public ViewModel View { get; set; } = new();
 
         public async Task OnGet(string? errorId)
         {

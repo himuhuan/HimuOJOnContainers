@@ -1,5 +1,4 @@
-﻿
-namespace Submits.BackgroundTasks.Services.Judge;
+﻿namespace Submits.BackgroundTasks.Services.Judge;
 
 public interface IJudgeService
 {

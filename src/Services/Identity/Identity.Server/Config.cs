@@ -1,6 +1,9 @@
-﻿using Duende.IdentityServer;
+﻿#region
+
+using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
-using Serilog;
+
+#endregion
 
 namespace Identity.Server
 {
@@ -42,8 +45,9 @@ namespace Identity.Server
 
                     AllowedGrantTypes = GrantTypes.Code,
 
-                    RedirectUris           = { $"{configuration["WebSpaClient"]}/signin-oidc" },
-                    PostLogoutRedirectUris = { $"{configuration["WebSpaClient"]}/signout-callback-oidc" },
+                    RedirectUris = { $"{configuration["WebSpaClient"]}/signin-oidc" },
+                    PostLogoutRedirectUris =
+                        { $"{configuration["WebSpaClient"]}/signout-callback-oidc" },
 
                     AllowOfflineAccess               = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
@@ -66,8 +70,12 @@ namespace Identity.Server
                     AllowedGrantTypes           = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["ProblemsApiExternalUrl"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["ProblemsApiExternalUrl"]}/swagger/" },
+                    RedirectUris =
+                    {
+                        $"{configuration["ProblemsApiExternalUrl"]}/api-reference/v1"
+                    },
+                    PostLogoutRedirectUris =
+                        { $"{configuration["ProblemsApiExternalUrl"]}/api-reference/v1" },
 
                     AllowedScopes =
                     {
@@ -76,7 +84,7 @@ namespace Identity.Server
                         "problems"
                     }
                 },
-                
+
                 new Client
                 {
                     ClientId      = "submitsswaggerui",
@@ -86,8 +94,12 @@ namespace Identity.Server
                     AllowedGrantTypes           = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["SubmitsApiExternalUrl"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["SubmitsApiExternalUrl"]}/swagger/" },
+                    RedirectUris =
+                    {
+                        $"{configuration["SubmitsApiExternalUrl"]}/api-reference/v1"
+                    },
+                    PostLogoutRedirectUris =
+                        { $"{configuration["SubmitsApiExternalUrl"]}/api-reference/v1" },
 
                     AllowedScopes =
                     {

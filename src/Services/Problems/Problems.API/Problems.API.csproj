@@ -1,43 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace> HimuOJ.Services.Problems.API </RootNamespace>
-		<UserSecretsId>8a700adb-abc7-47d8-b509-216f9404b4c0</UserSecretsId>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>..\..\..\..</DockerfileContext>
-		<DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<NoWarn>$(NoWarn);1591</NoWarn>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>HimuOJ.Services.Problems.API</RootNamespace>
+        <UserSecretsId>8a700adb-abc7-47d8-b509-216f9404b4c0</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..\..\..</DockerfileContext>
+        <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0"/>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Application\Validations\" />
-	  <Folder Include="Services\" />
-	  <Folder Include="Setup\" />
-	</ItemGroup>
+    <ItemGroup>
+        <Folder Include="Application\Services\" />
+        <Folder Include="Application\Validations\"/>
+        <Folder Include="Setup\"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProtoBuf Include="Proto\problems.proto" GrpcServices="Server" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj" />
-	  <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj" />
-	  <ProjectReference Include="..\Problems.Instructure\Problems.Infrastructure.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProtoBuf Include="Proto\problems.proto" GrpcServices="Server"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj"/>
+        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
+        <ProjectReference Include="..\Problems.Instructure\Problems.Infrastructure.csproj"/>
+    </ItemGroup>
 
 </Project>

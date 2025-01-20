@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿#region
+
+using System.Reflection;
 using Grpc.Net.Client;
 using GrpcProblems;
 using HimuOJ.Common.WebHostDefaults.Extensions;
@@ -6,12 +8,13 @@ using HimuOJ.Services.Submits.Infrastructure;
 using HimuOJ.Services.Submits.Infrastructure.Repositories;
 using Serilog;
 using Serilog.Events;
-using Submits.BackgroundTasks.Library;
 using Submits.BackgroundTasks.Services;
 using Submits.BackgroundTasks.Services.Judge;
 using Submits.BackgroundTasks.Services.Remote;
 using Submits.BackgroundTasks.Services.Sandbox;
 using Submits.BackgroundTasks.Services.Subscribers;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Extensions;
 
@@ -22,17 +25,17 @@ public static class HostingExtensions
         builder.Services.AddSerilog((services, config) =>
         {
             config.ReadFrom
-                  .Services(services)
-                  .MinimumLevel
-                  .Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                  .MinimumLevel
-                  .Override("Microsoft.EntityFrameworkCore", LogEventLevel.Verbose)
-                  .Enrich
-                  .FromLogContext()
-                  .WriteTo
-                  .Console();
+                .Services(services)
+                .MinimumLevel
+                .Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel
+                .Override("Microsoft.EntityFrameworkCore", LogEventLevel.Verbose)
+                .Enrich
+                .FromLogContext()
+                .WriteTo
+                .Console();
         });
-        
+
         builder.Services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
@@ -45,7 +48,7 @@ public static class HostingExtensions
         builder.Services.AddTransient<ISubmitsSubscriberService, SubmitsSubscriberService>();
 
         builder.ConfigureGrpcService<ProblemsService.ProblemsServiceClient>("ProblemsGrpcUrl")
-               .AddSingleton<ProblemsServices>();
+            .AddSingleton<ProblemsServices>();
 
         builder.Services.ConfigureLocalCacheFileService(
             builder.Configuration.GetRequiredSection("LocalCacheFile"));
@@ -53,7 +56,8 @@ public static class HostingExtensions
         // builder.Services.Configure<SandboxServicesOptions>(builder.Configuration.GetSection("SandboxServices"));
         builder.Services.AddSingleton<ISandboxService, SandboxService>();
 
-        builder.Services.Configure<CompileServicesOptions>(builder.Configuration.GetRequiredSection("CompileServices"));
+        builder.Services.Configure<CompileServicesOptions>(
+            builder.Configuration.GetRequiredSection("CompileServices"));
         builder.Services.AddSingleton<ICompileService, CompileService>();
 
         builder.Services.AddScoped<IJudgeService, JudgeService>();
@@ -81,7 +85,8 @@ public static class HostingExtensions
                 var response = await client.CheckHealthAsync(new CheckHealthRequest());
                 if (response.Status != 0)
                 {
-                    Log.Fatal("gRPC service {Url} reports unexpected code: {Code}", address, response.Status);
+                    Log.Fatal("gRPC service {Url} reports unexpected code: {Code}", address,
+                        response.Status);
                     return false;
                 }
 
@@ -109,8 +114,8 @@ public static class HostingExtensions
         builder.Services.AddGrpcClient<TClient>(o => { o.Address = new Uri(grpcAddress); });
 
         var waitingForService = WaitForGrpcServiceReady(grpcAddress, TimeSpan.FromSeconds(30))
-                                .GetAwaiter()
-                                .GetResult();
+            .GetAwaiter()
+            .GetResult();
 
         if (!waitingForService)
         {

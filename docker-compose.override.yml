@@ -8,7 +8,7 @@ services:
       - SubmitsApiExternalUrl=http://localhost:5200
       - ConnectionStrings__IdentityDbContext=Host=host.docker.internal;Database=HimuOJIdentityDB;Username=postgres;Password=liuhuan123
     ports:
-      - "5001:80" 
+      - "5001:80"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

@@ -1,2 +1,6 @@
-﻿global using HimuOJ.Common;
+﻿#region
+
+global using HimuOJ.Common;
 global using HimuOJ.Common.DomainSeedWork;
+
+#endregion

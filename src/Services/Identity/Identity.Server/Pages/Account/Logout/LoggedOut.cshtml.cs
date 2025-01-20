@@ -1,9 +1,13 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Identity.Server.Pages.Logout
 {
@@ -13,12 +17,12 @@ namespace Identity.Server.Pages.Logout
     {
         private readonly IIdentityServerInteractionService _interactionService;
 
-        public LoggedOutViewModel View { get; set; } = default!;
-
         public LoggedOut(IIdentityServerInteractionService interactionService)
         {
             _interactionService = interactionService;
         }
+
+        public LoggedOutViewModel View { get; set; } = default!;
 
         public async Task OnGet(string? logoutId)
         {
@@ -28,8 +32,10 @@ namespace Identity.Server.Pages.Logout
             View = new LoggedOutViewModel
             {
                 AutomaticRedirectAfterSignOut = LogoutOptions.AutomaticRedirectAfterSignOut,
-                PostLogoutRedirectUri = logout?.PostLogoutRedirectUri,
-                ClientName = String.IsNullOrEmpty(logout?.ClientName) ? logout?.ClientId : logout?.ClientName,
+                PostLogoutRedirectUri         = logout?.PostLogoutRedirectUri,
+                ClientName = String.IsNullOrEmpty(logout?.ClientName)
+                    ? logout?.ClientId
+                    : logout?.ClientName,
                 SignOutIframeUrl = logout?.SignOutIFrameUrl
             };
         }

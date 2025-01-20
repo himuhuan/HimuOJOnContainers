@@ -1,21 +1,15 @@
-﻿using HimuOJ.Services.Problems.Infrastructure.EntityConfigurations;
+﻿#region
+
 using System.Data;
+using System.Diagnostics;
+using HimuOJ.Services.Problems.Infrastructure.EntityConfigurations;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.Infrastructure;
 
 public class ProblemsDbContext : DbContext, IUnitOfWork
 {
-    public DbSet<Problem> Problems { get; set; }
-    public DbSet<TestPoint> TestPoints { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.HasDefaultSchema("problems");
-        modelBuilder.ApplyConfiguration(new ProblemEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new TestPointEntityConfiguration());
-    }
-
     private readonly IMediator _mediator;
     private IDbContextTransaction _currentTransaction;
 
@@ -28,10 +22,11 @@ public class ProblemsDbContext : DbContext, IUnitOfWork
         : base(options)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        System.Diagnostics.Debug.WriteLine("ProblemsDbContext::ctor ->" + base.GetHashCode());
+        Debug.WriteLine("ProblemsDbContext::ctor ->" + base.GetHashCode());
     }
 
-    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
+    public DbSet<Problem> Problems { get; set; }
+    public DbSet<TestPoint> TestPoints { get; set; }
 
     public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -42,6 +37,16 @@ public class ProblemsDbContext : DbContext, IUnitOfWork
         await base.SaveChangesAsync(cancellationToken);
         return true;
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDefaultSchema("problems");
+        modelBuilder.ApplyConfiguration(new ProblemEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TestPointEntityConfiguration());
+    }
+
+    public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
 
     private async Task DispatchDomainEventsAsync()
     {
@@ -73,7 +78,8 @@ public class ProblemsDbContext : DbContext, IUnitOfWork
     {
         ArgumentNullException.ThrowIfNull(transaction);
         if (transaction != _currentTransaction)
-            throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+            throw new InvalidOperationException(
+                $"Transaction {transaction.TransactionId} is not current");
 
         try
         {
@@ -94,6 +100,7 @@ public class ProblemsDbContext : DbContext, IUnitOfWork
             }
         }
     }
+
     public void RollbackTransaction()
     {
         try

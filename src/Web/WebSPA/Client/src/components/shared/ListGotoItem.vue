@@ -1,7 +1,6 @@
-<script setup lang="ts">
-import { NListItem, NSpace, NIcon } from "naive-ui";
-import { ArrowForwardIosRound as ArrowRightIcon } from "@vicons/material";
-import { useThemeVars } from "naive-ui";
+<script lang="ts" setup>
+import {NIcon, NListItem, NSpace, useThemeVars} from "naive-ui";
+import {ArrowForwardIosRound as ArrowRightIcon} from "@vicons/material";
 
 const themeVars = useThemeVars();
 </script>
@@ -15,7 +14,7 @@ const themeVars = useThemeVars();
         <slot></slot>
       </span>
       <n-icon>
-        <arrow-right-icon />
+        <arrow-right-icon/>
       </n-icon>
     </n-space>
   </n-list-item>

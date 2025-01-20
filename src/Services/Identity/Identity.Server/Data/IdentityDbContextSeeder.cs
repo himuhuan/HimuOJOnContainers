@@ -1,8 +1,11 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Extensions;
 using Identity.Server.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace Identity.Server.Data
 {
@@ -18,22 +21,18 @@ namespace Identity.Server.Data
             {
                 if (!await context.Roles.AnyAsync())
                 {
-                    foreach (string role in ApplicationRole.RolePermissionPriority.Keys)
+                    foreach (var role in ApplicationRole.GetAllRoles())
                     {
-                        await roleManager.CreateAsync(new ApplicationRole
-                        {
-                            Name = role,
-                            NormalizedName = role.ToUpper()
-                        });
-
-                        logger.LogDebug("Role created: {RoleName}", role);
+                        await roleManager.CreateAsync(role);
+                        logger.LogDebug("Role created: {@Role}", role);
                     }
                 }
 
                 if (!await context.Users.AnyAsync())
                 {
                     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                    var (user, rawPassword) = GetInitialUserFromConfig(configuration);
+                    (ApplicationUser user, string rawPassword) =
+                        GetInitialUserFromConfig(configuration);
                     var result = await userManager.CreateAsync(user, rawPassword);
 
                     if (!result.Succeeded)
@@ -42,13 +41,16 @@ namespace Identity.Server.Data
                     }
 
                     logger.LogDebug("Initial user created: {UserName}", user.UserName);
+                    await userManager.AddToRolesAsync(
+                        user, ApplicationRole.GetAllRoles().Select(r => r.Name!));
                 }
 
                 await context.SaveChangesAsync();
             }
         }
 
-        private static (ApplicationUser user, string rawPassword) GetInitialUserFromConfig(IConfiguration configuration)
+        private static (ApplicationUser user, string rawPassword) GetInitialUserFromConfig(
+            IConfiguration configuration)
         {
             var initialUserConfig = configuration.GetSection("InitialUser");
             var userName = initialUserConfig.GetValue<string>("Name");
@@ -59,10 +61,12 @@ namespace Identity.Server.Data
 
             var user = new ApplicationUser
             {
+                // TODO: may be better to use a random GUID in production?
+                Id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).ToString(),
                 UserName = userName,
-                Email = mail
+                Email = mail,
+                EmailConfirmed = true
             };
-            user.EmailConfirmed = true;
 
             return (user, password);
         }

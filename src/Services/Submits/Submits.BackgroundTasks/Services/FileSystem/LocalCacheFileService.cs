@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿#region
+
+using Microsoft.Extensions.Options;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services;
 
@@ -11,18 +15,24 @@ public class LocalCacheFileService : ILocalCacheFileService
         _options = options.Value;
     }
 
-    public async Task<string> CreateOrGetTextFileAsync(string directory, string fileName, string content)
+    public async Task<string> CreateOrGetTextFileAsync(
+        string directory,
+        string fileName,
+        string content,
+        long prefix)
     {
         var filePath = Path.Combine(BasePath, directory);
         if (!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);
+        
+        fileName = $"{prefix}-{fileName}";
         
         filePath = Path.Combine(filePath, fileName);
         if (File.Exists(filePath))
         {
             return filePath;
         }
-        
+
         await File.WriteAllTextAsync(filePath, content);
         return filePath;
     }
@@ -35,17 +45,18 @@ public class LocalCacheFileService : ILocalCacheFileService
         return Path.Combine(fullPath, fileName);
     }
 
-    public string BasePath => Path.Combine(Directory.GetCurrentDirectory(), _options.CacheDirectory);
+    public string BasePath =>
+        Path.Combine(Directory.GetCurrentDirectory(), _options.CacheDirectory);
 
     public async Task<string> CreateOrGetTextFileAsync(string fileName, string content)
     {
         var filePath = Path.Combine(BasePath, fileName);
-        
+
         if (File.Exists(filePath))
         {
             return filePath;
         }
-        
+
         await File.WriteAllTextAsync(filePath, content);
         return filePath;
     }

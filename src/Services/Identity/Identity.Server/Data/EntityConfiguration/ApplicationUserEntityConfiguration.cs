@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿#region
+
 using Identity.Server.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace Identity.Server.Data.EntityConfiguration
 {

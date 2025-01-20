@@ -11,8 +11,11 @@ namespace Identity.Server.Pages.Ciba
 
         public string? BindingMessage { get; set; }
 
-        public IEnumerable<ScopeViewModel> IdentityScopes { get; set; } = Enumerable.Empty<ScopeViewModel>();
-        public IEnumerable<ScopeViewModel> ApiScopes { get; set; } = Enumerable.Empty<ScopeViewModel>();
+        public IEnumerable<ScopeViewModel> IdentityScopes { get; set; } =
+            Enumerable.Empty<ScopeViewModel>();
+
+        public IEnumerable<ScopeViewModel> ApiScopes { get; set; } =
+            Enumerable.Empty<ScopeViewModel>();
     }
 
     public class ScopeViewModel
@@ -24,7 +27,9 @@ namespace Identity.Server.Pages.Ciba
         public bool Emphasize { get; set; }
         public bool Required { get; set; }
         public bool Checked { get; set; }
-        public IEnumerable<ResourceViewModel> Resources { get; set; } = Enumerable.Empty<ResourceViewModel>();
+
+        public IEnumerable<ResourceViewModel> Resources { get; set; } =
+            Enumerable.Empty<ResourceViewModel>();
     }
 
     public class ResourceViewModel

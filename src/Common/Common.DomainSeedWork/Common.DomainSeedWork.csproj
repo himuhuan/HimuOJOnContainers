@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace> HimuOJ.Common.DomainSeedWork </RootNamespace>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>HimuOJ.Common.DomainSeedWork</RootNamespace>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="MediatR" Version="12.4.1" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MediatR" Version="12.4.1"/>
+    </ItemGroup>
 
 </Project>

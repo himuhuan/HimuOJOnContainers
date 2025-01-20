@@ -17,7 +17,7 @@ public class SandboxConfiguration(string taskName, string command)
     public ulong MaxOutputSize { get; init; } = 0;
     public int MaxProcessCount { get; init; } = -1;
     public int Policy { get; init; } = 0;
-    
+
     // Only used in client
     public bool OutputLogFileDetail { get; init; } = true;
 }

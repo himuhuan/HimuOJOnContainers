@@ -1,3 +1,5 @@
 ﻿namespace HimuOJ.Common.DomainSeedWork;
 
-public interface IAggregateRoot { }
+public interface IAggregateRoot
+{
+}

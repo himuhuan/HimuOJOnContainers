@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: src/Services/Submits/Submits.API/Dockerfile
     depends_on:
-      - rabbitmq 
+      - rabbitmq
   
   webspa-bff:
     image: ${DOCKER_REGISTRY-}webspa

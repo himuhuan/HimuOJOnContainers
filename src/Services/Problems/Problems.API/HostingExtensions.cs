@@ -1,10 +1,16 @@
-﻿using HimuOJ.Common.WebHostDefaults.Extensions;
+﻿#region
+
+using HimuOJ.Common.WebHostDefaults.Extensions;
+using HimuOJ.Services.Problems.API.Application.Auth;
 using HimuOJ.Services.Problems.API.Application.Queries;
 using HimuOJ.Services.Problems.API.GrpcServices;
 using HimuOJ.Services.Problems.API.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.API;
 
@@ -21,13 +27,16 @@ public static class HostingExtensions
         builder.Services.AddDbContextMigration<ProblemsDbContext, ProblemsDbContextSeeder>();
 
         builder.Services.AddScoped<IProblemsRepository, ProblemsRepository>();
-        builder.Services.AddScoped<IProblemsQuery, ProblemsEFQuery>();
+        builder.Services.AddScoped<IProblemsQuery, ProblemsQuery>();
 
         builder.Services.AddControllers();
         builder.Services.AddGrpc();
-        
+
         builder.AddDefaultOpenApi();
         builder.AddDefaultAuthenticationPolicy();
+        
+        builder.Services.AddSingleton<IAuthorizationHandler, ProblemAuthorizationCrudHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, ProblemVoAuthorizationCrudHandler>();
 
         return builder.Build();
     }

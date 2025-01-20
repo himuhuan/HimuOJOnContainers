@@ -1,29 +1,31 @@
-﻿using DotNetCore.CAP;
+﻿#region
 
+using DotNetCore.CAP;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Submits.API.Application.IntegrationEvents;
 using HimuOJ.Services.Submits.API.Hubs;
 using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using Microsoft.AspNetCore.SignalR;
-
 using Submits.BackgroundTasks.Services.IntegrationEvents;
+
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Services;
 
 public class EventBusService : ICapSubscribe, IEventBusService
 {
-    private readonly ILogger<EventBusService> _logger;
-    private readonly IHubContext<SubmissionStatusHub> _hubContext;
     private readonly ICapPublisher _bus;
+    private readonly IHubContext<SubmissionStatusHub> _hubContext;
+    private readonly ILogger<EventBusService> _logger;
 
     public EventBusService(
         ILogger<EventBusService> logger,
         IHubContext<SubmissionStatusHub> hubContext,
         ICapPublisher bus)
     {
-        _logger = logger;
+        _logger     = logger;
         _hubContext = hubContext;
-        _bus = bus;
+        _bus        = bus;
     }
 
     public async Task PublishSubmissionReadyToJudgeAsync(int submissionId, int? problemId)
@@ -34,7 +36,7 @@ public class EventBusService : ICapSubscribe, IEventBusService
         await _bus.PublishEventAsync(new SubmissionReadyToJudgeIntegrationEvent
         {
             SubmissionId = submissionId,
-            ProblemId = problemId.GetValueOrDefault(0)
+            ProblemId    = problemId.GetValueOrDefault(0)
         });
     }
 
@@ -45,8 +47,8 @@ public class EventBusService : ICapSubscribe, IEventBusService
     {
         _logger.LogInformation("Submission {SubmissionId} judge finished with status {Status}.",
             @event.SubmissionId, @event.Status);
-        await _hubContext.SendSubmissionStatusAsync(@event.SubmissionId, 
-            @event.Status.ToString(), 
+        await _hubContext.SendSubmissionStatusAsync(@event.SubmissionId,
+            @event.Status.ToString(),
             @event.Usage);
     }
 

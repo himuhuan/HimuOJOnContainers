@@ -5,7 +5,8 @@ namespace Identity.Server.Pages.Grants
 {
     public class ViewModel
     {
-        public IEnumerable<GrantViewModel> Grants { get; set; } = Enumerable.Empty<GrantViewModel>();
+        public IEnumerable<GrantViewModel> Grants { get; set; } =
+            Enumerable.Empty<GrantViewModel>();
     }
 
     public class GrantViewModel

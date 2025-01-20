@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace HimuOJ.Services.Problems.Infrastructure.EntityConfigurations;
 
@@ -8,7 +12,7 @@ public class TestPointEntityConfiguration : IEntityTypeConfiguration<TestPoint>
     {
         builder.ToTable("t_testpoints");
         builder.Ignore(tp => tp.DomainEvents);
-        
+
         builder.Property(tp => tp.Id).UseHiLo("testpointseq");
 
         builder.Property(tp => tp.ProblemId)
@@ -16,5 +20,11 @@ public class TestPointEntityConfiguration : IEntityTypeConfiguration<TestPoint>
 
         builder.Property(tp => tp.Remarks)
             .HasMaxLength(2000);
+        
+        builder.Property(tp => tp.ResourceType)
+            .IsRequired()
+            .HasMaxLength(20)
+            .HasDefaultValue(TestPointResourceType.Text)
+            .HasConversion<string>();
     }
 }

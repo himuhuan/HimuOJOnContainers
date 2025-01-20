@@ -1,24 +1,19 @@
+#region
+
 using System.Security.Claims;
-
-using DotNetCore.CAP;
-
 using HimuOJ.Common.WebApiComponents.Extensions;
-using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
-using HimuOJ.Services.Submits.API.Application.IntegrationEvents;
 using HimuOJ.Services.Submits.API.Application.Objects;
 using HimuOJ.Services.Submits.API.Application.Queries;
 using HimuOJ.Services.Submits.API.Services;
 using HimuOJ.Services.Submits.Domain.AggregatesModel.SubmitAggregate;
 using HimuOJ.Services.Submits.Domain.Events;
 using HimuOJ.Services.Submits.Infrastructure.Repositories;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Submits.BackgroundTasks.Services.IntegrationEvents;
+#endregion
 
 namespace HimuOJ.Services.Submits.API.Controllers
 {
@@ -26,11 +21,11 @@ namespace HimuOJ.Services.Submits.API.Controllers
     [ApiController]
     public class SubmitsController : ControllerBase
     {
-        private readonly ISubmitsRepository _repository;
-        private readonly ISubmitsQuery _query;
-        private readonly IMediator _mediator;
         private readonly IEventBusService _bus;
         private readonly ILogger<SubmitsController> _logger;
+        private readonly IMediator _mediator;
+        private readonly ISubmitsQuery _query;
+        private readonly ISubmitsRepository _repository;
 
         public SubmitsController(
             ILogger<SubmitsController> logger,
@@ -39,11 +34,11 @@ namespace HimuOJ.Services.Submits.API.Controllers
             IEventBusService bus,
             ISubmitsQuery query)
         {
-            _logger = logger;
+            _logger     = logger;
             _repository = repository;
-            _mediator = mediator;
-            _bus = bus;
-            _query = query;
+            _mediator   = mediator;
+            _bus        = bus;
+            _query      = query;
         }
 
         [HttpPost]
@@ -77,6 +72,7 @@ namespace HimuOJ.Services.Submits.API.Controllers
             {
                 return NotFound();
             }
+
             await _bus.PublishSubmissionReadyToJudgeAsync(submission.Id, submission.ProblemId);
             return Ok();
         }
@@ -100,9 +96,19 @@ namespace HimuOJ.Services.Submits.API.Controllers
         public async Task<IActionResult> GetSubmission(int id)
         {
             var submission = await _query.GetSubmissionAsync(id);
-            if (submission == null) { return NotFound(); }
-            return submission.ToHttpApiResult(ApiResultCode.Ok);
+            return submission == null ? NotFound() : submission.ToHttpApiResult(ApiResultCode.Ok);
         }
 
+        /// <summary>
+        /// Retrieves the submission statistics for a specific user.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose statistics are to be retrieved.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the user's submission statistics.</returns>
+        [HttpGet("statistics/user-profile/{userId}")]
+        public async Task<IActionResult> GetStatisticsByUser(string userId)
+        {
+            var statistics = await _query.GetUserProfileStatisticsAsync(userId);
+            return statistics.ToHttpApiResult();
+        }
     }
 }

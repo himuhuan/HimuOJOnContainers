@@ -102,17 +102,17 @@ a {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
 }
 
 .slide-up-enter-from {
-  opacity: 0;
-  transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 .slide-up-leave-to {
-  opacity: 0;
-  transform: translateY(-30px);
+    opacity: 0;
+    transform: translateY(-30px);
 }
 
 .md-format {
@@ -144,10 +144,10 @@ a {
 }
 
 .creator-header {
-	font-size: 2em;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	font-weight: 300;
+    font-size: 2em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: 300;
 }
 
 .spining-container {
@@ -162,4 +162,4 @@ a {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-  }
+}

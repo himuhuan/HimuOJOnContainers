@@ -1,27 +1,34 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Identity.Server.Pages
 {
     public static class Extensions
     {
         /// <summary>
-        /// Determines if the authentication scheme support signout.
+        ///     Determines if the authentication scheme support signout.
         /// </summary>
-        internal static async Task<bool> GetSchemeSupportsSignOutAsync(this HttpContext context, string scheme)
+        internal static async Task<bool> GetSchemeSupportsSignOutAsync(
+            this HttpContext context,
+            string scheme)
         {
-            var provider = context.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
+            var provider = context.RequestServices
+                .GetRequiredService<IAuthenticationHandlerProvider>();
             var handler = await provider.GetHandlerAsync(context, scheme);
             return (handler is IAuthenticationSignOutHandler);
         }
 
         /// <summary>
-        /// Checks if the redirect URI is for a native client.
+        ///     Checks if the redirect URI is for a native client.
         /// </summary>
         internal static bool IsNativeClient(this AuthorizationRequest context)
         {
@@ -30,11 +37,11 @@ namespace Identity.Server.Pages
         }
 
         /// <summary>
-        /// Renders a loading page that is used to redirect back to the redirectUri.
+        ///     Renders a loading page that is used to redirect back to the redirectUri.
         /// </summary>
         internal static IActionResult LoadingPage(this PageModel page, string? redirectUri)
         {
-            page.HttpContext.Response.StatusCode = 200;
+            page.HttpContext.Response.StatusCode          = 200;
             page.HttpContext.Response.Headers["Location"] = "";
 
             return page.RedirectToPage("/Redirect/Index", new { RedirectUri = redirectUri });

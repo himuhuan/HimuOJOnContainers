@@ -1,6 +1,9 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
+#region
+
+using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
@@ -12,25 +15,30 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
+#endregion
+
 namespace Identity.Server.Pages.Logout
 {
     [SecurityHeaders]
     [AllowAnonymous]
     public class Index : PageModel
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
+        private readonly IIdentityServerInteractionService _interaction;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public Index(
+            SignInManager<ApplicationUser> signInManager,
+            IIdentityServerInteractionService interaction,
+            IEventService events)
+        {
+            _signInManager = signInManager;
+            _interaction   = interaction;
+            _events        = events;
+        }
 
         [BindProperty]
         public string? LogoutId { get; set; }
-
-        public Index(SignInManager<ApplicationUser> signInManager, IIdentityServerInteractionService interaction, IEventService events)
-        {
-            _signInManager = signInManager;
-            _interaction = interaction;
-            _events = events;
-        }
 
         public async Task<IActionResult> OnGet(string? logoutId)
         {
@@ -79,11 +87,12 @@ namespace Identity.Server.Pages.Logout
                 var idp = User.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
 
                 // raise the logout event
-                await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));
+                await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(),
+                    User.GetDisplayName()));
                 Telemetry.Metrics.UserLogout(idp);
 
                 // if it's a local login we can ignore this workflow
-                if (idp != null && idp != Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider)
+                if (idp != null && idp != IdentityServerConstants.LocalIdentityProvider)
                 {
                     // we need to see if the provider supports external logout
                     if (await HttpContext.GetSchemeSupportsSignOutAsync(idp))
@@ -91,7 +100,8 @@ namespace Identity.Server.Pages.Logout
                         // build a return URL so the upstream provider will redirect back
                         // to us after the user has logged out. this allows us to then
                         // complete our single sign-out processing.
-                        var url = Url.Page("/Account/Logout/Loggedout", new { logoutId = LogoutId });
+                        var url = Url.Page("/Account/Logout/Loggedout",
+                            new { logoutId = LogoutId });
 
                         // this triggers a redirect to the external provider for sign-out
                         return SignOut(new AuthenticationProperties { RedirectUri = url }, idp);

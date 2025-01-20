@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿#region
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+
+#endregion
 
 namespace HimuOJ.Common.WebHostDefaults.Infrastructure.OpenApi;
 
@@ -9,7 +13,8 @@ public class AuthenticationOperationFilter(string[] RequiredScopes) : IOperation
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var requireAuthorization = context.ApiDescription.ActionDescriptor.EndpointMetadata
-            .OfType<IAuthorizeData>().Any();
+            .OfType<IAuthorizeData>()
+            .Any();
 
         if (!requireAuthorization)
         {
@@ -17,14 +22,15 @@ public class AuthenticationOperationFilter(string[] RequiredScopes) : IOperation
         }
 
         operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
-        operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Permission denied" });
+        operation.Responses.TryAdd("403",
+            new OpenApiResponse { Description = "Permission denied" });
 
         var oAuthScheme = new OpenApiSecurityScheme
         {
             Reference = new OpenApiReference
             {
                 Type = ReferenceType.SecurityScheme,
-                Id = "oauth2"
+                Id   = "oauth2"
             }
         };
 
@@ -35,6 +41,5 @@ public class AuthenticationOperationFilter(string[] RequiredScopes) : IOperation
                 [oAuthScheme] = RequiredScopes
             }
         ];
-
     }
 }

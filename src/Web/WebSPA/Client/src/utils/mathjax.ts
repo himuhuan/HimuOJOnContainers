@@ -1,19 +1,19 @@
 // @ts-nocheck
 window.MathJax = {
     tex: {
-      inlineMath: [
-        ["$", "$"],
-        ["\\(", "\\)"],
-      ], 
-      displayMath: [
-        ["$$", "$$"],
-        ["\\[", "\\]"],
-      ],
+        inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+        ],
+        displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+        ],
     },
     startup: {
-      ready() {
-        MathJax.startup.defaultReady();
-      },
+        ready() {
+            MathJax.startup.defaultReady();
+        },
     },
-  };
+};
   

@@ -1,4 +1,6 @@
-﻿namespace HimuOJ.Services.Problems.Domain.AggregatesModel.ProblemAggregate;
+﻿using System.Text.Json.Serialization;
+
+namespace HimuOJ.Services.Problems.Domain.AggregatesModel.ProblemAggregate;
 
 public class ResourceLimit : ValueObject
 {
@@ -10,9 +12,16 @@ public class ResourceLimit : ValueObject
     {
     }
 
+    [JsonConstructor]
     public ResourceLimit(long maxMemoryLimitByte, long maxRealTimeLimitMilliseconds)
     {
-        MaxMemoryLimitByte = maxMemoryLimitByte;
+        MaxMemoryLimitByte           = maxMemoryLimitByte;
+        MaxRealTimeLimitMilliseconds = maxRealTimeLimitMilliseconds;
+    }
+    
+    public void Update(long maxMemoryLimitByte, long maxRealTimeLimitMilliseconds)
+    {
+        MaxMemoryLimitByte           = maxMemoryLimitByte;
         MaxRealTimeLimitMilliseconds = maxRealTimeLimitMilliseconds;
     }
 

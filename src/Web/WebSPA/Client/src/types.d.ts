@@ -1,4 +1,4 @@
-import { MessageApiInjection } from "naive-ui";
+import {MessageApiInjection} from "naive-ui";
 
 declare global {
     interface Window {

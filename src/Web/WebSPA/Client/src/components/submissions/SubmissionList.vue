@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {
 	ResourceUsage,
 	SubmissionList,
 	SubmissionListItem,
 } from "@/modules/submits-type";
-import { h, onMounted, ref, defineProps, onUnmounted } from "vue";
-import { DataTableColumn, NButton, NDataTable, useThemeVars } from "naive-ui";
+import { defineProps, h, onMounted, onUnmounted, ref } from "vue";
+import { DataTableColumn, NButton, NDataTable } from "naive-ui";
 import { getSubmissionList } from "@/services/submissionsApi";
 import AvatarWithText from "@/components/shared/AvatarWithText.vue";
 import SubmissionStatusTag from "./SubmissionStatusTag.vue";
@@ -24,12 +24,20 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	showProblemTitle: {
+		type: Boolean,
+		default: true,
+	},
 	filter: {
 		type: Object,
 		default: () => ({
 			problemId: undefined,
 			submitterId: undefined,
 		}),
+	},
+	pageSize: {
+		type: Number,
+		default: 20,
 	},
 });
 
@@ -54,23 +62,6 @@ const paginationRef = ref({
 });
 
 const tableColumns = ref<DataTableColumn[]>([
-	{
-		key: "problemTitle",
-		title: "题目",
-		resizable: true,
-		minWidth: "200px",
-		render(row: any) {
-			return h(
-				NButton,
-				{
-					text: true,
-					tag: "a",
-					href: `/problems/${row.problemId}`,
-				},
-				{ default: () => row.problemTitle }
-			);
-		},
-	},
 	{
 		key: "status",
 		title: "状态",
@@ -129,7 +120,11 @@ function handleRowProps(rowData: SubmissionListItem, _: number) {
 }
 
 let connection: signalR.HubConnection | null = null;
-async function fetchSubmissionList(page: number, pageSize: number = 30) {
+
+async function fetchSubmissionList(
+	page: number,
+	pageSize: number = props.pageSize
+) {
 	loadingRef.value = true;
 	getSubmissionList({
 		page,
@@ -186,6 +181,27 @@ function updateSubmissionStatusCallback(
 ////////////////////////// lifecycle //////////////////////////
 
 onMounted(async () => {
+
+  if (props.showProblemTitle) {
+		tableColumns.value.unshift({
+			key: "problemTitle",
+			title: "题目",
+			resizable: true,
+			minWidth: "200px",
+			render(row: any) {
+				return h(
+					NButton,
+					{
+						text: true,
+						tag: "a",
+						href: `/problems/${row.problemId}`,
+					},
+					{ default: () => row.problemTitle }
+				);
+			},
+		});
+	}
+
 	if (props.showUser) {
 		tableColumns.value.unshift({
 			key: "submitterName",
@@ -213,22 +229,22 @@ onMounted(async () => {
 
 <template>
 	<n-data-table
-		remote
-		striped
-		size="small"
-		:data="dataRef.items"
-		:pagination="paginationRef"
 		:columns="tableColumns"
+		:data="dataRef.items"
 		:loading="loadingRef"
+		:on-update:page="handlePageChange"
+		:pagination="paginationRef"
 		:row-key="(row) => row.problemCode"
 		:row-props="handleRowProps"
-		:on-update:page="handlePageChange"
+		remote
+		size="small"
+		striped
 	></n-data-table>
 
 	<!-- <pre>
-		Javascript: {{ JSON.stringify(dataRef, null, 2) }}
-	</pre
-	> -->
+    Javascript: {{ JSON.stringify(dataRef, null, 2) }}
+  </pre
+  > -->
 </template>
 
 <style scoped></style>

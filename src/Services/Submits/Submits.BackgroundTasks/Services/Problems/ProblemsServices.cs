@@ -1,9 +1,17 @@
-﻿using Grpc.Core;
+﻿#region
+
+using Grpc.Core;
 using GrpcProblems;
+
+#endregion
 
 namespace Submits.BackgroundTasks.Services.Remote;
 
+#region
+
 using GrpcProblemsClient = ProblemsService.ProblemsServiceClient;
+
+#endregion
 
 public class ProblemsServices
 {
@@ -14,7 +22,7 @@ public class ProblemsServices
         _client = client;
     }
 
-    public async Task<GetProblemEssentialPartForJudgeResponse?> 
+    public async Task<GetProblemEssentialPartForJudgeResponse?>
         GetProblemEssentialPartForJudgeAsync(int problemId)
     {
         var request = new GetProblemEssentialPartForJudgeRequest

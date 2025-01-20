@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# No Identity Server generated key files
+src/Services/Identity/Identity.Server/keys/
+
+src/Services/Submits/Submits.BackgroundTasks/workspace/
+
 # User-specific files
 *.rsuser
 *.suo
