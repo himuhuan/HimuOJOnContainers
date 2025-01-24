@@ -24,7 +24,7 @@ namespace Identity.Server.Models
 
         #region Constants
 
-        public const string DEFAULT_AVATAR = "/static/users/default/default_avatar.png";
+        public const string DEFAULT_AVATAR = "default_avatar.png";
         public const string DEFAULT_BACKGROUND = "";
 
         #endregion

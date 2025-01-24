@@ -1,5 +1,7 @@
 ﻿#region
 
+using Common.BucketStorage.Minio;
+using HimuOJ.Common.BucketStorage;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Problems.API.Application.Auth;
 using HimuOJ.Services.Problems.API.Application.Queries;
@@ -8,6 +10,7 @@ using HimuOJ.Services.Problems.API.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Minio;
 using Serilog;
 
 #endregion
@@ -37,6 +40,9 @@ public static class HostingExtensions
         
         builder.Services.AddSingleton<IAuthorizationHandler, ProblemAuthorizationCrudHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, ProblemVoAuthorizationCrudHandler>();
+        
+        var storageOptions = builder.Configuration.GetSection("Storage");
+        builder.Services.AddBucketStorage(storageOptions);
 
         return builder.Build();
     }

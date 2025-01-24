@@ -1,4 +1,15 @@
 services:
+  
+  bucket:
+    environment:
+      - MINIO_ROOT_USER=himuoj
+      - MINIO_ROOT_PASSWORD=himuoj0721@dev!pwd
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    volumes:
+      - ${APPDATA}/Minio:/data
+  
   identity:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -6,6 +17,12 @@ services:
       - WebSpaClient=http://localhost:6100
       - ProblemsApiExternalUrl=http://localhost:5100
       - SubmitsApiExternalUrl=http://localhost:5200
+      - IdentityApiExternalUrl=http://localhost:5001
+      - IdentityServer__Url=http://identity
+      - IdentityServer__ExternalUrl=http://localhost:5001
+      - Storage__Endpoint=bucket:9000
+      - Storage__AccessKey=bVar0SOreHEaQVmfwWPC
+      - Storage__SecretKey=ldgq4W8u2AYqftGbtjrooJFPM1J2pFgVMX7Y7jlU
       - ConnectionStrings__IdentityDbContext=Host=host.docker.internal;Database=HimuOJIdentityDB;Username=postgres;Password=liuhuan123
     ports:
       - "5001:80"
@@ -20,7 +37,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=80
       - ASPNETCORE_HTTPS_PORTS=81
-      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - Storage__Endpoint=bucket:9000
+      - Storage__AccessKey=bVar0SOreHEaQVmfwWPC
+      - Storage__SecretKey=ldgq4W8u2AYqftGbtjrooJFPM1J2pFgVMX7Y7jlU
+      - IdentityServer__Url=http://identity
+      - IdentityServer__ExternalUrl=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
       - SubmitsGrpcUrl=http://submits-api:81
       - ConnectionStrings__ProblemsDbContext=Host=host.docker.internal;Database=HimuOJProblemsDB;Username=postgres;Password=liuhuan123
     ports:
@@ -37,7 +58,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=80
       - ASPNETCORE_HTTPS_PORTS=81
-      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - IdentityServer__Url=http://identity
+      - IdentityServer__ExternalUrl=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
       - ConnectionStrings__SubmitsDbContext=Host=host.docker.internal;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123
     ports:
       - "5200:80"
@@ -52,7 +74,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__SubmitsDbContext=Host=host.docker.internal;Database=HimuOJSubmitsDB;Username=postgres;Password=liuhuan123
-      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - IdentityServer__Url=http://identity
+      - IdentityServer__ExternalUrl=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
       - ProblemsGrpcUrl=http://problems-api:81
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
@@ -65,8 +88,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=80
       - ASPNETCORE_HTTPS_PORTS=81
-      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
-      - IdentityServer__Url=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - IdentityServer__Url=http://identity
+      - IdentityServer__ExternalUrl=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
     ports:
       - "6000:80"
       - "6001:81"

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Security.Claims;
+using HimuOJ.Common.BucketStorage;
 using HimuOJ.Common.WebApiComponents.Authorization;
 using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
@@ -12,6 +13,8 @@ using HimuOJ.Services.Problems.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Minio;
+using Minio.DataModel.Args;
 
 #endregion
 
@@ -25,17 +28,20 @@ public class ProblemsController : ControllerBase
     private readonly IProblemsRepository _repository;
     private readonly IAuthorizationService _authorization;
     private readonly ILogger<ProblemsController> _logger;
+    private readonly IBucketStorage _storage;
 
     public ProblemsController(
         IProblemsQuery query,
         IProblemsRepository repository,
         ILogger<ProblemsController> logger,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        IBucketStorage storage)
     {
-        _query         = query;
-        _repository    = repository;
-        _logger        = logger;
+        _query = query;
+        _repository = repository;
+        _logger = logger;
         _authorization = authorization;
+        _storage = storage;
     }
 
     /// <summary>API /problems/{id}: Retrieves the full details of a problem by its ID.</summary>

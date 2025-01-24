@@ -1,5 +1,6 @@
 ﻿#region
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -45,22 +46,30 @@ public static class AuthenticationExtensions
         string identityServerUrl = identityServer.GetValue<string>("Url")
                                    ?? throw new ArgumentException(
                                        "IdentityServer:Url is not configured");
+        string identityServerExternalUrl = identityServer.GetValue<string>("ExternalUrl")
+                                   ?? throw new ArgumentException(
+                                       "IdentityServer:ExternalUrl is not configured");
         string audience = identityServer.GetValue<string>("Audience")
                           ?? throw new ArgumentException(
                               "IdentityServer:Audience is not configured");
 
-        Log.Information("Service {audience} using Identity Server at {url}", audience,
-            identityServerUrl);
+        Log.Information("Service {audience} using Identity Server at {url} ({ExternalUrl})", audience,
+            identityServerUrl, identityServerExternalUrl);
 
-        builder.Services.AddAuthentication()
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
 #if DEBUG
                 options.RequireHttpsMetadata = false;
 #endif
-                options.Authority                                  = identityServerUrl;
-                options.TokenValidationParameters.ValidIssuers     = [identityServerUrl];
-                options.Audience                                   = audience;
+                options.Authority = identityServerUrl;
+                options.Audience = audience;
+
+                options.TokenValidationParameters.ValidIssuers = [identityServerExternalUrl, identityServerUrl];
                 options.TokenValidationParameters.ValidateAudience = false;
             });
 
