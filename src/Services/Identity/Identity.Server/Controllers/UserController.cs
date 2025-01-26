@@ -20,7 +20,7 @@ namespace Identity.Server.Controllers
     /// <summary>
     /// Controller for managing user-related operations.
     /// </summary>
-    [Route("api/users")]
+    [Route("users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -65,7 +65,7 @@ namespace Identity.Server.Controllers
             return Ok(new UserBrief
             {
                 UserName = user.UserName ?? string.Empty,
-                Avatar = user.Avatar
+                Avatar = _resourcePath.GetUserAvatarFullPath(userId, user.Avatar)
             });
         }
 
@@ -94,7 +94,7 @@ namespace Identity.Server.Controllers
                     d => new UserBrief
                     {
                         UserName = d.UserName,
-                        Avatar = d.Avatar
+                        Avatar = _resourcePath.GetUserAvatarFullPath(d.Id, d.Avatar)
                     }
                 );
             return Ok(queryResult);
@@ -118,6 +118,7 @@ namespace Identity.Server.Controllers
             return Ok(new UserDetail
             {
                 UserId = user.Id,
+                Avatar = _resourcePath.GetUserAvatarFullPath(userId, user.Avatar),
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
                 RegisterDate = user.RegisterDate.ToShortDateString(),
@@ -159,6 +160,7 @@ namespace Identity.Server.Controllers
                 new UserDetail
                 {
                     UserId = user.Id,
+                    Avatar = user.Avatar,
                     UserName = user.UserName ?? string.Empty,
                     Email = user.Email ?? string.Empty,
                     RegisterDate = user.RegisterDate.ToShortDateString(),
@@ -172,7 +174,7 @@ namespace Identity.Server.Controllers
         /// <param name="userId">The user ID.</param>
         /// <param name="file">The avatar file.</param>
         /// <returns>No content if the update is successful.</returns>
-        [Authorize(IdentityServerConstants.LocalApi.PolicyName)]
+        [Authorize(Policy = "PublicApi")]
         [HttpPut("{userId}/avatar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

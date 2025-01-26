@@ -67,6 +67,7 @@ public static class AuthenticationExtensions
                 options.RequireHttpsMetadata = false;
 #endif
                 options.Authority = identityServerUrl;
+                
                 options.Audience = audience;
 
                 options.TokenValidationParameters.ValidIssuers = [identityServerExternalUrl, identityServerUrl];

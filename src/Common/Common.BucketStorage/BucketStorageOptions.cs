@@ -9,6 +9,11 @@ public class BucketStorageOptions
     /// The endpoint URL for the bucket storage.
     /// </summary>
     public string Endpoint { get; set; }
+
+    /// <summary>
+    /// The external endpoint URL for the bucket storage.
+    /// </summary>
+    public string ExternalEndpoint {get; set;}
     
     /// <summary>
     /// The name of the bucket.

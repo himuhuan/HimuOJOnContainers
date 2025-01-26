@@ -12,6 +12,7 @@ export interface UserDetail {
     userId: string;
     userName: string;
     email: string;
+    avatar: string;
     registerDate: string;
     lastLoginDate: string;
     totalSubmissionCount: number;

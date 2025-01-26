@@ -19,7 +19,8 @@ services:
       - SubmitsApiExternalUrl=http://localhost:5200
       - IdentityApiExternalUrl=http://localhost:5001
       - IdentityServer__Url=http://identity
-      - IdentityServer__ExternalUrl=http://localhost:5001
+      - IdentityServer__ExternalUrl=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:5001
+      - Storage__ExternalEndpoint=http://${HIMUOJ_EXTERNAL_DNS_NAME_OR_IP}:9000
       - Storage__Endpoint=bucket:9000
       - Storage__AccessKey=bVar0SOreHEaQVmfwWPC
       - Storage__SecretKey=ldgq4W8u2AYqftGbtjrooJFPM1J2pFgVMX7Y7jlU

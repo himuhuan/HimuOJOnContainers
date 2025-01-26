@@ -14,6 +14,14 @@ public class UserResourcePathService
 
     public string GetUserAvatarPath(string userId, string avatarFileName)
     {
-        return Path.Combine(_options.BucketName, "avatars", userId, avatarFileName);
+        return Path.Combine(userId, "avatars", avatarFileName);
+    }
+
+    public string GetUserAvatarFullPath(string userId, string avatarFileName)
+    {
+        return Path.Combine(
+            _options.ExternalEndpoint, 
+            _options.BucketName, 
+            GetUserAvatarPath(userId, avatarFileName));
     }
 }

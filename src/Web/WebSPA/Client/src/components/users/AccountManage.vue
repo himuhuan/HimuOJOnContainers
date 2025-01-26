@@ -12,15 +12,6 @@
     <list-goto-item class="mb-2">
       <template #icon>
         <n-icon size="large">
-          <password-icon/>
-        </n-icon>
-      </template>
-      修改密码
-    </list-goto-item>
-
-    <list-goto-item class="mb-2">
-      <template #icon>
-        <n-icon size="large">
           <account-settings-icon/>
         </n-icon>
       </template>
