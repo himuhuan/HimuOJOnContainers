@@ -53,6 +53,7 @@ public class MinioBucketStorage : IBucketStorage
             .WithBucket(_options.BucketName)
             .WithObject(fileName)
             .WithCallbackStream(stream => { stream.CopyTo(ms); }));
+        ms.Position = 0;
         return ms;
     }
 

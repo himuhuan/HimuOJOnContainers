@@ -207,5 +207,18 @@ namespace Identity.Server.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("{userId}/avatar")]
+        [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAvatar(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+            var path = _resourcePath.GetUserAvatarPath(user.Id, user.Avatar);
+            var stream = await _storage.DownloadAsync(path);
+            return File(stream, "application/octet-stream", user.Avatar);
+        }
     }
 }
