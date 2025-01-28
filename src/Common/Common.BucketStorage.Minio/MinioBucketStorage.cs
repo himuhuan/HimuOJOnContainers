@@ -69,4 +69,22 @@ public class MinioBucketStorage : IBucketStorage
         await _client.PutObjectAsync(putObjectArgs);
         return true;
     }
+
+    public async Task<bool> IsFileExits(string fileName)
+    {
+        if (!await IsBucketExistsAsync())
+            return false;
+        StatObjectArgs statObjectArgs = new StatObjectArgs()
+            .WithBucket(_options.BucketName)
+            .WithObject(fileName);
+        try
+        {
+            await _client.StatObjectAsync(statObjectArgs);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
 }

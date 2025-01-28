@@ -155,4 +155,10 @@ public class ProblemsQuery : IProblemsQuery
             Items     = list
         });
     }
+
+    public async Task<bool> IsProblemExistAsync(int id)
+    {
+        return await _context.Problems.AsNoTracking()
+            .AnyAsync(p => p.Id == id);
+    }
 }

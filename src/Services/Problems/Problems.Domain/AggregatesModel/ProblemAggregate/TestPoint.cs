@@ -12,13 +12,15 @@ public class TestPoint : Entity
         int problemId,
         string input,
         string expectedOutput,
-        string remarks)
+        string remarks,
+        TestPointResourceType resourceType = TestPointResourceType.Text)
     {
-        Id             = id;
-        ProblemId      = problemId;
-        Input          = input;
+        Id = id;
+        ProblemId = problemId;
+        Input = input;
         ExpectedOutput = expectedOutput;
-        Remarks        = remarks;
+        Remarks = remarks;
+        ResourceType = resourceType;
     }
 
     public int ProblemId { get; private set; }
@@ -50,9 +52,9 @@ public class TestPoint : Entity
 
     public void Update(string input, string expectedOutput, string remarks)
     {
-        Input          = input;
+        Input = input;
         ExpectedOutput = expectedOutput;
-        Remarks        = remarks;
+        Remarks = remarks;
         LastModifyTime = DateTime.UtcNow;
     }
 }

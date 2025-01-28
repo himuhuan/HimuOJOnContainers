@@ -27,4 +27,5 @@ public interface IBucketStorage
     /// <param name="fileName">The name of the file to be deleted.</param>
     /// <returns>A task that represents the asynchronous operation. The task result indicates whether the deletion was successful.</returns>
     Task<bool> DeleteAsync(string fileName);
+    Task<bool> IsFileExits(string fileName);
 }

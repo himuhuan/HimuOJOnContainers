@@ -87,7 +87,7 @@
 						<n-tab-pane name="preview" tab="预览">
 							<problem-detail-preview :detail="detail" />
 						</n-tab-pane>
-						<n-tab-pane name="testpoints" tab="测试点">
+						<n-tab-pane name="testpoints" tab="测试点" class="pb-10 p-2">
 							<n-button
 								style="width: 100%"
 								type="primary"
@@ -97,7 +97,7 @@
 							>
 							<transition-group name="slide-fade">
 								<n-collapse
-									v-for="testPoint in state.detail.testPoints"
+									v-for="(testPoint, idx) in state.detail.testPoints"
 									:key="testPoint.id"
 								>
 									<template #header-extra>
@@ -147,39 +147,160 @@
 										<n-collapse-item
 											:key="testPoint.id"
 											:title="testPoint.remarks"
-											name="ss"
 										>
-											<n-form :model="testPoint" label-placement="top">
+											<n-form
+												:disabled="state.apiLoading"
+												:model="testPoint"
+												label-placement="top"
+											>
 												<n-form-item label="备注" path="testPointRemarks">
 													<n-input v-model:value="testPoint.remarks" />
 												</n-form-item>
 												<n-form-item label="类型" path="testPointType">
-													<n-select
+													<n-radio-group
 														:disabled="testPoint.id !== 0"
-														v-model:value="testPoint.type"
-														placeholder="请选择测试点类型"
-														:options="typeOptions"
+														v-model:value="testPoint.resourceType"
+														:default-value="typeOptions[0].value"
 													>
-													</n-select>
+														<n-radio-button
+															v-for="type in typeOptions"
+															:key="type.value"
+															:value="type.value"
+															:label="type.label"
+														>
+														</n-radio-button>
+													</n-radio-group>
 												</n-form-item>
 												<n-form-item label="输入" path="testPointInput">
 													<n-input
+														v-if="testPoint.resourceType === 'Text'"
 														type="textarea"
 														placeholder="测试点的输入"
 														:autosize="{ minRows: 2, maxRows: 6 }"
 														v-model:value="testPoint.input"
 													/>
+													<n-upload
+														v-else
+														:custom-request="handleUploadProblemResource"
+														:show-file-list="false"
+														:data="{
+															idx: idx.toString(),
+															type: 'input',
+														}"
+														:show-remove-button="false"
+													>
+														<n-upload-dragger>
+															<div style="margin-bottom: 12px">
+																<n-icon size="48">
+																	<submit-icon />
+																</n-icon>
+															</div>
+															<n-text style="font-size: 16px">
+																点击或者拖动文件到该区域来上传.
+															</n-text>
+															<n-p depth="3" style="margin: 8px 0 0 0">
+																文件大小不得超过
+																10MB。如果该测试点已有数据，上传将会覆盖原有数据。
+															</n-p>
+														</n-upload-dragger>
+													</n-upload>
+												</n-form-item>
+												<n-form-item
+													:show-label="false"
+													v-if="
+														testPoint.resourceType === 'File' &&
+														testPoint.input.length > 0
+													"
+												>
+													<n-alert type="success" show-icon class="w-full">
+														<template #header>
+															已存在于
+															{{ getTimeStringFromFileName(testPoint.input) }}
+															上传的数据。
+														</template>
+														<n-button
+															size="small"
+															class="w-full"
+															secondary
+															@click.stop="
+																downloadProblemResourceAsync(
+																	testPoint.problemId,
+																	testPoint.input
+																)
+															"
+														>
+															下载
+														</n-button>
+													</n-alert>
 												</n-form-item>
 												<n-form-item
 													label="输出"
 													path="testPointExpectedOutput"
 												>
 													<n-input
+														v-if="testPoint.resourceType === 'Text'"
 														type="textarea"
 														placeholder="测试点的期望输出"
 														:autosize="{ minRows: 2, maxRows: 6 }"
 														v-model:value="testPoint.expectedOutput"
 													/>
+													<n-upload
+														v-else
+														:custom-request="handleUploadProblemResource"
+														:data="{
+															idx: idx.toString(),
+															type: 'answer',
+														}"
+														:show-remove-button="false"
+														:show-file-list="false"
+													>
+														<n-upload-dragger>
+															<div style="margin-bottom: 12px">
+																<n-icon size="48">
+																	<submit-icon />
+																</n-icon>
+															</div>
+															<n-text style="font-size: 16px">
+																点击或者拖动文件到该区域来上传.
+															</n-text>
+															<n-p depth="3" style="margin: 8px 0 0 0">
+																文件大小不得超过
+																10MB。如果该测试点已有数据，上传将会覆盖原有数据。
+															</n-p>
+														</n-upload-dragger>
+													</n-upload>
+												</n-form-item>
+												<n-form-item
+													:show-label="false"
+													v-if="
+														testPoint.resourceType === 'File' &&
+														testPoint.input.length > 0
+													"
+												>
+													<n-alert type="success" show-icon class="w-full mt-2">
+														<template #header>
+															已存在于
+															{{
+																getTimeStringFromFileName(
+																	testPoint.expectedOutput
+																)
+															}}
+															上传的数据。
+														</template>
+														<n-button
+															size="small"
+															class="w-full"
+															secondary
+															@click.stop="
+																downloadProblemResourceAsync(
+																	testPoint.problemId,
+																	testPoint.expectedOutput
+																)
+															"
+														>
+															下载
+														</n-button>
+													</n-alert>
 												</n-form-item>
 											</n-form>
 										</n-collapse-item>
@@ -227,6 +348,7 @@ import {
 	NSpin,
 	NSplit,
 	NText,
+	NP,
 	useThemeVars,
 	NSpace,
 	NButton,
@@ -241,17 +363,23 @@ import {
 	NSwitch,
 	FormRules,
 	NAlert,
-	NSelect,
+	NUpload,
+	NUploadDragger,
 	useLoadingBar,
+	NRadioGroup,
+	NRadioButton,
 	NCollapse,
 	NCollapseItem,
 	NCard,
+	UploadCustomRequestOptions,
+	useDialog,
 } from "naive-ui";
 import { computed, onMounted, ref } from "vue";
 import { SwapHorizontal as SwapHorizontalIcon } from "@vicons/ionicons5";
 import {
 	Delete20Regular as DeleteIcon,
 	ArrowForward20Regular as RestoreIcon,
+	DocumentArrowUp20Regular as SubmitIcon,
 } from "@vicons/fluent";
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
@@ -261,7 +389,9 @@ import SubmissionList from "@/components/submissions/SubmissionList.vue";
 import {
 	createProblemAsync,
 	getFullProblemAsync,
+	downloadProblemResourceAsync,
 	updateProblemAsync,
+	uploadProblemResourceAsync,
 } from "@/services/problemsApi";
 import router from "@/routers";
 
@@ -292,6 +422,7 @@ const isEdit = computed(() => !!props.id);
 
 const themeVars = useThemeVars();
 const loadingBar = useLoadingBar();
+const dialog = useDialog();
 const customThemeVars = {
 	removedTestPointColor: themeVars.value.errorColor + "30",
 	newTestPointColor: themeVars.value.successColor + "10",
@@ -344,9 +475,12 @@ const detail = computed(() => {
 	} as ProblemDetail;
 });
 
+//////////////////////////////////// function ////////////////////////////////////
+
 function handleSubmitProblem() {
 	state.value.apiLoading = true;
 	loadingBar.start();
+
 	if (isEdit.value) {
 		// update problem
 		updateProblemAsync(
@@ -390,7 +524,7 @@ function handleAddTestPoint() {
 		remarks: "新测试点 #" + state.value.detail.testPoints.length,
 		input: "",
 		expectedOutput: "",
-		type: "Text",
+		resourceType: "Text",
 	});
 }
 
@@ -415,6 +549,51 @@ function handleRemoveTestPoint(
 	} else {
 		state.value.removedTestPoints.push(testPoint);
 	}
+}
+
+function handleUploadProblemResource(option: UploadCustomRequestOptions) {
+	if (!option.file.file) return;
+	dialog.warning({
+		title: "警告",
+		content: "上传文件将会覆盖原有数据，此操作不可逆！是否继续？",
+		positiveText: "继续",
+		onPositiveClick: async () => {
+			await dohandleUploadProblemResource(option);
+		},
+		negativeText: "取消",
+	});
+}
+
+async function dohandleUploadProblemResource(
+	option: UploadCustomRequestOptions
+) {
+	const file = option.file.file as File;
+	const data = option.data as { idx: string; type: "input" | "answer" };
+	const testPoint = state.value.detail.testPoints[Number(data.idx)];
+	const type = data.type;
+	state.value.apiLoading = true;
+	loadingBar.start();
+	uploadProblemResourceAsync(Number(props.id!), file, type)
+		.then((newFileName) => {
+			if (type === "input") {
+				testPoint.input = newFileName;
+			} else {
+				testPoint.expectedOutput = newFileName;
+			}
+		})
+		.catch((err) => {
+			console.error("Problem resource upload failed", err);
+			window.$message.error("上传资源失败! ");
+		})
+		.finally(() => {
+			state.value.apiLoading = false;
+			loadingBar.finish();
+		});
+}
+
+function getTimeStringFromFileName(fileName: string) {
+	const timestamp = Number(fileName.split(".")[0]);
+	return new Date(timestamp * 1000).toLocaleString();
 }
 
 onMounted(async () => {

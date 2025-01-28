@@ -5,6 +5,7 @@ using HimuOJ.Common.BucketStorage;
 using HimuOJ.Common.WebHostDefaults.Extensions;
 using HimuOJ.Services.Problems.API.Application.Auth;
 using HimuOJ.Services.Problems.API.Application.Queries;
+using HimuOJ.Services.Problems.API.Application.Services;
 using HimuOJ.Services.Problems.API.GrpcServices;
 using HimuOJ.Services.Problems.API.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure;
@@ -43,6 +44,7 @@ public static class HostingExtensions
         
         var storageOptions = builder.Configuration.GetSection("Storage");
         builder.Services.AddBucketStorage(storageOptions);
+        builder.Services.AddSingleton<IResourceStorage, ResourceStorage>();
 
         return builder.Build();
     }

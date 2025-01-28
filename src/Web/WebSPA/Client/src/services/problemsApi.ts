@@ -88,3 +88,50 @@ export async function deleteProblemAsync(problemId: number) {
 	const response = await client.delete(`/api/problems/${problemId}`);
 	return response.data;
 }
+
+export async function downloadProblemResourceAsync(
+	problemId: number,
+	resourceName: string
+) {
+	try {
+		const response = await client.get(
+			`/api/problems/${problemId}/resources/${resourceName}`,
+			{
+				responseType: "blob",
+			}
+		);
+		const url = window.URL.createObjectURL(
+			new Blob([response.data as BlobPart])
+		);
+		const link = document.createElement("a");
+		link.href = url;
+		link.setAttribute("download", resourceName);
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		window.URL.revokeObjectURL(url);
+	} catch (error) {
+		console.error(error);
+		window.$message.error("下载失败", error);
+	}
+}
+
+/**
+ * Uploads a resource file for a specific problem.
+ * @param problemId - The ID of the problem to upload the resource for
+ * @param file - The file to be uploaded
+ * @param resourceType - The type of resource being uploaded, either "input" or "answer"
+ * @returns Promise that resolves to the resource name as a string
+ * @throws Will throw an error if the upload request fails
+ */
+export async function uploadProblemResourceAsync(
+	problemId: number,
+	file: File,
+	resourceType: "input" | "answer"
+) {
+	const formData = new FormData();
+	formData.append("file", file);
+	const url = `/api/problems/${problemId}/resources/${resourceType}`;
+	const response = await client.post(url, formData);
+	return response.data as string; // return the resource name
+}

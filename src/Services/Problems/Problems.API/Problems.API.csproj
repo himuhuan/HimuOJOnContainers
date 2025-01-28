@@ -14,31 +14,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0"/>
-        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0"/>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Services\" />
-        <Folder Include="Application\Validations\"/>
-        <Folder Include="Setup\"/>
+        <Folder Include="Application\Validations\" />
+        <Folder Include="Setup\" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProtoBuf Include="Proto\problems.proto" GrpcServices="Server"/>
+        <ProtoBuf Include="Proto\problems.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Common\Common.BucketStorage.Minio\Common.BucketStorage.Minio.csproj" />
-        <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj"/>
-        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
-        <ProjectReference Include="..\Problems.Instructure\Problems.Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\..\Common\Common.WebApiComponents\Common.WebApiComponents.csproj" />
+        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj" />
+        <ProjectReference Include="..\Problems.Instructure\Problems.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

@@ -34,7 +34,7 @@ import ListGotoItem from "../shared/ListGotoItem.vue";
 import { NIcon, NList } from "naive-ui";
 import {
 	ArrowForwardDownPerson20Filled as LogoutIcon,
-	Password20Regular as PasswordIcon,
+	// Password20Regular as PasswordIcon,
 	Person24Regular as AvatarIcon,
 	PersonSettings20Regular as AccountSettingsIcon,
 } from "@vicons/fluent";
