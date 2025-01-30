@@ -15,6 +15,11 @@ message GetProblemEssentialPartForJudgeRequest {
   int32 ProblemId = 1;
 }
 
+enum ResoureType {
+    Text = 0;
+    File = 1;
+}
+
 message GetProblemEssentialPartForJudgeResponse {
   int64 MaxTimeLimitMs = 3;
   int64 MaxMemoryLimitByte = 4;
@@ -26,6 +31,7 @@ message TestPointEssentialPart {
   string Input = 2;
   string ExpectedOutput = 3;
   int64 OutdatedTimestamp = 4;
+  ResoureType ResourceType = 5;
 }
 
 message CheckHealthRequest {

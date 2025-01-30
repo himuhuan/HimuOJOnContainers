@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Security.Claims;
+using System.Text;
 using HimuOJ.Common.BucketStorage;
 using HimuOJ.Common.WebApiComponents.Authorization;
 using HimuOJ.Common.WebApiComponents.Extensions;
@@ -71,10 +72,19 @@ public class ProblemsController : ControllerBase
 
     /// <summary>API /problems/{id}/title</summary>
     [HttpGet("{id}/title")]
-    [ProducesResponseType<ApiResult<string>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProblemTitleAsync(int id)
     {
         var result = await _query.GetProblemTitleAsync(id);
+        return result.ToHttpApiResult();
+    }
+
+    [HttpGet("{id}/guest-access")]
+    [ProducesResponseType<ProblemGuestAccessLimit>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProblemGuestAccessLimit(int id)
+    {
+        var result = await _query.GetProblemGuestAccessLimit(id);
         return result.ToHttpApiResult();
     }
 
@@ -332,12 +342,52 @@ public class ProblemsController : ControllerBase
         try
         {
             var stream = await _resource.DownloadResourceAsync(id, resourceName);
-            return File(stream, "application/octet-stream", resourceName);
+            return File(stream, "text/plain", resourceName);
         }
         catch (FileNotFoundException e)
         {
             _logger.LogError(e, """Failed to download resource "{ResourceName}" for problem {ProblemId}""", resourceName, id);
             return ApiResultCode.ResourceNotExist.ToHttpApiResult();
+        }
+    }
+
+    [HttpGet("{id}/testpoints/{testPointId}/{type}")]
+    [Authorize]
+    public async Task<IActionResult> DownloadTestPointResource(int id, int testPointId, string type)
+    {
+        var operationType = type == "input" 
+            ? ProblemAuthorizationOperations.ReadInput : ProblemAuthorizationOperations.ReadExpectedOutput;
+
+        var problem = await _repository.GetAsync(id);
+        if (problem == null)
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(id, "problem doesn't exist");
+        
+        if (!(await _authorization.AuthorizeAsync(User, problem, operationType)).Succeeded)
+        {
+            return ApiResultCode.BadAuthorization.ToHttpApiResult();
+        }
+
+        var testpoint = problem.TestPoints.FirstOrDefault(tp => tp.Id == testPointId);
+        if (testpoint == null)
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(testPointId, "specific testpoint doesn't exist");
+
+        if (testpoint.ResourceType == TestPointResourceType.Text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(
+                operationType == ProblemAuthorizationOperations.ReadInput ? testpoint.Input : testpoint.ExpectedOutput);
+            MemoryStream stream = new(bytes);
+            return File(stream, "text/plain", $"{testPointId}.{type}");
+        }
+
+        try
+        {
+            var stream = await _resource.DownloadResourceAsync(id, testpoint.Input);
+            return File(stream, "text/plain", $"{testPointId}.{type}");
+        }
+        catch (FileNotFoundException e)
+        {
+            _logger.LogError(e, """Failed to download resource for test point {TestPointId}""", testPointId);
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(testPointId);
         }
     }
 }

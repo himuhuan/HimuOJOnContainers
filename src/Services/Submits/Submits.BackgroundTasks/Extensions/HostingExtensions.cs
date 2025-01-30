@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Reflection;
+using Common.BucketStorage.Minio;
 using Grpc.Net.Client;
 using GrpcProblems;
 using HimuOJ.Common.WebHostDefaults.Extensions;
@@ -62,6 +63,9 @@ public static class HostingExtensions
 
         builder.Services.AddScoped<IJudgeService, JudgeService>();
 
+        var storageOptions = builder.Configuration.GetSection("Storage");
+        builder.Services.AddBucketStorage(storageOptions);
+
         return builder.Build();
     }
 
@@ -77,7 +81,7 @@ public static class HostingExtensions
         using var channel = GrpcChannel.ForAddress(address);
         Log.Information("Waiting for gRPC service {Url} to be ready...", address);
         var deadlineTask = Task.Delay(timeout);
-        var client       = new ProblemsService.ProblemsServiceClient(channel);
+        var client = new ProblemsService.ProblemsServiceClient(channel);
         while (true)
         {
             try

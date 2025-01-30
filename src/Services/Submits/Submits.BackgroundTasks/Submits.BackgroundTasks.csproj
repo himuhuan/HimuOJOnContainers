@@ -10,11 +10,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.67.0"/>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0"/>
-        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.67.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,16 +24,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
-        <ProjectReference Include="..\Submits.Infrastructure\Submits.Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\..\Common\Common.BucketStorage.Minio\Common.BucketStorage.Minio.csproj" />
+        <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj" />
+        <ProjectReference Include="..\Submits.Infrastructure\Submits.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\..\Problems\Problems.API\Proto\problems.proto" GrpcServices="Client"/>
+        <Protobuf Include="..\..\Problems\Problems.API\Proto\problems.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Update="..\..\Problems\Problems.API\Proto"/>
+        <Folder Update="..\..\Problems\Problems.API\Proto" />
     </ItemGroup>
 
     <ItemGroup>

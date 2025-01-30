@@ -135,3 +135,50 @@ export async function uploadProblemResourceAsync(
 	const response = await client.post(url, formData);
 	return response.data as string; // return the resource name
 }
+
+/**
+ * Downloads a test point resource (input or answer file) for a specific problem.
+ * Creates a temporary download link and automatically triggers the download.
+ * 
+ * @param problemId - The unique identifier of the problem
+ * @param testPointId - The unique identifier of the test point
+ * @param type - The type of resource to download ("input" or "answer")
+ * 
+ * @throws Will throw an error if the download fails
+ * 
+ * @example
+ * ```typescript
+ * Download an input file
+ * await downloadProblemTestPointResource(1, 1, "input");
+ * 
+ * Download an answer file
+ * await downloadProblemTestPointResource(1, 1, "answer");
+ * ```
+ */
+export async function downloadProblemTestPointResource(
+	problemId: number,
+	testPointId: number,
+	type: "input" | "answer"
+) {
+	try {
+		const response = await client.get(
+			`/api/problems/${problemId}/testpoints/${testPointId}/${type}`,
+			{
+				responseType: "blob",
+			}
+		);
+		const url = window.URL.createObjectURL(
+			new Blob([response.data as BlobPart])
+		);
+		const link = document.createElement("a");
+		link.href = url;
+		link.setAttribute("download", `${problemId}_${testPointId}.${type}`);
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		window.URL.revokeObjectURL(url);
+	} catch (error) {
+		console.error(error);
+		window.$message.error("下载失败", error);
+	}
+}

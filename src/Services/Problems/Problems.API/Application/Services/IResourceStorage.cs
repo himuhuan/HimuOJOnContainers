@@ -7,4 +7,5 @@ public interface IResourceStorage
 
     public Task<string> UploadExpectedOutputFileAsync(int problemId, IFormFile expectedOutputFile);
     Task<Stream> DownloadResourceAsync(int problemId, string fileName);
+    string GetResourceUrl(int problemId, string fileName);
 }

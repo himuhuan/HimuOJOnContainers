@@ -161,4 +161,22 @@ public class ProblemsQuery : IProblemsQuery
         return await _context.Problems.AsNoTracking()
             .AnyAsync(p => p.Id == id);
     }
+
+    public async Task<ApiResult<ProblemGuestAccessLimit>> GetProblemGuestAccessLimit(int id)
+    {
+        var problem = await _context.Problems
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .SingleOrDefaultAsync();
+
+        if (problem == null)
+            return ApiResult<ProblemGuestAccessLimit>.Error(ApiResultCode.ResourceNotExist);
+        var result = new ProblemGuestAccessLimit
+        {
+            ProblemTitle = problem.Title,
+            AllowDownloadAnswer = problem.GuestAccessLimit.AllowDownloadOutput,
+            AllowDownloadInput = problem.GuestAccessLimit.AllowDownloadInput
+        };
+        return result.ToApiResult(ApiResultCode.Ok);
+    }
 }

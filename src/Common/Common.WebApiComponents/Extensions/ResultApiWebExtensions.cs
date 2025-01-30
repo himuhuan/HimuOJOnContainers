@@ -40,6 +40,11 @@ public static class ResultApiWebExtensions
         return (new ApiResult<ApiResultCode>(code, code, code.ToString())).ToHttpApiResult();
     }
 
+    public static IActionResult ToHttpApiResult<T>(this ApiResultCode code, T value, string message = null)
+    {
+        return (new ApiResult<T>(value, code, message ?? code.ToString())).ToHttpApiResult();
+    }
+
     public static IActionResult ToHttpApiResult(this ApiResultCode code, string message)
     {
         return (new ApiResult<ApiResultCode>(code, code, message)).ToHttpApiResult();
