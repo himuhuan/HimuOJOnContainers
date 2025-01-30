@@ -15,10 +15,14 @@ namespace Identity.Server.Services
     public class ProfileService : IProfileService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserResourcePathService _userResourcePath;
 
-        public ProfileService(UserManager<ApplicationUser> userManager)
+        public ProfileService(
+            UserManager<ApplicationUser> userManager,
+            UserResourcePathService userResourcePath)
         {
             _userManager = userManager;
+            _userResourcePath = userResourcePath;
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -73,7 +77,12 @@ namespace Identity.Server.Services
             };
 
             if (!string.IsNullOrWhiteSpace(user.Avatar))
-                claims.Add(new Claim("avatar", user.Avatar));
+            {
+                claims.Add(new Claim(
+                    "avatar",
+                    _userResourcePath.GetUserAvatarFullPath(user.Id, user.Avatar))
+                );
+            }
 
             if (!string.IsNullOrWhiteSpace(user.Background))
                 claims.Add(new Claim("background", user.Background));

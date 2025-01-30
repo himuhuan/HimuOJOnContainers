@@ -79,8 +79,7 @@ public class JudgeService : IJudgeService
         }
 
         var problemPart =
-            await _problemsServices.GetProblemEssentialPartForJudgeAsync(submission.ProblemId
-                .Value);
+            await _problemsServices.GetProblemEssentialPartForJudgeAsync(submission.ProblemId.Value);
         if (problemPart == null)
         {
             await _mediator.Publish(new JudgeTaskExitedEvent(submission, JudgeStatus.SystemError,
@@ -103,7 +102,7 @@ public class JudgeService : IJudgeService
             _logger.LogDebug("Judging test point {TestPointId} for submission {SubmissionId}",
                 testPoint.TestPointId,
                 submissionId);
-            if (!await RunTestPoint(testPoint, submission, executable, problemPart))
+            if (!await RunTestPoint(submission.ProblemId.Value, testPoint, submission, executable, problemPart))
             {
                 hasError = true;
                 break;
@@ -133,19 +132,26 @@ public class JudgeService : IJudgeService
     }
 
     private async Task<bool> RunTestPoint(
+        int problemId,
         TestPointEssentialPart testPoint,
         Submission submission,
         string executable,
         ProblemInfo problemPart)
     {
-        var inputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "input", testPoint.TestPointId + ".in", testPoint.Input, testPoint.OutdatedTimestamp);
-        var outputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "output", testPoint.TestPointId + ".out", string.Empty, submission.Id);
+        // Ensure that the input file for each test point is unique and can distinguish
+        // between different versions of input data based on the timestamp.
+        string inputFileName = $"P{problemId}-{testPoint.OutdatedTimestamp}.in";
+        // Ensure that the output file for each test point is unique and can distinguish
+        // between different versions of output data based on submission ID and test point ID.
+        string outputFileName = $"S{submission.Id}-{testPoint.TestPointId}.out";
+
+        var inputPath = (testPoint.ResourceType == ResoureType.Text) 
+            ? await _cacheFiles.CreateOrGetAsync("input", inputFileName, testPoint.Input)
+            : await _cacheFiles.DownloadOrGetAsync("input", inputFileName, testPoint.Input);
+        var outputPath = await _cacheFiles.CreateOrGetAsync("output", outputFileName, string.Empty);
 
         var sandboxResult =
-            RunSandbox(submission.Id, executable, inputPath, outputPath, submission.CompilerName,
-                problemPart);
+            RunSandbox(submission.Id, executable, inputPath, outputPath, submission.CompilerName, problemPart);
         SandboxStatus status = (SandboxStatus) sandboxResult.Status;
         if (status != SandboxStatus.Success || sandboxResult.ExitCode != 0)
         {
@@ -160,9 +166,12 @@ public class JudgeService : IJudgeService
             new ResourceUsage((long) sandboxResult.MemoryUsage,
                 (long) sandboxResult.RealTimeUsage));
 
-        string expectedOutputPath = await _cacheFiles.CreateOrGetTextFileAsync(
-            "answer", testPoint.TestPointId + ".ans", testPoint.ExpectedOutput,
-            testPoint.OutdatedTimestamp);
+        // Ensure that the expected output file for each test point is unique and can distinguish
+        // between different versions of output data based on the timestamp.
+        string expectedOutputFileName = $"P{problemId}-{testPoint.OutdatedTimestamp}.ans";
+        string expectedOutputPath = (testPoint.ResourceType == ResoureType.Text)
+            ? await _cacheFiles.CreateOrGetAsync("answer", expectedOutputFileName, testPoint.ExpectedOutput)
+            : await _cacheFiles.DownloadOrGetAsync("answer", expectedOutputFileName, testPoint.ExpectedOutput);
         var outputDifference = await CompareOutput(expectedOutputPath, outputPath);
         if (outputDifference != null)
         {
@@ -244,7 +253,7 @@ public class JudgeService : IJudgeService
         return _sandbox.Run(configuration);
     }
 
-    private async Task<OutputDifference?> CompareOutput(
+    private static async Task<OutputDifference?> CompareOutput(
         string expectedOutputPath,
         string actualOutputPath)
     {

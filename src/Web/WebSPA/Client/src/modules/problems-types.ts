@@ -72,10 +72,15 @@ export interface TestPoint {
     id: number;
     
     problemId: number;
-    type: "Text" | "File";
+    resourceType: "Text" | "File";
     input: string;
     expectedOutput: string;
     remarks: string;
+
+    // The following fields are only used in client side.
+    
+    inputFileToUpload?: File;
+    expectedOutputFileToUpload?: File;
 }
 
 export interface ProblemDto {

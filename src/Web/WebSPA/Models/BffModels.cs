@@ -41,6 +41,8 @@ public class BffSubmission : GetSubmissionResult
     public string? SubmitterName { get; set; }
     public string? SubmitterAvatar { get; set; }
     public string? ProblemTitle { get; set; }
+    public bool ProblemAllowDownloadInput { get; set; }
+    public bool ProblemAllowDownloadAnswer { get; set; }
 }
 
 public class BffUserDetail : UserDetail

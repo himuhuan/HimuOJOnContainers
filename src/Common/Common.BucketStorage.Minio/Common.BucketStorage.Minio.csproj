@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace> Common.BucketStorage.Minio </RootNamespace>
+	</PropertyGroup>
+	
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+	  <PackageReference Include="Minio" Version="6.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Common.BucketStorage\Common.BucketStorage.csproj" />
+	</ItemGroup>
+
+</Project>

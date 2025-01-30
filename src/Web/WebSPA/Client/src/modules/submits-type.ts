@@ -61,6 +61,8 @@ export interface SubmissionDetail {
     submitterName?: string;
     submitterAvatar?: string;
     problemTitle?: string;
+    problemAllowDownloadInput?: boolean;
+    problemAllowDownloadAnswer?: boolean;
     id: number;
     problemId?: number;
     usage?: ResourceUsage;

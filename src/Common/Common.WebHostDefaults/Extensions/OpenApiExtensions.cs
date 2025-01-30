@@ -26,6 +26,8 @@ public static class OpenApiExtensions
         //
         // "OpenApi": {
         //   "Name": "HimuOJ.xxx.API",
+        //   "ServiceUrl": "http://localhost:5000",
+        //   "Authority": "http://host.docker.internal:5001",
         //   "Version": "v1",
         //   "XmlComments": "xxx.xml",
         //   "Auth": {
@@ -35,7 +37,7 @@ public static class OpenApiExtensions
         //   }
         // },
         // "IdentityServer": {
-        //   "Url": "https://localhost:5001",
+        //   "Url": "http://identity",
         //   "Scopes": {
         //      "xxx": "xxx",
         //      "xxx": "xxx"
@@ -45,7 +47,7 @@ public static class OpenApiExtensions
 
         // ArgumentNullException.ThrowIfNull(apiVersioning);
 
-        var openApiOptions        = builder.Configuration.GetSection("OpenApi");
+        var openApiOptions = builder.Configuration.GetSection("OpenApi");
         var identityServerOptions = builder.Configuration.GetSection("IdentityServer");
         if (!openApiOptions.Exists())
         {
@@ -55,13 +57,18 @@ public static class OpenApiExtensions
 
         builder.Services.AddEndpointsApiExplorer();
 
-        var name    = openApiOptions["Name"];
+        var name = openApiOptions["Name"];
         var version = openApiOptions["Version"];
-        var serviceUrl = openApiOptions["ServiceUrl"] ?? "http://localhost:5000";
+        var serviceUrl = openApiOptions["ServiceUrl"]
+            ?? throw new InvalidOperationException("OpenApi:ServiceUrl is not configured");
         var xmlFile = openApiOptions["XmlComments"];
+
         var scopes = identityServerOptions.GetRequiredSection("Scopes")
             .GetChildren()
             .ToDictionary(x => x.Key, x => x.Value);
+
+        var authority = identityServerOptions.GetValue<string>("ExternalUrl")
+            ?? throw new InvalidOperationException("IdentityServer:ExternalUrl is not configured");
 
         builder.Services.AddSwaggerGen(c =>
         {
@@ -70,21 +77,19 @@ public static class OpenApiExtensions
             if (!identityServerOptions.Exists())
                 return;
 
-            string url = identityServerOptions.GetValue<string>("Url");
-
             c.AddServer(new OpenApiServer { Url = serviceUrl });
-            
+
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
-                
+
                 Flows = new OpenApiOAuthFlows
                 {
                     Implicit = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri($"{url}/connect/authorize"),
-                        TokenUrl         = new Uri($"{url}/connect/token"),
-                        Scopes           = scopes,
+                        AuthorizationUrl = new Uri($"{authority}/connect/authorize"),
+                        TokenUrl = new Uri($"{authority}/connect/token"),
+                        Scopes = scopes,
                     }
                 }
             });
@@ -109,7 +114,7 @@ public static class OpenApiExtensions
     {
         var openApiSection = app.Configuration.GetSection("OpenApi");
         var identityServerSection = app.Configuration.GetSection("IdentityServer");
-        
+
         app.UseSwagger();
 
         if (app.Environment.IsDevelopment() && openApiSection.Exists())
@@ -118,7 +123,7 @@ public static class OpenApiExtensions
                 .GetChildren()
                 .Select(x => x.Key)
                 .ToArray();
-         
+
             var clientId = openApiSection["Auth:ClientId"];
 
             app.UseSwagger(options => { options.RouteTemplate = "/swagger/v1/swagger.json"; });
@@ -132,17 +137,17 @@ public static class OpenApiExtensions
                     OAuth2 = new OAuth2Options
                     {
                         ClientId = clientId,
-                        Scopes   = scopes
+                        Scopes = scopes
                     }
                 };
                 options.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
                 options.WithEndpointPrefix("/api-reference/{documentName}");
             });
 
-            app.MapGet("/", () => Results.Redirect("/api-reference/{documentName}")).ExcludeFromDescription();
+            app.MapGet("/", () => Results.Redirect("/api-reference/v1")).ExcludeFromDescription();
         }
 
         return app;
     }
-    
+
 }

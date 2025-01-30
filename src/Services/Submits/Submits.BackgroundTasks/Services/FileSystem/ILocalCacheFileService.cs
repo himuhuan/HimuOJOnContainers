@@ -15,10 +15,9 @@
 public interface ILocalCacheFileService
 {
     public string BasePath { get; }
-    public Task<string> CreateOrGetTextFileAsync(string fileName, string content);
 
-    public Task<string> CreateOrGetTextFileAsync(string directory, string fileName, string 
-        content, long prefix);
+    public Task<string> CreateOrGetAsync(string directory, string fileName, string content);
 
     public string CombineAndMakeSureDirectoryExists(string path, string fileName);
+    Task<string> DownloadOrGetAsync(string directory, string fileName, string url);
 }

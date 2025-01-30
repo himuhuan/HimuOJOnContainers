@@ -1,5 +1,12 @@
 services:
   
+  # We use minio for storing files
+  bucket:
+    image: minio/minio:latest
+    container_name: bucket
+    command: server /data --console-address ":9090" --address ":9000"
+    restart: unless-stopped
+    
   rabbitmq:
     image: rabbitmq:3-management-alpine
   

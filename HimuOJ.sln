@@ -43,6 +43,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSPA", "src\Web\WebSPA\We
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.BucketStorage", "src\Common\Common.BucketStorage\Common.BucketStorage.csproj", "{B3B7C961-9FDF-4264-90FF-8D9D765B72B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.BucketStorage.Minio", "src\Common\Common.BucketStorage.Minio\Common.BucketStorage.Minio.csproj", "{A3149245-8232-448D-9D96-1345C0F62063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,14 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3B7C961-9FDF-4264-90FF-8D9D765B72B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3B7C961-9FDF-4264-90FF-8D9D765B72B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3B7C961-9FDF-4264-90FF-8D9D765B72B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3B7C961-9FDF-4264-90FF-8D9D765B72B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3149245-8232-448D-9D96-1345C0F62063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3149245-8232-448D-9D96-1345C0F62063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3149245-8232-448D-9D96-1345C0F62063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3149245-8232-448D-9D96-1345C0F62063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +134,8 @@ Global
 		{C3561070-9369-47FF-9AFE-28AF164AEF1E} = {7F9D151C-CEE9-434E-9EC8-707DE233F078}
 		{7BD186F0-7E48-4F7C-AE01-FF24557102D1} = {91E5F696-EAAE-4941-9049-D7D209DBE159}
 		{B4479196-A4D5-4E25-BF16-C394307C21EE} = {7BD186F0-7E48-4F7C-AE01-FF24557102D1}
+		{B3B7C961-9FDF-4264-90FF-8D9D765B72B1} = {88742993-D5EC-4373-9B7B-54A0E3ED0863}
+		{A3149245-8232-448D-9D96-1345C0F62063} = {88742993-D5EC-4373-9B7B-54A0E3ED0863}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C3575EE0-38B1-45C6-A396-36186DDC8B86}

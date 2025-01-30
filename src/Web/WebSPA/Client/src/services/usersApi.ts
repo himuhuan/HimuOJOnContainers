@@ -10,3 +10,15 @@ export async function registerUser(user: UserRegisterRequest) {
     const response = await client.post<UserDetail>("/api/users", user);
     return response.data;
 }
+
+export async function uploadUserAvatar(id: string, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await client.put(`/api/users/${id}/avatar`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+
+    return response.data;
+}

@@ -33,6 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Common\Common.BucketStorage.Minio\Common.BucketStorage.Minio.csproj" />
         <ProjectReference Include="..\..\..\Common\Common.DomainSeedWork\Common.DomainSeedWork.csproj"/>
         <ProjectReference Include="..\..\..\Common\Common.WebHostDefaults\Common.WebHostDefaults.csproj"/>
     </ItemGroup>

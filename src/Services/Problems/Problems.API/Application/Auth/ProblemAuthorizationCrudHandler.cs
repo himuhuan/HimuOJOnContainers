@@ -30,6 +30,19 @@ public class ProblemAuthorizationCrudHandler
             // The distributor or Administrator can do anything.
             context.Succeed(requirement);
         }
+        else if (requirement.Name == ProblemAuthorizationOperations.ReadInput.Name
+            && resource.GuestAccessLimit.AllowDownloadInput)
+        {
+            // The guest can read the input of the problem.
+            context.Succeed(requirement);
+        }
+        else if (requirement.Name == ProblemAuthorizationOperations.ReadExpectedOutput.Name
+            && resource.GuestAccessLimit.AllowDownloadOutput)
+        {
+            // The guest can read the output of the problem.
+            context.Succeed(requirement);
+        }
+
         return Task.CompletedTask;
     }
 }

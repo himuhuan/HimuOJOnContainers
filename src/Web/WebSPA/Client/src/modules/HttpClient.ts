@@ -18,8 +18,8 @@ class HttpClient {
         });
     }
 
-    public async get<T>(url: string, data?: any): Promise<AxiosResponse<T>> {
-        return this.instance.get<T>(url, data).catch((res) => {
+    public async get<T>(url: string, config?: any): Promise<AxiosResponse<T>> {
+        return this.instance.get<T>(url, config).catch((res) => {
             if (res && res.response) {
                 return Promise.reject(res.response);
             } else {
@@ -40,8 +40,8 @@ class HttpClient {
         });
     }
 
-    public async put<T>(url: string, data?: any): Promise<AxiosResponse<T>> {
-        return this.instance.put<T>(url, data).catch((res) => {
+    public async put<T>(url: string, data?: any, config?: any): Promise<AxiosResponse<T>> {
+        return this.instance.put<T>(url, data, config).catch((res) => {
             if (res && res.response) {
                 return Promise.reject(res.response);
             } else {

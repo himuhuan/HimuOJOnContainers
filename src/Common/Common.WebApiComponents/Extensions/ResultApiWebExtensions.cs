@@ -13,12 +13,12 @@ public static class ResultApiWebExtensions
     {
         return apiResult.Code switch
         {
-            ApiResultCode.Ok                => new OkObjectResult(apiResult.Result),
-            ApiResultCode.ResourceNotExist  => new NotFoundResult(),
-            ApiResultCode.BadAuthentication => new UnauthorizedResult(),
-            ApiResultCode.BadAuthorization  => new ForbidResult(),
-            ApiResultCode.BadRequest        => new BadRequestObjectResult(apiResult.Message),
-            _                               => new StatusCodeResult(500),
+            ApiResultCode.Ok => new OkObjectResult(apiResult.Result),
+            ApiResultCode.ResourceNotExist => new NotFoundObjectResult(apiResult),
+            ApiResultCode.BadAuthentication => new UnauthorizedObjectResult(apiResult),
+            ApiResultCode.BadAuthorization => new ForbidResult(),
+            ApiResultCode.BadRequest => new BadRequestObjectResult(apiResult),
+            _ => new ObjectResult(apiResult) { StatusCode = 500 },
         };
     }
 
@@ -33,6 +33,21 @@ public static class ResultApiWebExtensions
         string message = null)
     {
         return (new ApiResult<T>(any, code, message)).ToHttpApiResult();
+    }
+
+    public static IActionResult ToHttpApiResult(this ApiResultCode code)
+    {
+        return (new ApiResult<ApiResultCode>(code, code, code.ToString())).ToHttpApiResult();
+    }
+
+    public static IActionResult ToHttpApiResult<T>(this ApiResultCode code, T value, string message = null)
+    {
+        return (new ApiResult<T>(value, code, message ?? code.ToString())).ToHttpApiResult();
+    }
+
+    public static IActionResult ToHttpApiResult(this ApiResultCode code, string message)
+    {
+        return (new ApiResult<ApiResultCode>(code, code, message)).ToHttpApiResult();
     }
 
     public static ApiResult<T> ToApiResult<T>(this T any, ApiResultCode code, string message = null)

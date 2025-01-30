@@ -24,4 +24,6 @@ public interface IProblemsQuery
 
     Task<ApiResult<ProblemManageList>>
         GetProblemManageListAsync(GetProblemManageListRequest request);
+    Task<bool> IsProblemExistAsync(int id);
+    Task<ApiResult<ProblemGuestAccessLimit>> GetProblemGuestAccessLimit(int id);
 }

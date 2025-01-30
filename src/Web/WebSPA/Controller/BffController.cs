@@ -1,6 +1,7 @@
 #region
 
 using HimuOJ.Services.Problems.API.Application.Models.Dto;
+using HimuOJ.Services.Problems.API.Application.Models.Vo;
 using HimuOJ.Services.Submits.API.Application.Queries;
 using HimuOJ.Web.WebSPA.Services;
 using Identity.Server.Controllers;
@@ -21,8 +22,8 @@ namespace HimuOJ.Web.WebSPA.Controller
         public BffController(IProblemsApi problemsApi, ISubmitsApi submitsApi, IUsersApi usersApi)
         {
             _problemsApi = problemsApi;
-            _submitsApi  = submitsApi;
-            _usersApi    = usersApi;
+            _submitsApi = submitsApi;
+            _usersApi = usersApi;
         }
 
         [HttpGet("problems-list")]
@@ -40,7 +41,7 @@ namespace HimuOJ.Web.WebSPA.Controller
             {
                 var statistics = await _submitsApi.GetSubmitsStatisticsAsync(item.Id);
                 item.AcceptedSubmissionCount = statistics.AcceptedSubmits;
-                item.TotalSubmissionCount    = statistics.TotalSubmits;
+                item.TotalSubmissionCount = statistics.TotalSubmits;
             });
 
             return Ok(result);
@@ -72,8 +73,8 @@ namespace HimuOJ.Web.WebSPA.Controller
                 });
 
             await Task.WhenAll(userBriefsTask, problemTitlesTask);
-            IDictionary<string, UserBrief> userBriefs    = userBriefsTask.Result;
-            IDictionary<int, string>       problemTitles = problemTitlesTask.Result;
+            IDictionary<string, UserBrief> userBriefs = userBriefsTask.Result;
+            IDictionary<int, string> problemTitles = problemTitlesTask.Result;
 
             // aggregate problem titles and user briefs
             foreach (var item in result.Items)
@@ -81,7 +82,7 @@ namespace HimuOJ.Web.WebSPA.Controller
                 if (item.SubmitterId != null
                     && userBriefs.TryGetValue(item.SubmitterId, out var userBrief))
                 {
-                    item.SubmitterName   = userBrief.UserName;
+                    item.SubmitterName = userBrief.UserName;
                     item.SubmitterAvatar = userBrief.Avatar;
                 }
 
@@ -100,13 +101,13 @@ namespace HimuOJ.Web.WebSPA.Controller
         {
             var submission = await _submitsApi.GetSubmission(id);
 
-            Task<UserBrief>? userBriefTask    = null;
-            Task<string>?    problemTitleTask = null;
+            Task<UserBrief>? userBriefTask = null;
+            Task<ProblemGuestAccessLimit>? problemTitleTask = null;
 
             if (submission.SubmitterId != null)
                 userBriefTask = _usersApi.GetUserBriefAsync(submission.SubmitterId);
             if (submission.ProblemId.HasValue)
-                problemTitleTask = _problemsApi.GetProblemTitleAsync(submission.ProblemId.Value);
+                problemTitleTask = _problemsApi.GetProblemGuestAccessLimit(submission.ProblemId.Value);
 
             try
             {
@@ -119,9 +120,11 @@ namespace HimuOJ.Web.WebSPA.Controller
                 return BadRequest(e.Message);
             }
 
-            submission.SubmitterName   = userBriefTask?.Result.UserName;
+            submission.SubmitterName = userBriefTask?.Result.UserName;
             submission.SubmitterAvatar = userBriefTask?.Result.Avatar;
-            submission.ProblemTitle    = problemTitleTask?.Result;
+            submission.ProblemTitle = problemTitleTask?.Result.ProblemTitle;
+            submission.ProblemAllowDownloadAnswer = problemTitleTask?.Result.AllowDownloadAnswer ?? false;
+            submission.ProblemAllowDownloadInput = problemTitleTask?.Result.AllowDownloadInput ?? false;
 
             return Ok(submission);
         }
@@ -130,16 +133,16 @@ namespace HimuOJ.Web.WebSPA.Controller
         public async Task<IActionResult> GetUserDetail(string id)
         {
             var userDetailTask = _usersApi.GetUserDetailAsync(id);
-            var profileTask    = _submitsApi.GetUserProfileStatisticsAsync(id);
+            var profileTask = _submitsApi.GetUserProfileStatisticsAsync(id);
 
             await Task.WhenAll(userDetailTask, profileTask);
 
             var userDetail = userDetailTask.Result;
-            var profile    = profileTask.Result;
+            var profile = profileTask.Result;
             userDetail.AcceptedSubmissionCount = profile.AcceptedSubmissionCount;
-            userDetail.TotalSubmissionCount    = profile.TotalSubmissionCount;
-            userDetail.TotalProblemTriedCount  = profile.TotalProblemTriedCount;
-            userDetail.AcceptedProblemCount    = profile.AcceptedProblemCount;
+            userDetail.TotalSubmissionCount = profile.TotalSubmissionCount;
+            userDetail.TotalProblemTriedCount = profile.TotalProblemTriedCount;
+            userDetail.AcceptedProblemCount = profile.AcceptedProblemCount;
 
             return Ok(userDetail);
         }

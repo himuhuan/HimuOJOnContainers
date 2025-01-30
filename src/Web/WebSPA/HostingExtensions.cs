@@ -23,7 +23,7 @@ public static class HostingExtensions
 
         var identityServer = builder.Configuration.GetRequiredSection("IdentityServer");
 
-        string identityServerUrl = identityServer.GetValue<string>("Url")
+        string identityServerUrl = identityServer.GetValue<string>("ExternalUrl")
                                    ?? throw new ArgumentException(
                                        "IdentityServer:Url is not configured");
 

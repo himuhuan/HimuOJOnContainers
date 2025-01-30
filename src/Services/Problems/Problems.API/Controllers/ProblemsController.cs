@@ -1,14 +1,17 @@
 ﻿#region
 
 using System.Security.Claims;
+using System.Text;
+using HimuOJ.Common.BucketStorage;
 using HimuOJ.Common.WebApiComponents.Authorization;
 using HimuOJ.Common.WebApiComponents.Extensions;
 using HimuOJ.Common.WebHostDefaults.Infrastructure;
+using HimuOJ.Services.Problems.API.Application.Auth;
 using HimuOJ.Services.Problems.API.Application.Models.Dto;
 using HimuOJ.Services.Problems.API.Application.Models.Vo;
 using HimuOJ.Services.Problems.API.Application.Queries;
+using HimuOJ.Services.Problems.API.Application.Services;
 using HimuOJ.Services.Problems.Domain.AggregatesModel.ProblemAggregate;
-using HimuOJ.Services.Problems.Infrastructure;
 using HimuOJ.Services.Problems.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,17 +28,21 @@ public class ProblemsController : ControllerBase
     private readonly IProblemsRepository _repository;
     private readonly IAuthorizationService _authorization;
     private readonly ILogger<ProblemsController> _logger;
+    private readonly IResourceStorage _resource;
 
     public ProblemsController(
         IProblemsQuery query,
         IProblemsRepository repository,
         ILogger<ProblemsController> logger,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        IBucketStorage storage,
+        IResourceStorage resource)
     {
-        _query         = query;
-        _repository    = repository;
-        _logger        = logger;
+        _query = query;
+        _repository = repository;
+        _logger = logger;
         _authorization = authorization;
+        _resource = resource;
     }
 
     /// <summary>API /problems/{id}: Retrieves the full details of a problem by its ID.</summary>
@@ -65,10 +72,19 @@ public class ProblemsController : ControllerBase
 
     /// <summary>API /problems/{id}/title</summary>
     [HttpGet("{id}/title")]
-    [ProducesResponseType<ApiResult<string>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProblemTitleAsync(int id)
     {
         var result = await _query.GetProblemTitleAsync(id);
+        return result.ToHttpApiResult();
+    }
+
+    [HttpGet("{id}/guest-access")]
+    [ProducesResponseType<ProblemGuestAccessLimit>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProblemGuestAccessLimit(int id)
+    {
+        var result = await _query.GetProblemGuestAccessLimit(id);
         return result.ToHttpApiResult();
     }
 
@@ -108,7 +124,7 @@ public class ProblemsController : ControllerBase
     /// <response code="201">Returns the ID of the newly created problem.</response>
     /// <response code="400">If the request is invalid.</response>
     [HttpPost]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType<int>(StatusCodes.Status201Created)]
     [ProducesResponseType<string>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult>
@@ -129,14 +145,49 @@ public class ProblemsController : ControllerBase
 
         foreach (var testPointDto in dto.TestPoints)
         {
-            problem.AddTestPoint(testPointDto.Input, testPointDto.ExpectedOutput,
-                testPointDto.Remarks);
+            // TODO: add check for file existence
+            problem.AddTestPoint(
+                testPointDto.Input, testPointDto.ExpectedOutput,
+                testPointDto.Remarks, TestPointResourceType.File);
         }
 
         _repository.Add(problem);
         await _repository.UnitOfWork.SaveEntitiesAsync();
 
         return CreatedAtAction(nameof(GetFullProblem), new { id = problem.Id }, problem.Id);
+    }
+
+    /// <summary>
+    /// Uploads a resource file for a problem.
+    /// </summary>
+    /// <param name="id">The ID of the problem.</param>
+    /// <param name="type">The type of the resource (input or answer).</param>
+    /// <param name="file">The resource file to upload.</param>
+    /// <returns>An <see cref="IActionResult"/> indicating the result of the upload operation.</returns>
+    /// <response code="200">If the resource was successfully uploaded.</response>
+    /// <response code="404">If the problem with the specified ID was not found.</response>
+    /// <response code="400">If the request is invalid.</response>
+    [HttpPost("{id}/resources/{type}")]
+    //[Authorize]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UploadProblemResource(int id, string type, IFormFile file)
+    {
+        if (type != "input" && type != "answer")
+            return ApiResultCode.BadRequest.ToHttpApiResult();
+
+        if (!(await _query.IsProblemExistAsync(id)))
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult();
+
+        bool isInput = type == "input";
+        string? uploadedFileName;
+        if (isInput)
+            uploadedFileName = await _resource.UploadInputFileAsync(id, file);
+        else
+            uploadedFileName = await _resource.UploadExpectedOutputFileAsync(id, file);
+
+        return uploadedFileName.ToHttpApiResult(ApiResultCode.Ok);
     }
 
     /// <summary>API PUT: /problems/{id}: Updates an existing problem with new details.</summary>
@@ -149,12 +200,12 @@ public class ProblemsController : ControllerBase
     /// <remarks>
     ///     The method calculates which TestPoint entities remain unchanged, which need to be updated,
     ///     by comparing the old and new collections, via comparing their Ids. <br />
-    ///     The method will NOT delete any TestPoint entities from the current collection. <br />
+    ///     The method will <i>NOT</i> delete any TestPoint entities from the current collection. <br />
     ///     To add a new TestPoint, set ID of the TestPoint to 0, to 
-    ///     remove a TestPoint, use DELETE <code> /problems/{id}/testpoints </code> instead.
+    ///     remove a TestPoint, use DELETE /problems/{id}/testpoints instead.
     /// </remarks>
     [HttpPut("{id}")]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProblemAsync(int id, [FromBody] ProblemDto dto)
@@ -252,5 +303,91 @@ public class ProblemsController : ControllerBase
 
         await _repository.UnitOfWork.SaveEntitiesAsync();
         return NoContent();
+    }
+
+    /// <summary>
+    /// Downloads a resource file for a problem.
+    /// </summary>
+    /// <param name="id">The ID of the problem.</param>
+    /// <param name="resourceName">The name of the resource file to download.</param>
+    /// <returns>An <see cref="IActionResult"/> containing the resource file stream.</returns>
+    /// <response code="200">Returns the resource file stream.</response>
+    /// <response code="404">If the problem with the specified ID was not found.</response>
+    /// <response code="403">If the user is not authorized to access the resource.</response>
+    /// <response code="400">If the resource name is invalid.</response>
+    [HttpGet("{id}/resources/{resourceName}")]
+    [Authorize]
+    public async Task<IActionResult> DownloadResource(int id, string resourceName)
+    {
+        var problem = await _repository.GetProblemMinimalAsync(id);
+        if (problem == null)
+        {
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult();
+        }
+
+        string resourceExtension = Path.GetExtension(resourceName);
+        if (resourceExtension != ".in" && resourceExtension != ".out")
+            return ApiResultCode.BadRequest.ToHttpApiResult("Bad resource name");
+        var operationType = resourceExtension switch
+        {
+            ".in" => ProblemAuthorizationOperations.ReadInput,
+            _ => ProblemAuthorizationOperations.ReadExpectedOutput
+        };
+        if (!(await _authorization.AuthorizeAsync(User, problem, operationType))
+            .Succeeded)
+        {
+            return Forbid();
+        }
+
+        try
+        {
+            var stream = await _resource.DownloadResourceAsync(id, resourceName);
+            return File(stream, "text/plain", resourceName);
+        }
+        catch (FileNotFoundException e)
+        {
+            _logger.LogError(e, """Failed to download resource "{ResourceName}" for problem {ProblemId}""", resourceName, id);
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult();
+        }
+    }
+
+    [HttpGet("{id}/testpoints/{testPointId}/{type}")]
+    [Authorize]
+    public async Task<IActionResult> DownloadTestPointResource(int id, int testPointId, string type)
+    {
+        var operationType = type == "input" 
+            ? ProblemAuthorizationOperations.ReadInput : ProblemAuthorizationOperations.ReadExpectedOutput;
+
+        var problem = await _repository.GetAsync(id);
+        if (problem == null)
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(id, "problem doesn't exist");
+        
+        if (!(await _authorization.AuthorizeAsync(User, problem, operationType)).Succeeded)
+        {
+            return ApiResultCode.BadAuthorization.ToHttpApiResult();
+        }
+
+        var testpoint = problem.TestPoints.FirstOrDefault(tp => tp.Id == testPointId);
+        if (testpoint == null)
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(testPointId, "specific testpoint doesn't exist");
+
+        if (testpoint.ResourceType == TestPointResourceType.Text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(
+                operationType == ProblemAuthorizationOperations.ReadInput ? testpoint.Input : testpoint.ExpectedOutput);
+            MemoryStream stream = new(bytes);
+            return File(stream, "text/plain", $"{testPointId}.{type}");
+        }
+
+        try
+        {
+            var stream = await _resource.DownloadResourceAsync(id, testpoint.Input);
+            return File(stream, "text/plain", $"{testPointId}.{type}");
+        }
+        catch (FileNotFoundException e)
+        {
+            _logger.LogError(e, """Failed to download resource for test point {TestPointId}""", testPointId);
+            return ApiResultCode.ResourceNotExist.ToHttpApiResult(testPointId);
+        }
     }
 }

@@ -11,21 +11,28 @@ namespace Identity.Server
     {
         public static IEnumerable<ApiResource> Apis =>
         [
-            new ApiResource("problems", "Problems API")
+            new("problems", "Problems API")
             {
                 Scopes = { "problems" }
             },
 
-            new ApiResource("submits", "Submits API")
+            new("submits", "Submits API")
             {
                 Scopes = { "submits" }
+            },
+
+            new("identity", "Identity API")
+            {
+                Scopes = { "openid", "profile", "identity", IdentityServerConstants.LocalApi.ScopeName }
             }
         ];
 
         public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("problems", displayName: "Problems API"),
-            new ApiScope("submits", displayName: "Submits API")
+            new("problems", displayName: "Problems API"),
+            new("submits", displayName: "Submits API"),
+            new("identity", displayName: "Identity API"),
+            new(IdentityServerConstants.LocalApi.ScopeName)
         ];
 
         public static IEnumerable<IdentityResource> IdentityResources =>
@@ -107,7 +114,32 @@ namespace Identity.Server
                         IdentityServerConstants.StandardScopes.Profile,
                         "submits"
                     }
-                }
+                },
+
+                new Client
+                {
+                    ClientId      = "identity_swagger_ui",
+                    ClientName    = "Identity Swagger UI",
+                    ClientSecrets = { new Secret("identity-secret".Sha256()) },
+
+                    AllowedGrantTypes           = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris =
+                    {
+                        $"{configuration["IdentityApiExternalUrl"]}/api-reference/v1"
+                    },
+                    PostLogoutRedirectUris =
+                        { $"{configuration["IdentityApiExternalUrl"]}/api-reference/v1" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.LocalApi.ScopeName,
+                        "identity",
+                    }
+                },
             ];
         }
     }
