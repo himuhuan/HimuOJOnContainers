@@ -63,9 +63,10 @@ public static class AuthenticationExtensions
             })
             .AddJwtBearer(options =>
             {
-#if DEBUG
-                options.RequireHttpsMetadata = false;
-#endif
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.RequireHttpsMetadata = false;
+                }
                 options.Authority = identityServerUrl;
                 
                 options.Audience = audience;

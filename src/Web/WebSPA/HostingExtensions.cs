@@ -60,10 +60,11 @@ public static class HostingExtensions
 
 
                 // Required for docker compose
-#if DEBUG
-                options.MetadataAddress = $"{identityServerUrl}/.well-known/openid-configuration";
-                options.RequireHttpsMetadata = false;
-#endif
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.MetadataAddress = $"{identityServerUrl}/.well-known/openid-configuration";
+                    options.RequireHttpsMetadata = false;
+                }
 
                 options.Scope.Clear();
 

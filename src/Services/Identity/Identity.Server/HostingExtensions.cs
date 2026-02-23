@@ -58,6 +58,12 @@ namespace Identity.Server
 
                     options.EmitStaticAudienceClaim = true;
                     options.KeyManagement.Enabled = true;
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        // In dev containers /app is often not writable for APP_UID.
+                        // Keep key management enabled but store keys in a writable temp path.
+                        options.KeyManagement.KeyPath = Path.Combine(Path.GetTempPath(), "identityserver-keys");
+                    }
 
                     options.Discovery.CustomEntries.Add("local_api", "~/api");
                 })
@@ -82,19 +88,23 @@ namespace Identity.Server
             builder.Services.AddAuthentication()
                 .AddJwtBearer("IdentityPublicApi", options =>
                 {
-#if DEBUG
-                    options.RequireHttpsMetadata = false;
-#endif
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        options.RequireHttpsMetadata = false;
+                    }
                     options.Authority = identityServerUrl;
 
                     options.Audience = audience;
-#if DEBUG
-                    options.TokenValidationParameters.ValidIssuers 
-                        = [identityServerExternalUrl, identityServerUrl, "http://localhost:5001"];
-#else
-                    options.TokenValidationParameters.ValidIssuers 
-                        = [identityServerExternalUrl, identityServerUrl];
-#endif
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        options.TokenValidationParameters.ValidIssuers =
+                            [identityServerExternalUrl, identityServerUrl, "http://localhost:5001"];
+                    }
+                    else
+                    {
+                        options.TokenValidationParameters.ValidIssuers =
+                            [identityServerExternalUrl, identityServerUrl];
+                    }
                     options.TokenValidationParameters.ValidateAudience = false;
                 });
 

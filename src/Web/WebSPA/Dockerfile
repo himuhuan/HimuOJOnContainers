@@ -12,10 +12,8 @@ EXPOSE 81
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Web/WebSPA/WebSPA.csproj", "src/Web/WebSPA/"]
-COPY ["src/Common/Common.WebHostDefaults/Common.WebHostDefaults.csproj", "src/Common/Common.WebHostDefaults/"]
-RUN dotnet restore "./src/Web/WebSPA/WebSPA.csproj"
 COPY . .
+RUN dotnet restore "./src/Web/WebSPA/WebSPA.csproj"
 WORKDIR "/src/src/Web/WebSPA"
 RUN dotnet build "./WebSPA.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
