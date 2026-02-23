@@ -12,11 +12,9 @@ EXPOSE 81
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Identity.Server/Identity.Server.csproj", "src/Identity.Server/"]
-COPY ["Common/Common.WebHostDefaults/Common.WebHostDefaults.csproj", "Common/Common.WebHostDefaults/"]
-RUN dotnet restore "./src/Identity.Server/Identity.Server.csproj"
 COPY . .
-WORKDIR "/src/src/Identity.Server"
+RUN dotnet restore "./src/Services/Identity/Identity.Server/Identity.Server.csproj"
+WORKDIR "/src/src/Services/Identity/Identity.Server"
 RUN dotnet build "./Identity.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # 此阶段用于发布要复制到最终阶段的服务项目

@@ -83,7 +83,7 @@ const routes = [
 
 const router = createRouter({history: createWebHistory(), routes});
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
     const userState = useUserState();
     useUiServices().loadingBar?.start();
     if (to.matched.length === 0) {

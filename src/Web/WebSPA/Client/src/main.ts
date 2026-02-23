@@ -18,16 +18,29 @@ self.MonacoEnvironment = {
     },
 };
 
-const app = createApp(App)
+async function enableMocking() {
+    if (!import.meta.env.VITE_USE_MOCK) {
+        return;
+    }
 
-const pinia = createPinia()
-pinia.use(PersistedStatePlugin);
+    const {worker} = await import("@/mocks/browser");
+    await worker.start({
+        onUnhandledRequest: "bypass",
+    });
+}
 
-app.use(pinia)
+enableMocking().finally(() => {
+    const app = createApp(App)
 
-const userState = useUserState();
+    const pinia = createPinia()
+    pinia.use(PersistedStatePlugin);
 
-userState.fetchProfile().finally(() => {
-    app.use(router)
-    app.mount('#app');
+    app.use(pinia)
+
+    const userState = useUserState();
+
+    userState.fetchProfile().finally(() => {
+        app.use(router)
+        app.mount('#app');
+    });
 });

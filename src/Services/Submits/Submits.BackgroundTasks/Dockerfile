@@ -8,13 +8,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Submits/Submits.BackgroundTasks/Submits.BackgroundTasks.csproj", "src/Services/Submits/Submits.BackgroundTasks/"]
-COPY ["src/Common/Common.WebHostDefaults/Common.WebHostDefaults.csproj", "src/Common/Common.WebHostDefaults/"]
-COPY ["src/Services/Submits/Submits.Infrastructure/Submits.Infrastructure.csproj", "src/Services/Submits/Submits.Infrastructure/"]
-COPY ["src/Services/Submits/Submits.Domain/Submits.Domain.csproj", "src/Services/Submits/Submits.Domain/"]
-COPY ["src/Common/Common.DomainSeedWork/Common.DomainSeedWork.csproj", "src/Common/Common.DomainSeedWork/"]
-RUN dotnet restore "./src/Services/Submits/Submits.BackgroundTasks/Submits.BackgroundTasks.csproj"
 COPY . .
+RUN dotnet restore "./src/Services/Submits/Submits.BackgroundTasks/Submits.BackgroundTasks.csproj"
 WORKDIR "/src/src/Services/Submits/Submits.BackgroundTasks"
 RUN dotnet build "./Submits.BackgroundTasks.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

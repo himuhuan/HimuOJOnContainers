@@ -61,6 +61,7 @@ import {
 import HimuLogo from "@/assets/images/himu-logo.svg";
 import AvatarWithText from "./AvatarWithText.vue";
 import {useUserState} from "@/stores/user";
+import {setMockAuthRole} from "@/mocks/data/constants";
 import {RouterLink} from "vue-router";
 import {h} from "vue";
 
@@ -95,6 +96,7 @@ const props = defineProps({
 });
 
 const userState = useUserState();
+const isMockMode = Boolean(import.meta.env.VITE_USE_MOCK);
 const themeVars = useThemeVars();
 window.$message = useMessage();
 
@@ -127,6 +129,23 @@ const userInfoMenuOptions: MenuOption[] = [
   {
     label: () => {
       if (!userState.isLogin) {
+        if (isMockMode) {
+          return h(
+              "a",
+              {
+                href: "#",
+                onClick: async (e: Event) => {
+                  e.preventDefault();
+                  setMockAuthRole("user");
+                  await userState.fetchProfile();
+                },
+              },
+              {
+                default: () => "注册/登录",
+              }
+          );
+        }
+
         return h(
             "a",
             {href: `/bff/login`},
@@ -169,6 +188,13 @@ const handleSelect = (key: string | number) => {
     userState.triggerThemeChange();
     window.$message.info("已切换主题");
   } else if (key === "logout") {
+    if (isMockMode) {
+      setMockAuthRole("guest");
+      userState.fetchProfile();
+      window.$message.success("已退出 Mock 登录");
+      return;
+    }
+
     window.location.href = userState.userLogoutUrl!;
   }
 };

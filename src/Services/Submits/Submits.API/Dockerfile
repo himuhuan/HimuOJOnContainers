@@ -12,14 +12,8 @@ EXPOSE 81
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Submits/Submits.API/Submits.API.csproj", "src/Services/Submits/Submits.API/"]
-COPY ["src/Common/Common.WebApiComponents/Common.WebApiComponents.csproj", "src/Common/Common.WebApiComponents/"]
-COPY ["src/Common/Common.WebHostDefaults/Common.WebHostDefaults.csproj", "src/Common/Common.WebHostDefaults/"]
-COPY ["src/Services/Submits/Submits.Infrastructure/Submits.Infrastructure.csproj", "src/Services/Submits/Submits.Infrastructure/"]
-COPY ["src/Services/Submits/Submits.Domain/Submits.Domain.csproj", "src/Services/Submits/Submits.Domain/"]
-COPY ["src/Common/Common.DomainSeedWork/Common.DomainSeedWork.csproj", "src/Common/Common.DomainSeedWork/"]
-RUN dotnet restore "./src/Services/Submits/Submits.API/Submits.API.csproj"
 COPY . .
+RUN dotnet restore "./src/Services/Submits/Submits.API/Submits.API.csproj"
 WORKDIR "/src/src/Services/Submits/Submits.API"
 RUN dotnet build "./Submits.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

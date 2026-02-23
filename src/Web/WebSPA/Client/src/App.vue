@@ -17,6 +17,7 @@
             <n-loading-bar-provider>
               <n-modal-provider>
                 <ViewComponent/>
+                <mock-auth-panel />
               </n-modal-provider>
             </n-loading-bar-provider>
           </n-scrollbar>
@@ -28,6 +29,7 @@
 
 <script lang="ts" setup>
 import HimuNavBar from "@/components/shared/HimuNavBar.vue";
+import MockAuthPanel from "@/components/dev/MockAuthPanel.vue";
 import HimuBackground from "./components/shared/HimuBackground.vue";
 import "@/style.css";
 import {defineComponent, h} from "vue";
