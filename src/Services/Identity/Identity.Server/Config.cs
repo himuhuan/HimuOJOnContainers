@@ -43,6 +43,13 @@ namespace Identity.Server
 
         public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
+            string webSpaClientUrl = configuration["WebSpaClient"]
+                                     ?? throw new ArgumentException(
+                                         "WebSpaClient is not configured");
+            var webSpaRedirectUris = BuildLoopbackRedirectUris(webSpaClientUrl, "/signin-oidc");
+            var webSpaPostLogoutRedirectUris = BuildLoopbackRedirectUris(webSpaClientUrl,
+                "/signout-callback-oidc");
+
             return
             [
                 new Client
@@ -52,9 +59,8 @@ namespace Identity.Server
 
                     AllowedGrantTypes = GrantTypes.Code,
 
-                    RedirectUris = { $"{configuration["WebSpaClient"]}/signin-oidc" },
-                    PostLogoutRedirectUris =
-                        { $"{configuration["WebSpaClient"]}/signout-callback-oidc" },
+                    RedirectUris = webSpaRedirectUris,
+                    PostLogoutRedirectUris = webSpaPostLogoutRedirectUris,
 
                     AllowOfflineAccess               = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
@@ -141,6 +147,43 @@ namespace Identity.Server
                     }
                 },
             ];
+        }
+
+        private static List<string> BuildLoopbackRedirectUris(string baseUrl, string callbackPath)
+        {
+            if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var baseUri))
+            {
+                throw new ArgumentException($"Invalid URL in WebSpaClient: {baseUrl}");
+            }
+
+            var redirectUris = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                BuildRedirectUri(baseUri, callbackPath)
+            };
+
+            if (baseUri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+            {
+                var loopbackIpUri = new UriBuilder(baseUri)
+                {
+                    Host = "127.0.0.1"
+                }.Uri;
+                redirectUris.Add(BuildRedirectUri(loopbackIpUri, callbackPath));
+            }
+            else if (baseUri.Host.Equals("127.0.0.1", StringComparison.OrdinalIgnoreCase))
+            {
+                var localhostUri = new UriBuilder(baseUri)
+                {
+                    Host = "localhost"
+                }.Uri;
+                redirectUris.Add(BuildRedirectUri(localhostUri, callbackPath));
+            }
+
+            return [..redirectUris];
+        }
+
+        private static string BuildRedirectUri(Uri baseUri, string callbackPath)
+        {
+            return new Uri(baseUri, callbackPath).ToString().TrimEnd('/');
         }
     }
 }
