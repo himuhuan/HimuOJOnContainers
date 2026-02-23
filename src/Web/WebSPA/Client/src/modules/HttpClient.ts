@@ -4,6 +4,7 @@
  */
 
 import axios, {AxiosHeaders, type AxiosInstance, type AxiosResponse,} from "axios";
+import {getMockAuthRole} from "@/mocks/data/constants";
 
 // Specific details will be handled by BFF
 class HttpClient {
@@ -67,12 +68,24 @@ class HttpClient {
 
 const client = new HttpClient();
 
+client.instance.interceptors.request.use((config) => {
+    if (import.meta.env.VITE_USE_MOCK) {
+        const headers = AxiosHeaders.from(config.headers);
+        headers.set("X-Mock-Role", getMockAuthRole());
+        config.headers = headers;
+    }
+
+    return config;
+});
+
 client.instance.interceptors.response.use(
     (response) => {
         return response;
     },
     (error) => {
-        if (error.response && error.response.status === 401) {
+        const requestUrl: string = error?.config?.url ?? "";
+        const isUserProfileRequest = requestUrl.startsWith("/bff/user");
+        if (error.response && error.response.status === 401 && !isUserProfileRequest) {
             window.$message.error("身份验证失败，请重新登录");
         }
         return Promise.reject(error);

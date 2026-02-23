@@ -44,6 +44,7 @@ const props = defineProps({
 ////////////////////////// variable //////////////////////////
 
 const loadingRef = ref<boolean>(false);
+const isMockMode = Boolean(import.meta.env.VITE_USE_MOCK);
 
 const dataRef = ref<SubmissionList>({
 	total: 0,
@@ -120,6 +121,36 @@ function handleRowProps(rowData: SubmissionListItem, _: number) {
 }
 
 let connection: signalR.HubConnection | null = null;
+let mockStatusTimer: number | null = null;
+
+function stopMockStatusSimulation() {
+	if (mockStatusTimer) {
+		window.clearInterval(mockStatusTimer);
+		mockStatusTimer = null;
+	}
+}
+
+function startMockStatusSimulation() {
+	stopMockStatusSimulation();
+	mockStatusTimer = window.setInterval(() => {
+		const runningItems = dataRef.value.items.filter(
+			(item) => item.status === "Running" || item.status === "Pending"
+		);
+		if (runningItems.length === 0) {
+			return;
+		}
+
+		const target = runningItems[Math.floor(Math.random() * runningItems.length)];
+		const finalStatusPool = ["Accepted", "WrongAnswer", "TimeLimitExceeded"];
+		const nextStatus =
+			finalStatusPool[Math.floor(Math.random() * finalStatusPool.length)];
+
+		updateSubmissionStatusCallback(target.id, nextStatus, {
+			usedMemoryByte: Math.round((4 + Math.random() * 8) * 1000 * 1000),
+			usedTimeMs: Math.round(20 + Math.random() * 150),
+		});
+	}, 2000);
+}
 
 async function fetchSubmissionList(
 	page: number,
@@ -139,23 +170,33 @@ async function fetchSubmissionList(
 			pageSize: pageSize,
 			itemCount: data.total,
 		};
-		// console.log("dataRef: ", dataRef.value);
-		connection = createSubmitsHubConnection();
-		connection.on("ReceiveSubmissionStatus", updateSubmissionStatusCallback);
-		connection
-			.start()
-			.then(() => {
-				console.log("Connection started");
-			})
-			.catch((err: any) => {
-				console.error(err);
-			});
+
+		if (isMockMode) {
+			startMockStatusSimulation();
+		} else {
+			if (connection) {
+				connection.off("ReceiveSubmissionStatus", updateSubmissionStatusCallback);
+				connection.stop();
+			}
+			connection = createSubmitsHubConnection();
+			connection.on("ReceiveSubmissionStatus", updateSubmissionStatusCallback);
+			connection
+				.start()
+				.then(() => {
+					console.log("Connection started");
+				})
+				.catch((err: any) => {
+					console.error(err);
+				});
+		}
+
 		loadingRef.value = false;
 	});
 }
 
 onUnmounted(() => {
 	console.log("Unsubscribing from hub connection");
+	stopMockStatusSimulation();
 	if (connection) {
 		connection.off("ReceiveSubmissionStatus", updateSubmissionStatusCallback);
 		connection.stop();

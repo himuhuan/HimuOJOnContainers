@@ -1,5 +1,5 @@
 <template>
-  <div class="container" id="copyright">
+  <div id="copyright">
     <n-grid x-gap="32" cols="4">
       <n-grid-item>
         <n-space vertical>
@@ -61,12 +61,11 @@
 
 <script lang="ts" setup>
 import {NGrid, NGridItem, NHr, NIcon, NSpace, NText, useThemeVars,} from "naive-ui";
-import {defineProps} from "vue";
 import DotNetBrand from "@/assets/images/brand-dotnet.png";
 import NaiveLogo from "@/assets/images/naive-logo.svg";
 import {LogoDocker, LogoVue} from "@vicons/ionicons5";
 
-const props = defineProps({
+defineProps({
   backgroundColor: {
     type: String,
     default: null,

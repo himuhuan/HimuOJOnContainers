@@ -67,13 +67,12 @@ import CenterContentContainer from "@/components/shared/CenterContentContainer.v
 import { ref, reactive } from "vue";
 import { MailOutline } from "@vicons/ionicons5";
 import type { FormRules } from "naive-ui";
-import { FormInst, useLoadingBar, useNotification } from "naive-ui";
+import { FormInst, useNotification } from "naive-ui";
 import { UserRegisterRequest } from "@/modules/user-types";
 import { registerUser } from "@/services/usersApi";
 
 const modelRef = ref<FormInst | null>(null);
 const notification = useNotification();
-const loadingBar = useLoadingBar();
 
 const formState = reactive({
 	register: {
