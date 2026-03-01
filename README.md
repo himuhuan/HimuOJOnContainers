@@ -48,6 +48,7 @@ docker compose ps
 在另一个终端执行：
 
 ```powershell
+git submodule update --init --recursive src/Web/WebSPA/Client
 cd src/Web/WebSPA/Client
 yarn install
 yarn dev --host 127.0.0.1 --port 6100
