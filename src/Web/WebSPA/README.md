@@ -26,7 +26,7 @@
 - `Services/*.cs`：下游 API 的 Refit 接口。
 - `Models/BffModels.cs`：BFF 聚合返回用的模型。
 - `Filters/BffGatewayRefitExceptionFilter.cs`：将 Refit `ApiException` 转成更友好的 JSON 错误响应。
-- `Client/`：Vue SPA（Vite 开发服务器、组件、路由、store、前端 API 封装）。
+- `Client/`：Vue SPA 子模块（独立仓库，Vite 开发服务器、组件、路由、store、前端 API 封装）。
 
 ## 对外 HTTP 面（概览）
 
@@ -61,6 +61,12 @@
 
 - .NET 8 SDK
 - Node.js + Yarn（前端）
+
+首次 clone 或切换到新分支后，请先初始化前端子模块：
+
+```bash
+git submodule update --init --recursive src/Web/WebSPA/Client
+```
 
 前端（Vite）：
 
